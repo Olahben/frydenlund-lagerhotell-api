@@ -1,8 +1,4 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Nodes;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,7 +9,7 @@ public class UserController : ControllerBase
     private readonly string filePath = @"C:\Users\ohage\SKOLE\Programmering\Lagerhotell\wwwroot\Data\users.json";
     [Route("adduser")]
     [HttpPost]
-    public IActionResult AddUser([FromBody] Dictionary<string, object> data)
+    public IActionResult AddUser([FromBody] Dictionary<string, string> data)
     {
         List<object> _data = new List<object>() { data };
 
