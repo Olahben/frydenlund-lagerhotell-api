@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LagerhotellAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
@@ -10,15 +11,14 @@ public class UserController : ControllerBase
     private readonly string filePath = @"C:\Users\ohage\SKOLE\Programmering\Lagerhotell\wwwroot\Data\users.json";
     [Route("adduser")]
     [HttpPost]
-    public IActionResult AddUser([FromBody] Dictionary<string, string> data)
+    public IActionResult AddUser([FromBody] AddUserRequest request)
     {
-        List<object> _data = new List<object>() { data };
 
         string existingJson = System.IO.File.ReadAllText(filePath);
-        JObject jsonObject = JsonConvert.DeserializeObject<JObject>(existingJson);
+        var users = JsonConvert.DeserializeObject<List<User>>(existingJson);
 
-        JArray usersArray = jsonObject.GetValue("users") as JArray;
-        usersArray.Add(JToken.FromObject(data));
+        
+        users.Add(new LagerhotellAPI.Models.User(request.FirstName));
 
         string updatedJson = jsonObject.ToString();
 
@@ -48,6 +48,7 @@ public class UserController : ControllerBase
             Console.WriteLine(phoneNumber);
             if (phoneNumber == item["phoneNumber"].ToString())
             {
+                // return Ok response object with PhoneExist true or false
                 return BadRequest("False");
             }
         }
