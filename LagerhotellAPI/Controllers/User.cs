@@ -48,8 +48,7 @@ public class UserController : ControllerBase
             Console.WriteLine(phoneNumber);
             if (phoneNumber == item["phoneNumber"].ToString())
             {
-                // return Ok response object with PhoneExist true or false
-                return BadRequest("False");
+                return NotFound("False");
             }
         }
 
