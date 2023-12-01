@@ -1,32 +1,37 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace LagerhotellAPI.Models
 {
     public class AddUserRequest
     {
-        private string firstName { get; set; }
-        private string lastName { get; set; }
-        private string phoneNumber { get; set; }
-        private string birthDate { get; set; }
-        private string password { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+        [Required]
+        public string BirthDate { get; set; }
+        [Required]
+        public string Password { get; set; }
 
-
-        public string GetFirstName() => firstName;
-        public string GetLastName() => lastName;
-        public string GetPhoneNumber() => phoneNumber;
-        public string GetBirthDate() => birthDate;
-        public string GetPassword() => password;
-        static public AddUserRequest AddUserRequestFunc(string FirstName, string LastName, string PhoneNumber, string BirthDate, string Password)
+        static public AddUserRequest AddUserRequestFunc(string firstName, string lastName, string phoneNumber, string birthDate, string password)
         {
             var addUserRequest = new AddUserRequest
             {
-                firstName = FirstName,
-                lastName = LastName,
-                phoneNumber = PhoneNumber,
-                birthDate = BirthDate,
-                password = Password
+                FirstName = firstName,
+                LastName = lastName,
+                PhoneNumber = phoneNumber,
+                BirthDate = birthDate,
+                Password = password
             };
             return addUserRequest;
         }
+
+    }
+    public class AddUserResponse 
+    { 
+        public string UserId { get; set; } 
     }
 }
