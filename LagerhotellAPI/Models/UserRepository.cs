@@ -20,6 +20,7 @@ namespace LagerhotellAPI.Models
             user.Id = Guid.NewGuid().ToString();
             Users.Add(user);
             // Ensure JSON is saved
+            Save();
             return user.Id;
             
         }
@@ -28,8 +29,11 @@ namespace LagerhotellAPI.Models
         {
             return Users.Where(_ => _.PhoneNumber == phoneNumber).SingleOrDefault();
         }
-
-        // private void save
+        private void Save() 
+        {
+            var updatedJson = JsonConvert.SerializeObject(Users);
+            System.IO.File.WriteAllText(_filePath, updatedJson);
+        }
         private void Load()
         {
             // Check if JSON is read
