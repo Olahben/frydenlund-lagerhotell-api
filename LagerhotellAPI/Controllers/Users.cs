@@ -28,8 +28,14 @@ public class UsersController : ControllerBase
     [HttpPost]
     public IActionResult CheckPhoneNumberExistence([FromBody] CheckPhoneNumberRequest request)
     {
+        // user is null if not found
         var user = _userRepository.Get(request.PhoneNumber);
-        // logic to check if it exists
-        return Ok(new CheckPhoneNumberResponse { PhoneNumberExistence = true});
+        if (user == null)
+        {
+            return Ok(new CheckPhoneNumberResponse { PhoneNumberExistence = false });
+        } else
+        {
+            return Ok(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
+        }
     }
 }
