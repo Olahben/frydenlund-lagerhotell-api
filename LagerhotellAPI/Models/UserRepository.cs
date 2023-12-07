@@ -27,7 +27,7 @@ namespace LagerhotellAPI.Models
 
         public User? Get(string phoneNumber)
         {
-            return Users.Where(_ => _.PhoneNumber == phoneNumber).SingleOrDefault();
+            return Users.Where(_ => _.PhoneNumber == phoneNumber).FirstOrDefault();
         }
         private void Save() 
         {
@@ -37,7 +37,7 @@ namespace LagerhotellAPI.Models
         private void Load()
         {
             // Check if JSON is read
-            string existingJson = System.IO.File.ReadAllText(_filePath);
+            var existingJson = System.IO.File.ReadAllText(_filePath);
             _users = JsonConvert.DeserializeObject<List<User>>(existingJson);
         }
     }
