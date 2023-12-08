@@ -32,15 +32,20 @@ public class UsersController : ControllerBase
     [HttpPost]
     public IActionResult AddUser([FromBody] AddUserRequest request)
     {
+        var user = _userRepository.Get(request.PhoneNumber);
+        if (user != null)
+        {
+
+            return Conflict(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
+        } else
 
             _userRepository.Add(new User(
-                request.FirstName,
-                request.LastName,
-                request.PhoneNumber,
-                request.BirthDate,
-                request.Password));
+              request.FirstName,
+              request.LastName,
+              request.PhoneNumber,
+              request.BirthDate,
+              request.Password));
 
-        // Should return AddUserResponse
-        return Ok();
+        return Ok(new AddUserResponse { UserId = user.Id });
     }
 }
