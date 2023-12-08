@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Reflection.Metadata.Ecma335;
 
 namespace LagerhotellAPI.Models
 {
