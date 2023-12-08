@@ -24,7 +24,7 @@ public class UsersController : ControllerBase
         } else
         {
             // Not found as in found
-            return NotFound(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
+            return Conflict(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
         }
     }
 
