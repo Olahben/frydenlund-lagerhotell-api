@@ -12,19 +12,18 @@ public class UsersController : ControllerBase
 
     [Route("is-phone-number-registered-registration")]
     [HttpPost]
-    public IActionResult CheckPhoneNumberExistence([FromBody] CheckPhoneNumberRequest request)
+    public IActionResult CheckPhoneNumberExistence([FromBody] CheckPhoneNumber.CheckPhoneNumberRequest request)
     {
         // user is null if not found
-        // takes the phone number as a string
         var user = _userRepository.Get(request.PhoneNumber);
         // should return phone number response
         if (user == null)
         {
-            return Ok(new CheckPhoneNumberResponse { PhoneNumberExistence = false });
+            return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
         } else
         {
             // Not found as in found
-            return Conflict(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
+            return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
         }
     }
 
@@ -36,7 +35,7 @@ public class UsersController : ControllerBase
         if (user != null)
         {
 
-            return Conflict(new CheckPhoneNumberResponse { PhoneNumberExistence = true });
+            return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
         } else
 
             _userRepository.Add(new User(
