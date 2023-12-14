@@ -1,4 +1,5 @@
-﻿using LagerhotellAPI.Models;
+﻿using Lagerhotell.Shared;
+using LagerhotellAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -22,7 +23,6 @@ public class UsersController : ControllerBase
             return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
         } else
         {
-            // Not found as in found
             return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
         }
     }
@@ -46,5 +46,14 @@ public class UsersController : ControllerBase
               request.Password));
 
         return Ok(new AddUserResponse { UserId = user.Id });
+    }
+
+    [Route("check-password")]
+    [HttpPost]
+    public IActionResult ReturnPassword([FromBody] CheckPassword.CheckPasswordRequest request)
+    {
+        string password = _userRepository.Password(request.PhoneNumber);
+        Console.WriteLine(password);
+        return Ok(new CheckPassword.CheckPasswordResponse { Password = password });
     }
 }
