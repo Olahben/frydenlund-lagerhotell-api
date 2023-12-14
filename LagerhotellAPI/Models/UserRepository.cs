@@ -44,6 +44,11 @@ namespace LagerhotellAPI.Models
         public string Password(string phoneNumber)
         {
             var user = Get(phoneNumber);
+            // Handle if user is null
+            if (user == null)
+            {
+                return null;
+            }
             return user.Password;
         }
     }
