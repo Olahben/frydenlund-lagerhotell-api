@@ -40,5 +40,11 @@ namespace LagerhotellAPI.Models
             var existingJson = System.IO.File.ReadAllText(_filePath);
             _users = JsonConvert.DeserializeObject<List<User>>(existingJson);
         }
+
+        public string Password(string phoneNumber)
+        {
+            var user = Get(phoneNumber);
+            return user.Password;
+        }
     }
 }
