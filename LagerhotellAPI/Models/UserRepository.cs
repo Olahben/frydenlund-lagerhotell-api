@@ -51,5 +51,15 @@ namespace LagerhotellAPI.Models
             }
             return user.Password;
         }
+
+        public User? User(string Id)
+        {
+            User user = Users.Where(_ => _.Id == Id).FirstOrDefault();
+            if (user == null)
+            {
+                return null;
+            }
+            return user;
+        }
     }
 }
