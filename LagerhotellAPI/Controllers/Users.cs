@@ -10,6 +10,7 @@ using System.IO;
 public class UsersController : ControllerBase
 {
     private readonly UserRepository _userRepository = new UserRepository();
+    private readonly GetUserResponse _getuserResponse = new GetUserResponse();
 
     [Route("is-phone-number-registered-registration")]
     [HttpPost]
@@ -58,4 +59,12 @@ public class UsersController : ControllerBase
         Console.WriteLine(password);
         return Ok(new CheckPassword.CheckPasswordResponse { Password = password });
     }
+
+    [Route("get-user")]
+    [HttpPost]
+    public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request) {
+      var user = _userRepository.GetUserById(request.userId);
+        return Ok(_getuserResponse.GetUserResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+    }
+
 }
