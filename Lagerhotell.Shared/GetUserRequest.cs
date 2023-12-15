@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lagerhotell.Models
+namespace LagerhotellAPI.Models
 {
         public class GetUserRequest
         {
