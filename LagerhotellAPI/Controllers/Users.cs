@@ -45,7 +45,9 @@ public class UsersController : ControllerBase
               request.BirthDate,
               request.Password));
 
-        return Ok(new AddUserResponse { UserId = user.Id });
+        var newUser = _userRepository.Get(request.PhoneNumber);
+
+        return Ok(new AddUserResponse { UserId = newUser.Id });
     }
 
     [Route("check-password")]
