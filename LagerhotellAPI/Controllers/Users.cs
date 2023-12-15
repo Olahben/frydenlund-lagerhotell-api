@@ -11,6 +11,7 @@ public class UsersController : ControllerBase
 {
     private readonly UserRepository _userRepository = new UserRepository();
     private readonly GetUserResponse _getuserResponse = new GetUserResponse();
+    private readonly GetUserByPhoneNumberResponse _getUserByPhoneNumberResponse = new GetUserByPhoneNumberResponse();
 
     [Route("is-phone-number-registered-registration")]
     [HttpPost]
@@ -63,8 +64,17 @@ public class UsersController : ControllerBase
     [Route("get-user")]
     [HttpPost]
     public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request) {
-      var user = _userRepository.GetUserById(request.userId);
+        User? user = _userRepository.GetUserById(request.UserId);
         return Ok(_getuserResponse.GetUserResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+    }
+
+    [Route("get-user-by-phone-number")]
+    [HttpPost]
+    public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
+    {
+       var user = _userRepository.Get(request.PhoneNumber);
+       return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+
     }
 
 }
