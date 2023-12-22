@@ -1,9 +1,6 @@
 ﻿using Lagerhotell.Shared;
 using LagerhotellAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IO;
 
 [ApiController]
 [Route("users")]
@@ -23,7 +20,8 @@ public class UsersController : ControllerBase
         if (user == null)
         {
             return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
-        } else
+        }
+        else
         {
             return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
         }
@@ -38,18 +36,16 @@ public class UsersController : ControllerBase
         {
 
             return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
-        } else
+        }
 
-            _userRepository.Add(new User(
-              request.FirstName,
-              request.LastName,
-              request.PhoneNumber,
-              request.BirthDate,
-              request.Password));
+        user = _userRepository.Add(
+         request.FirstName,
+         request.LastName,
+         request.PhoneNumber,
+         request.BirthDate,
+         request.Password);
 
-        var newUser = _userRepository.Get(request.PhoneNumber);
-
-        return Ok(new AddUserResponse { UserId = newUser.Id });
+        return Ok(new AddUserResponse { UserId = user.Id });
     }
 
     [Route("check-password")]
@@ -63,7 +59,8 @@ public class UsersController : ControllerBase
 
     [Route("get-user")]
     [HttpPost]
-    public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request) {
+    public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
+    {
         User? user = _userRepository.GetUserById(request.UserId);
         return Ok(_getuserResponse.GetUserResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
     }
@@ -72,8 +69,9 @@ public class UsersController : ControllerBase
     [HttpPost]
     public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
     {
-       var user = _userRepository.Get(request.PhoneNumber);
-       return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+        var user = _userRepository.Get(request.PhoneNumber);
+        Console.WriteLine(user.FirstName);
+        return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
 
     }
 
