@@ -4,14 +4,9 @@
     {
         public User User { get; set; }
 
-        public User GetUserByPhoneNumberResponseFunc(string firstName, string lastName, string phoneNumber, string birthDate, string password, string id)
+        public User GetUserByPhoneNumberResponseFunc(string id, string firstName, string lastName, string phoneNumber, string birthDate, string password)
         {
-            User.FirstName = firstName;
-            User.LastName = lastName;
-            User.PhoneNumber = phoneNumber;
-            User.BirthDate = birthDate;
-            User.Password = password;
-            User.Id = id;
+            User = new User(id, firstName, lastName, phoneNumber, birthDate, password);
             return User;
         }
     }
