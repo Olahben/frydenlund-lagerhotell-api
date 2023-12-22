@@ -6,7 +6,10 @@ namespace LagerhotellAPI.Models
     {
         private List<User> _users;
         private readonly string _filePath = @"C:\Users\ohage\SKOLE\Programmering\Lagerhotell\wwwroot\Data\users.json";
-        public List<User> Users { get {
+        public List<User> Users
+        {
+            get
+            {
                 if (_users == null)
                 {
                     Load();
@@ -15,21 +18,22 @@ namespace LagerhotellAPI.Models
             }
         }
 
-        public string Add(User user)
+        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string password)
         {
-            user.Id = Guid.NewGuid().ToString();
+            var id = Guid.NewGuid().ToString();
+            User user = new User(id, firstName, lastName, phoneNumber, birthDate, password);
             Users.Add(user);
             // Ensure JSON is saved
             Save();
-            return user.Id;
-            
+            return user;
+
         }
 
         public User? Get(string phoneNumber)
         {
             return Users.Where(_ => _.PhoneNumber == phoneNumber).FirstOrDefault();
         }
-        private void Save() 
+        private void Save()
         {
             var updatedJson = JsonConvert.SerializeObject(Users);
             System.IO.File.WriteAllText(_filePath, updatedJson);
