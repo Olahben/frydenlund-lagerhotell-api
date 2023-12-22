@@ -19,11 +19,11 @@ public class UsersController : ControllerBase
         // should return phone number response
         if (user == null)
         {
-            return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
+            return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
         }
         else
         {
-            return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
+            return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
         }
     }
 
@@ -71,7 +71,7 @@ public class UsersController : ControllerBase
     {
         var user = _userRepository.Get(request.PhoneNumber);
         Console.WriteLine(user.FirstName);
-        return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+        return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
 
     }
 
