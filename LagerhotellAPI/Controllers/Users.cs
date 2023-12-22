@@ -62,7 +62,7 @@ public class UsersController : ControllerBase
     public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
     {
         User? user = _userRepository.GetUserById(request.UserId);
-        return Ok(_getuserResponse.GetUserResponseFunc(user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password, user.Id));
+        return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
     }
 
     [Route("get-user-by-phone-number")]
@@ -70,7 +70,6 @@ public class UsersController : ControllerBase
     public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
     {
         var user = _userRepository.Get(request.PhoneNumber);
-        Console.WriteLine(user.FirstName);
         return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
 
     }
