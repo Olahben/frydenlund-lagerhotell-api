@@ -4,12 +4,12 @@
     {
         public class CreateJwtRequest
         {
-            public string PhoneNumber;
+            public string PhoneNumber { get; set; }
         }
 
         public class CreateJwtResponse
         {
-            public string JWT;
+            public string JWT { get; set; }
         }
     }
 }
