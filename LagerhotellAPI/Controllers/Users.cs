@@ -98,7 +98,7 @@ public class UsersController : ControllerBase
             audience: "https://localhost:5001",
             claims: new List<Claim>()
             {
-            new Claim(ClaimTypes.Name, request.PhoneNumber)
+            new Claim(ClaimTypes.Name, request.Id)
                 // Add other claims here as needed
             },
             expires: DateTime.Now.AddMinutes(30),
