@@ -32,7 +32,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Route("adduser")]
+    [Route("add-user")]
     [HttpPost]
     public IActionResult AddUser([FromBody] AddUserRequest request)
     {
@@ -99,7 +99,6 @@ public class UsersController : ControllerBase
             claims: new List<Claim>()
             {
             new Claim(ClaimTypes.Name, request.Id)
-                // Add other claims here as needed
             },
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: signinCredentials
