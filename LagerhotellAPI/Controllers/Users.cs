@@ -1,11 +1,6 @@
-﻿using Lagerhotell.Shared;
-using LagerhotellAPI.Models;
+﻿using LagerhotellAPI.Models;
+using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 [ApiController]
 [Route("users")]
@@ -14,6 +9,7 @@ public class UsersController : ControllerBase
     private readonly UserRepository _userRepository = new UserRepository();
     private readonly GetUserResponse _getuserResponse = new GetUserResponse();
     private readonly GetUserByPhoneNumberResponse _getUserByPhoneNumberResponse = new GetUserByPhoneNumberResponse();
+    private readonly TokenService _tokenService = new();
 
     [Route("is-phone-number-registered-registration")]
     [HttpPost]
@@ -55,11 +51,23 @@ public class UsersController : ControllerBase
 
     [Route("check-password")]
     [HttpPost]
-    public IActionResult ReturnPassword([FromBody] CheckPassword.CheckPasswordRequest request)
+    public IActionResult CheckPassword([FromBody] CheckPassword.CheckPasswordRequest request)
     {
-        string password = _userRepository.Password(request.PhoneNumber);
-        Console.WriteLine(password);
-        return Ok(new CheckPassword.CheckPasswordResponse { Password = password });
+        // Hent ut passordet fra brukeren, ved hjelp av mobilnummeret
+        // Lag en ny metode paa userRepository som sjekker om passordene er like
+        // den returnerer en bool
+        // Hvis passordene ikke er like, returner DeclineAccess eller noe saant
+        // Hvis passordene er like, returner JWT
+        // Hvis passord er feil, returner tom JWT
+        // Get user
+        User? user = _userRepository.Get(request.PhoneNumber);
+        if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
+        {
+            Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
+            return Ok(new CheckPassword.CheckPasswordResponse { Token = jwt.Token });
+        }
+
+        return Unauthorized();
     }
 
     [Route("get-user")]
@@ -78,34 +86,4 @@ public class UsersController : ControllerBase
         return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
 
     }
-
-    [Route("create-jwt")]
-    [HttpPost]
-    public IActionResult CreateJwt(CreateJwt.CreateJwtRequest request)
-    {
-        string bitSecret;
-        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-        {
-            var secretKeyByteArray = new byte[32];
-            rng.GetBytes(secretKeyByteArray);
-            bitSecret = Convert.ToBase64String(secretKeyByteArray);
-        }
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(bitSecret));
-        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-        var tokeOptions = new JwtSecurityToken(
-            issuer: "https://localhost:7272",
-            audience: "https://localhost:5001",
-            claims: new List<Claim>()
-            {
-            new Claim(ClaimTypes.Name, request.Id)
-            },
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: signinCredentials
-        );
-
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-        return Ok(new CreateJwt.CreateJwtResponse { JWT = tokenString });
-    }
-
 }

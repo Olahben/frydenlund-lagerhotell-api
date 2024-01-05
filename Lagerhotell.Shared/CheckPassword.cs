@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Lagerhotell.Shared
+﻿namespace LagerhotellAPI.Models
 {
     public class CheckPassword
     {
         public class CheckPasswordRequest
         {
-            public string PhoneNumber { get; set; }
+            public required string PhoneNumber { get; set; }
+            public required string Password { get; set; }
         }
 
         public class CheckPasswordResponse
         {
-            public string Password { get; set; }
+            public string Token { get; set; }
         }
     }
 }

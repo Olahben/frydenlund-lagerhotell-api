@@ -65,5 +65,10 @@ namespace LagerhotellAPI.Models
             }
             return user;
         }
+
+        public bool DoPasswordsMatch(string password, string requestedPassword)
+        {
+            return password == requestedPassword;
+        }
     }
 }
