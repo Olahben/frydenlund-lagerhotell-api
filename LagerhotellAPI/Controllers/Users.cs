@@ -1,5 +1,6 @@
 ﻿using LagerhotellAPI.Models;
 using LagerhotellAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -48,7 +49,6 @@ public class UsersController : ControllerBase
 
         return Ok(new AddUserResponse { UserId = user.Id });
     }
-
     [Route("check-password")]
     [HttpPost]
     public IActionResult CheckPassword([FromBody] CheckPassword.CheckPasswordRequest request)
@@ -70,6 +70,7 @@ public class UsersController : ControllerBase
         return Unauthorized();
     }
 
+    [Authorize]
     [Route("get-user")]
     [HttpPost]
     public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
