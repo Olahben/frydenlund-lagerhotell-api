@@ -10,7 +10,12 @@ public class UsersController : ControllerBase
     private readonly UserRepository _userRepository = new UserRepository();
     private readonly GetUserResponse _getuserResponse = new GetUserResponse();
     private readonly GetUserByPhoneNumberResponse _getUserByPhoneNumberResponse = new GetUserByPhoneNumberResponse();
-    private readonly TokenService _tokenService = new();
+    private readonly TokenService _tokenService;
+
+    public UsersController(TokenService tokenService)
+    {
+        _tokenService = tokenService;
+    }
 
     [Route("is-phone-number-registered-registration")]
     [HttpPost]
@@ -79,6 +84,7 @@ public class UsersController : ControllerBase
         return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
     }
 
+    [Authorize]
     [Route("get-user-by-phone-number")]
     [HttpPost]
     public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
