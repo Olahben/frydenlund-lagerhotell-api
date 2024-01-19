@@ -8,6 +8,7 @@ namespace LagerhotellAPI.Services
 {
     public class TokenService
     {
+        private readonly JwtSecurityTokenHandler _jwtHandler = new();
         private readonly IConfiguration _configuration;
 
         public TokenService(IConfiguration configuration)
@@ -33,8 +34,21 @@ namespace LagerhotellAPI.Services
                 signingCredentials: signinCredentials
             );
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            var tokenString = _jwtHandler.WriteToken(tokenOptions);
             return new Jwt { Token = tokenString };
         }
+
+        /* public string DecodeToken(string token)
+        {
+            JwtSecurityToken? jsonToken = (JwtSecurityToken)_jwtHandler.ReadToken(token) as JwtSecurityToken;
+
+            if (jsonToken != null)
+            {
+                Claim? claim = jsonToken.Claims.FirstOrDefault(c => c.Type == "MobilePhone");
+                return claim?.Value;
+            }
+
+            throw new Exception("Ikke noe mobilnummer i tokenen");
+        } */
     }
 }
