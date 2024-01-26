@@ -18,10 +18,10 @@ namespace LagerhotellAPI.Models
             }
         }
 
-        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string password)
+        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string address, string postalCode, string city, string password)
         {
             var id = Guid.NewGuid().ToString();
-            User user = new User(id, firstName, lastName, phoneNumber, birthDate, password);
+            User user = new User(id, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
             Users.Add(user);
             // Ensure JSON is saved
             Save();
