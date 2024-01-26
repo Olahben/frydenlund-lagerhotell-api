@@ -30,11 +30,11 @@ namespace Controllers
             // should return phone number response
             if (user == null)
             {
-                return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
+                return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
             }
             else
             {
-                return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
+                return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
             }
         }
 
@@ -54,9 +54,14 @@ namespace Controllers
              request.LastName,
              request.PhoneNumber,
              request.BirthDate,
+             request.Address,
+             request.PostalCode,
+             request.City,
              request.Password);
 
-            return Ok(new AddUserResponse { UserId = user.Id });
+            Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
+
+            return Ok(new AddUserResponse { UserId = user.Id, Token = jwt.Token });
         }
         [Route("check-password")]
         [HttpPost]
@@ -85,7 +90,11 @@ namespace Controllers
         public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
         {
             User? user = _userRepository.GetUserById(request.UserId);
-            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address, user.PostalCode, user.City, user.Password));
         }
 
         [Authorize]
@@ -94,8 +103,18 @@ namespace Controllers
         public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
         {
             var user = _userRepository.Get(request.PhoneNumber);
-            return Ok(_getUserByPhoneNumberResponse.GetUserByPhoneNumberResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Password));
+            return Ok(new GetUserByPhoneNumberResponse { Id = user.Id, });
 
         }
+
+        /* [Authorize]
+        [Route("decode-token")]
+        [HttpPost]
+        public IActionResult DecodeToken([FromBody] DecodeJwt.DecodeJwtRequest request)
+        {
+            string phoneNumber = _tokenService.DecodeToken(request.Token);
+            DecodeJwt.DecodeJwtResponse decodeJwtResponse = new() { PhoneNumber = phoneNumber };
+            return Ok(decodeJwtResponse);
+        } */
     }
 }
