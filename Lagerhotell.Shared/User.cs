@@ -9,6 +9,9 @@
             LastName = lastName;
             PhoneNumber = phoneNumber;
             BirthDate = birthDate;
+            Address = address;
+            PostalCode = postalCode;
+            City = city;
             Password = password;
         }
         public User()
