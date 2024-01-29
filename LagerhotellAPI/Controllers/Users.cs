@@ -116,5 +116,22 @@ namespace Controllers
             DecodeJwt.DecodeJwtResponse decodeJwtResponse = new() { PhoneNumber = phoneNumber };
             return Ok(decodeJwtResponse);
         } */
+
+        [Authorize]
+        [Route("update-user-values")]
+        [HttpPost]
+        public IActionResult UpdateUserValues([FromBody] UpdateUserValuesRequest request)
+        {
+            try
+            {
+                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address, request.PostalCode, request.City);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+
+        }
     }
 }
