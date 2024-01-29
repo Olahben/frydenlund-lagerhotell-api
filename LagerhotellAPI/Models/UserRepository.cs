@@ -21,7 +21,7 @@ namespace LagerhotellAPI.Models
         public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string address, string postalCode, string city, string password)
         {
             var id = Guid.NewGuid().ToString();
-            User user = new User(id, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
+            User user = new(id, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
             Users.Add(user);
             // Ensure JSON is saved
             Save();
@@ -69,6 +69,26 @@ namespace LagerhotellAPI.Models
         public bool DoPasswordsMatch(string password, string requestedPassword)
         {
             return password == requestedPassword;
+        }
+
+        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string address, string postalCode, string city)
+        {
+            User user = Get(phoneNumber);
+            if (user != null)
+            {
+                user.FirstName = firstName;
+                user.LastName = lastName;
+                user.BirthDate = birthDate;
+                user.Password = password;
+                user.Address = address;
+                user.PostalCode = postalCode;
+                user.City = city;
+                Save();
+            }
+            else
+            {
+                throw new Exception("Brukeren ble ikke funnet");
+            }
         }
     }
 }
