@@ -1,48 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Driver;
 
 namespace LagerhotellAPI.Models
 {
     public class UserRepository
     {
-        private List<User> _users;
-        private readonly string _filePath = @"C:\Users\ohage\SKOLE\Programmering\Lagerhotell\wwwroot\Data\users.json";
-        public List<User> Users
+        private readonly IMongoCollection<User> _users;
+
+        public UserRepository(MongoDbSettings settings)
         {
-            get
-            {
-                if (_users == null)
-                {
-                    Load();
-                }
-                return _users;
-            }
+            if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+                throw new ArgumentNullException(nameof(settings), "MongoDbSettings is not configured properly.");
+
+
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase("Lagerhotell");
+            _users = database.GetCollection<User>("Users");
         }
 
         public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string address, string postalCode, string city, string password)
         {
-            var id = Guid.NewGuid().ToString();
-            User user = new(id, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
-            Users.Add(user);
-            // Ensure JSON is saved
-            Save();
+            User user = new(firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
+            _users.InsertOne(user);
             return user;
 
         }
 
         public User? Get(string phoneNumber)
         {
-            return Users.Where(_ => _.PhoneNumber == phoneNumber).FirstOrDefault();
-        }
-        private void Save()
-        {
-            var updatedJson = JsonConvert.SerializeObject(Users);
-            System.IO.File.WriteAllText(_filePath, updatedJson);
-        }
-        private void Load()
-        {
-            // Check if JSON is read
-            var existingJson = System.IO.File.ReadAllText(_filePath);
-            _users = JsonConvert.DeserializeObject<List<User>>(existingJson);
+            return _users.Find(User => User.PhoneNumber == phoneNumber).FirstOrDefault();
         }
 
         public string Password(string phoneNumber)
@@ -56,9 +41,9 @@ namespace LagerhotellAPI.Models
             return user.Password;
         }
 
-        public User? GetUserById(string Id)
+        public User? GetUserById(string id)
         {
-            User user = Users.Where(_ => _.Id == Id).FirstOrDefault();
+            var user = _users.Find(user => user.Id == id).FirstOrDefault();
             if (user == null)
             {
                 return null;
@@ -76,18 +61,24 @@ namespace LagerhotellAPI.Models
             User user = Get(phoneNumber);
             if (user != null)
             {
-                user.FirstName = firstName;
-                user.LastName = lastName;
-                user.BirthDate = birthDate;
-                user.Password = password;
-                user.Address = address;
-                user.PostalCode = postalCode;
-                user.City = city;
-                Save();
+                User updatedUser = new User
+                {
+                    Id = user.Id,
+                    PhoneNumber = user.PhoneNumber,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    BirthDate = birthDate,
+                    Password = password,
+                    Address = address,
+                    PostalCode = postalCode,
+                    City = city
+                };
+                _users.ReplaceOne(u => u.Id == updatedUser.Id, updatedUser);
+
             }
             else
             {
-                throw new Exception("Brukeren ble ikke funnet");
+                throw new Exception("Brukeren som skulle oppdateres ble ikke funnet");
             }
         }
     }
