@@ -1,3 +1,4 @@
+using LagerhotellAPI.Models;
 using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -5,21 +6,25 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var mongoDbSettings = new MongoDbSettings();
+builder.Configuration.GetSection("LagerhotellDatabase").Bind(mongoDbSettings);
+builder.Services.AddSingleton(mongoDbSettings);
+
 // Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<UserRepository>();
 
 // Configure CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:5001")
+    options.AddPolicy("AllowSpecificOrigin", corsBuilder =>
+    {
+        corsBuilder.WithOrigins("https://localhost:5001")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
-        });
+    });
 });
 
 // Configure JWT Authentication
@@ -59,7 +64,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigin");
-
 
 app.UseAuthentication();
 app.UseAuthorization();
