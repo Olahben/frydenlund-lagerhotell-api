@@ -12,7 +12,7 @@ namespace Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserRepository _userRepository;
-        private readonly GetUserResponse _getuserResponse = new GetUserResponse();
+        private readonly GetUser.GetUserResponse _getuserResponse = new GetUser.GetUserResponse();
         private readonly TokenService _tokenService;
 
         public UsersController(TokenService tokenService, UserRepository userRepository)
@@ -103,7 +103,7 @@ namespace Controllers
             var user = _userRepository.Get(phoneNumber);
             if (user != null)
             {
-                return Ok(new GetUserByPhoneNumberResponse { Id = user.Id, });
+                return Ok(new GetUserByPhoneNumber.GetUserByPhoneNumberResponse { Id = user.Id, });
             }
             return NotFound();
 
