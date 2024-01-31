@@ -73,13 +73,17 @@ namespace Controllers
             // Hvis passord er feil, returner tom JWT
             // Get user
             User? user = _userRepository.Get(request.PhoneNumber);
-            if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
+            if (user != null)
             {
-                Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
-                return Ok(new Login.LoginResponse { Token = jwt.Token });
-            }
+                if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
+                {
+                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
+                    return Ok(new Login.LoginResponse { Token = jwt.Token });
+                }
 
-            return Unauthorized();
+                return Unauthorized();
+            }
+            return NotFound();
         }
 
         [Authorize]
@@ -108,16 +112,6 @@ namespace Controllers
             return NotFound();
 
         }
-
-        /* [Authorize]
-        [Route("decode-token")]
-        [HttpPost]
-        public IActionResult DecodeToken([FromBody] DecodeJwt.DecodeJwtRequest request)
-        {
-            string phoneNumber = _tokenService.DecodeToken(request.Token);
-            DecodeJwt.DecodeJwtResponse decodeJwtResponse = new() { PhoneNumber = phoneNumber };
-            return Ok(decodeJwtResponse);
-        } */
 
         [Authorize]
         [Route("update-user-values")]
