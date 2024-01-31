@@ -4,17 +4,17 @@
     {
         public class CreateJwtRequestService
         {
-            public string PhoneNumber { get; set; }
+            public required string PhoneNumber { get; set; }
         }
 
         public class CreateJwtRequest
         {
-            public string Id { get; set; }
+            public required string Id { get; set; }
         }
 
         public class CreateJwtResponse
         {
-            public string JWT { get; set; }
+            public string? JWT { get; set; }
         }
     }
 }

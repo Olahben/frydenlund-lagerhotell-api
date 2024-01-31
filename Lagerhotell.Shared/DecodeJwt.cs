@@ -4,11 +4,11 @@
     {
         public class DecodeJwtResponse
         {
-            public string PhoneNumber { get; set; }
+            public string? PhoneNumber { get; set; }
         }
         public class DecodeJwtRequest
         {
-            public string Token { get; set; }
+            public required string Token { get; set; }
         }
     }
 }

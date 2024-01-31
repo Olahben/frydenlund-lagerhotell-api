@@ -4,7 +4,7 @@
     {
         public class CheckPhoneNumberRequest
         {
-            public string PhoneNumber { get; set; }
+            public required string PhoneNumber { get; set; }
         }
 
         public class CheckPhoneNumberResponse { public bool PhoneNumberExistence { get; set; } }
