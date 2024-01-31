@@ -11,23 +11,21 @@ namespace Controllers
     [Route("users")]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userRepository = new UserRepository();
+        private readonly UserRepository _userRepository;
         private readonly GetUserResponse _getuserResponse = new GetUserResponse();
-        private readonly GetUserByPhoneNumberResponse _getUserByPhoneNumberResponse = new GetUserByPhoneNumberResponse();
         private readonly TokenService _tokenService;
 
-        public UsersController(TokenService tokenService)
+        public UsersController(TokenService tokenService, UserRepository userRepository)
         {
             _tokenService = tokenService;
+            _userRepository = userRepository;
         }
 
-        [Route("is-phone-number-registered-registration")]
-        [HttpPost]
-        public IActionResult CheckPhoneNumberExistence([FromBody] CheckPhoneNumber.CheckPhoneNumberRequest request)
+        [Route("check-phone/{phoneNumber}")]
+        [HttpGet]
+        public IActionResult CheckPhoneNumberExistence(string phoneNumber)
         {
-            // user is null if not found
-            var user = _userRepository.Get(request.PhoneNumber);
-            // should return phone number response
+            var user = _userRepository.Get(phoneNumber);
             if (user == null)
             {
                 return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
@@ -63,9 +61,9 @@ namespace Controllers
 
             return Ok(new AddUserResponse { UserId = user.Id, Token = jwt.Token });
         }
-        [Route("check-password")]
+        [Route("log-in")]
         [HttpPost]
-        public IActionResult CheckPassword([FromBody] CheckPassword.CheckPasswordRequest request)
+        public IActionResult Login([FromBody] CheckPassword.CheckPasswordRequest request)
         {
             // Hent ut passordet fra brukeren, ved hjelp av mobilnummeret
             // Lag en ny metode paa userRepository som sjekker om passordene er like
@@ -86,7 +84,7 @@ namespace Controllers
 
         [Authorize]
         [Route("get-user")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
         {
             User? user = _userRepository.GetUserById(request.UserId);
@@ -99,7 +97,7 @@ namespace Controllers
 
         [Authorize]
         [Route("get-user-by-phone-number")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
         {
             var user = _userRepository.Get(request.PhoneNumber);
@@ -119,7 +117,7 @@ namespace Controllers
 
         [Authorize]
         [Route("update-user-values")]
-        [HttpPost]
+        [HttpPut]
         public IActionResult UpdateUserValues([FromBody] UpdateUserValuesRequest request)
         {
             try
