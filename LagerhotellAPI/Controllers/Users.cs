@@ -63,7 +63,7 @@ namespace Controllers
         }
         [Route("log-in")]
         [HttpPost]
-        public IActionResult Login([FromBody] CheckPassword.CheckPasswordRequest request)
+        public IActionResult Login([FromBody] Login.LoginRequest request)
         {
             // Hent ut passordet fra brukeren, ved hjelp av mobilnummeret
             // Lag en ny metode paa userRepository som sjekker om passordene er like
@@ -76,18 +76,18 @@ namespace Controllers
             if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
             {
                 Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
-                return Ok(new CheckPassword.CheckPasswordResponse { Token = jwt.Token });
+                return Ok(new Login.LoginResponse { Token = jwt.Token });
             }
 
             return Unauthorized();
         }
 
         [Authorize]
-        [Route("get-user")]
+        [Route("get-user/{userId}")]
         [HttpGet]
-        public IActionResult GetUser([FromBody] LagerhotellAPI.Models.GetUserRequest request)
+        public IActionResult GetUser(string userId)
         {
-            User? user = _userRepository.GetUserById(request.UserId);
+            User? user = _userRepository.GetUserById(userId);
             if (user == null)
             {
                 return NotFound();
@@ -96,12 +96,16 @@ namespace Controllers
         }
 
         [Authorize]
-        [Route("get-user-by-phone-number")]
+        [Route("get-user-by-phone-number/{phoneNumber}")]
         [HttpGet]
-        public IActionResult GetUserByPhoneNumber([FromBody] GetUserByPhoneNumberRequest request)
+        public IActionResult GetUserByPhoneNumber(string phoneNumber)
         {
-            var user = _userRepository.Get(request.PhoneNumber);
-            return Ok(new GetUserByPhoneNumberResponse { Id = user.Id, });
+            var user = _userRepository.Get(phoneNumber);
+            if (user != null)
+            {
+                return Ok(new GetUserByPhoneNumberResponse { Id = user.Id, });
+            }
+            return NotFound();
 
         }
 
