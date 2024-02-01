@@ -30,7 +30,7 @@ namespace LagerhotellAPI.Models
             return _users.Find(User => User.PhoneNumber == phoneNumber).FirstOrDefault();
         }
 
-        public string Password(string phoneNumber)
+        public string? Password(string phoneNumber)
         {
             var user = Get(phoneNumber);
             // Handle if user is null
@@ -58,7 +58,7 @@ namespace LagerhotellAPI.Models
 
         public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string address, string postalCode, string city)
         {
-            User user = Get(phoneNumber);
+            User? user = Get(phoneNumber);
             if (user != null)
             {
                 User updatedUser = new User
@@ -78,7 +78,7 @@ namespace LagerhotellAPI.Models
             }
             else
             {
-                throw new Exception("Brukeren som skulle oppdateres ble ikke funnet");
+                throw new KeyNotFoundException("Brukeren som skulle oppdateres ble ikke funnet");
             }
         }
     }
