@@ -1,0 +1,15 @@
+﻿namespace LagerhotellAPI.Models
+{
+    public class UpdateOrder
+    {
+        public class UpdateOrderRequest
+        {
+            public required Order Order { get; set; }
+        }
+
+        public class UpdateOrderResponse
+        {
+            public required bool Success { get; set; }
+        }
+    }
+}
