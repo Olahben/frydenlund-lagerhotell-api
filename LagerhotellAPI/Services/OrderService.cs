@@ -6,9 +6,10 @@ namespace LagerhotellAPI.Services
     public class OrderService
     {
         private readonly IMongoCollection<Order> _orders;
-
-        public OrderService(IMongoDatabase database)
+        public OrderService(MongoDbSettings settings)
         {
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase("Lagerhotell");
             _orders = database.GetCollection<Order>("Orders");
         }
         public async Task AddOrder(Order order)

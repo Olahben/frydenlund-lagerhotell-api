@@ -7,8 +7,10 @@ namespace LagerhotellAPI.Services
     {
         private readonly IMongoCollection<StorageUnit> _storageUnits;
 
-        public StorageUnitService(IMongoDatabase database)
+        public StorageUnitService(MongoDbSettings settings)
         {
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase("Lagerhotell");
             _storageUnits = database.GetCollection<StorageUnit>("StorageUnits");
         }
 
