@@ -1,5 +1,4 @@
-﻿using LagerhotellAPI.Models;
-using LagerhotellAPI.Services;
+﻿using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers
@@ -17,11 +16,11 @@ namespace LagerhotellAPI.Controllers
 
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddStorageUnit([FromBody] StorageUnit storageUnit)
+        public async Task<IActionResult> AddStorageUnit([FromBody] CreateStorageUnitRequest request)
         {
             try
             {
-                await _storageUnitService.AddStorageUnit(storageUnit);
+                await _storageUnitService.AddStorageUnit(request.StorageUnit);
                 return Ok();
             }
             catch (InvalidOperationException)
@@ -34,9 +33,9 @@ namespace LagerhotellAPI.Controllers
             }
         }
 
-        [HttpDelete("{storageUnitId}")]
+        [HttpDelete]
         [Route("delete")]
-        public async Task<IActionResult> DeleteStorageUnit(string storageUnitId)
+        public async Task<IActionResult> DeleteStorageUnit([FromQuery] string storageUnitId)
         {
             try
             {
@@ -53,13 +52,13 @@ namespace LagerhotellAPI.Controllers
             }
         }
 
-        [HttpPut("{storageUnitId}")]
+        [HttpPut]
         [Route("modify")]
-        public async Task<IActionResult> ModifyStorageUnit(string storageUnitId, [FromBody] StorageUnit updatedStorageUnit)
+        public async Task<IActionResult> ModifyStorageUnit([FromBody] ModifyStorageUnitRequest request)
         {
             try
             {
-                await _storageUnitService.ModifyStorageUnit(storageUnitId, updatedStorageUnit);
+                await _storageUnitService.ModifyStorageUnit(request.StorageUnit.Id, request.StorageUnit);
                 return Ok();
             }
             catch (KeyNotFoundException)
@@ -72,9 +71,9 @@ namespace LagerhotellAPI.Controllers
             }
         }
 
-        [HttpGet("{storageUnitId}")]
+        [HttpGet]
         [Route("get-by-id")]
-        public async Task<IActionResult> GetStorageUnitById(string storageUnitId)
+        public async Task<IActionResult> GetStorageUnitById([FromQuery] string storageUnitId)
         {
             try
             {
