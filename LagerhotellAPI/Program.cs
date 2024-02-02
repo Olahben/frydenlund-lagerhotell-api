@@ -15,6 +15,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<StorageUnitService>();
 
 // Configure CORS policy
 builder.Services.AddCors(options =>
