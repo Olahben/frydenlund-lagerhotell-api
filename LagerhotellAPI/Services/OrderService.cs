@@ -36,9 +36,17 @@ namespace LagerhotellAPI.Services
             LagerhotellAPI.Models.DomainModels.Order domainOrder = new LagerhotellAPI.Models.DomainModels.Order { Id = dbOrder.OrderId, OrderDate = dbOrder.OrderDate, UserId = dbOrder.UserId, StorageUnitId = dbOrder.StorageUnitId, CustomInstructions = dbOrder.CustomInstructions };
             return domainOrder;
         }
-        public async Task<List<LagerhotellAPI.Models.DomainModels.Order>> GetAllOrders()
+        public async Task<List<LagerhotellAPI.Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take)
         {
-            List<LagerhotellAPI.Models.DbModels.Order> dbOrders = await _orders.Find(_ => true).ToListAsync();
+            var filter = Builders<LagerhotellAPI.Models.DbModels.Order>.Filter.Empty; // Default filter
+
+            if (userId != null)
+            {
+                filter = Builders<LagerhotellAPI.Models.DbModels.Order>.Filter.Eq(order => order.UserId, userId);
+            }
+
+            List<LagerhotellAPI.Models.DbModels.Order> dbOrders = await _orders.Find(filter).Skip(skip).Limit(take).ToListAsync();
+
             List<LagerhotellAPI.Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
             {
                 return new LagerhotellAPI.Models.DomainModels.Order
@@ -52,6 +60,7 @@ namespace LagerhotellAPI.Services
                     CustomInstructions = dbOrder.CustomInstructions
                 };
             });
+
             return domainOrders;
         }
     }
