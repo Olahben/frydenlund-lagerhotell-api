@@ -2,6 +2,6 @@
 {
     public class UserResponse
     {
-        public List<User>? users { get; set; }
+        public List<User>? Users { get; set; }
     }
 }
