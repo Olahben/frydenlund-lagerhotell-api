@@ -50,9 +50,9 @@ namespace LagerhotellAPI.Services
             return domainStorageUnit;
         }
 
-        public async Task<List<LagerhotellAPI.Models.DomainModels.StorageUnit>> GetAllStorageUnits()
+        public async Task<List<LagerhotellAPI.Models.DomainModels.StorageUnit>> GetAllStorageUnits(int? skip, int? take)
         {
-            List<LagerhotellAPI.Models.DbModels.StorageUnit> dbStorageUnits = await _storageUnits.Find(_ => true).ToListAsync();
+            List<LagerhotellAPI.Models.DbModels.StorageUnit> dbStorageUnits = await _storageUnits.Find(_ => true).Limit(take).Skip(skip).ToListAsync();
             List<LagerhotellAPI.Models.DomainModels.StorageUnit> domainStorageUnits = dbStorageUnits.ConvertAll(dbStorageUnit =>
             {
                 return new LagerhotellAPI.Models.DomainModels.StorageUnit
