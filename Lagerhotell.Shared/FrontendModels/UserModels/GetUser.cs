@@ -12,9 +12,10 @@ public class GetUser
     {
         public User? User { get; set; }
 
-        public User GetUserResponseFunc(string id, string firstName, string lastName, string phoneNumber, string birthDate, string address, string postalCode, string city, string password)
+        public User GetUserResponseFunc(string id, string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password)
         {
-            User = new User(id, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
+            Address userAddress = new(streetAddress, postalCode, city);
+            User = new User(id, firstName, lastName, phoneNumber, birthDate, userAddress, password);
 
             return User;
         }
