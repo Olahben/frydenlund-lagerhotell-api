@@ -94,12 +94,11 @@ namespace LagerhotellAPI.Controllers
         }
 
         [HttpGet]
-        [Route("get-all")]
-        public async Task<IActionResult> GetAllStorageUnits()
+        public async Task<IActionResult> GetAllStorageUnits([FromQuery] int? skip, int? take)
         {
             try
             {
-                var storageUnits = await _storageUnitService.GetAllStorageUnits();
+                var storageUnits = await _storageUnitService.GetAllStorageUnits(skip, take);
                 return Ok(storageUnits);
             }
             catch (Exception)

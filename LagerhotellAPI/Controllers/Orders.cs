@@ -72,7 +72,7 @@ namespace Controllers
             // rework logic
             try
             {
-                var orders = _orderService.GetAllOrders();
+                var orders = _orderService.GetAllOrders(userId, skip, take);
                 return Ok(orders);
             }
             catch
