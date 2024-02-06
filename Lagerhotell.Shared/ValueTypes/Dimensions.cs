@@ -2,9 +2,9 @@
 
 public class Dimensions
 {
-    public required double Length { get; set; }
-    public required double Width { get; set; }
-    public required double Height { get; set; }
+    public double Length { get; set; }
+    public double Width { get; set; }
+    public double Height { get; set; }
 
     public Dimensions(double length, double width, double height)
     {
