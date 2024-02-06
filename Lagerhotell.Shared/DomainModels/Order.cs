@@ -11,6 +11,15 @@ public class Order
         Status = status;
         CustomInstructions = customInstructions;
     }
+
+    public Order(OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null)
+    {
+        OrderPeriod = orderPeriod;
+        UserId = userId;
+        StorageUnitId = storageUnitId;
+        Status = status;
+        CustomInstructions = customInstructions;
+    }
     public string Id { get; set; }
     public OrderPeriod OrderPeriod { get; set; }
     public string UserId { get; set; }
