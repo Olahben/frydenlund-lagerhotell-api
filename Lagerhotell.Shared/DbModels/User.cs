@@ -8,9 +8,9 @@ namespace LagerhotellAPI.Models.DbModels;
 [BsonIgnoreExtraElements]
 public class User
 {
-    public User(string id, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password)
     {
-        UserId = id;
+        UserId = userId;
         FirstName = firstName;
         LastName = lastName;
         PhoneNumber = phoneNumber;
