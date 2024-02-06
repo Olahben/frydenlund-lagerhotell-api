@@ -18,8 +18,8 @@ namespace LagerhotellAPI.Services
         {
             if (await GetStorageUnitById(storageUnit.Id) == null)
             {
-                LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new LagerhotellAPI.Models.DbModels.StorageUnit { Length = storageUnit.Length, Width = storageUnit.Width, Height = storageUnit.Height, Temperated = storageUnit.Temperated, Area = storageUnit.Area, LockCode = storageUnit.LockCode, Name = storageUnit.Name, Occupied = storageUnit.Occupied, UserId = storageUnit.UserId, Coordinate = storageUnit.Coordinate, PricePerMonth = storageUnit.PricePerMonth };
-                dbStorageUnit.StorageUnitId = Guid.NewGuid().ToString();
+                string storageUnitId = Guid.NewGuid().ToString();
+                LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
                 await _storageUnits.InsertOneAsync(dbStorageUnit);
             }
             throw new InvalidOperationException("Already exists");
@@ -37,7 +37,7 @@ namespace LagerhotellAPI.Services
         {
             if (await GetStorageUnitById(storageUnitId) != null)
             {
-                LagerhotellAPI.Models.DbModels.StorageUnit updatedDbStorageUnit = new LagerhotellAPI.Models.DbModels.StorageUnit { Id = updatedStorageUnit.Id, Length = updatedStorageUnit.Length, Width = updatedStorageUnit.Width, Height = updatedStorageUnit.Height, Temperated = updatedStorageUnit.Temperated, Area = updatedStorageUnit.Area, LockCode = updatedStorageUnit.LockCode, Name = updatedStorageUnit.Name, Occupied = updatedStorageUnit.Occupied, UserId = updatedStorageUnit.UserId, Coordinate = updatedStorageUnit.Coordinate, PricePerMonth = updatedStorageUnit.PricePerMonth };
+                Models.DbModels.StorageUnit updatedDbStorageUnit = new(updatedStorageUnit.Id, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
                 await _storageUnits.ReplaceOneAsync(unit => unit.Id == storageUnitId, updatedDbStorageUnit);
             }
             throw new KeyNotFoundException();
@@ -46,7 +46,7 @@ namespace LagerhotellAPI.Services
         public async Task<StorageUnit> GetStorageUnitById(string storageUnitId)
         {
             var dbStorageUnit = await _storageUnits.Find(unit => unit.Id == storageUnitId).FirstOrDefaultAsync();
-            var domainStorageUnit = new LagerhotellAPI.Models.DomainModels.StorageUnit { Id = dbStorageUnit.Id, Length = dbStorageUnit.Length, Width = dbStorageUnit.Width, Height = dbStorageUnit.Height, Temperated = dbStorageUnit.Temperated, Area = dbStorageUnit.Area, LockCode = dbStorageUnit.LockCode, Name = dbStorageUnit.Name, Occupied = dbStorageUnit.Occupied, UserId = dbStorageUnit.UserId, Coordinate = dbStorageUnit.Coordinate, PricePerMonth = dbStorageUnit.PricePerMonth };
+            LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             return domainStorageUnit;
         }
 
@@ -55,21 +55,8 @@ namespace LagerhotellAPI.Services
             List<LagerhotellAPI.Models.DbModels.StorageUnit> dbStorageUnits = await _storageUnits.Find(_ => true).Limit(take).Skip(skip).ToListAsync();
             List<LagerhotellAPI.Models.DomainModels.StorageUnit> domainStorageUnits = dbStorageUnits.ConvertAll(dbStorageUnit =>
             {
-                return new LagerhotellAPI.Models.DomainModels.StorageUnit
-                {
-                    Id = dbStorageUnit.StorageUnitId,
-                    Length = dbStorageUnit.Length,
-                    Width = dbStorageUnit.Width,
-                    Height = dbStorageUnit.Height,
-                    Temperated = dbStorageUnit.Temperated,
-                    Area = dbStorageUnit.Area,
-                    LockCode = dbStorageUnit.LockCode,
-                    Name = dbStorageUnit.Name,
-                    Occupied = dbStorageUnit.Occupied,
-                    UserId = dbStorageUnit.UserId,
-                    Coordinate = dbStorageUnit.Coordinate,
-                    PricePerMonth = dbStorageUnit.PricePerMonth,
-                };
+
+                return new LagerhotellAPI.Models.DomainModels.StorageUnit(dbStorageUnit.StorageUnitId, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             });
             return domainStorageUnits;
         }

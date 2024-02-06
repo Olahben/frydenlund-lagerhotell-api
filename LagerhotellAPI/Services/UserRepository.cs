@@ -1,4 +1,5 @@
 ﻿using LagerhotellAPI.Models;
+using LagerhotellAPI.Models.ValueTypes;
 using MongoDB.Driver;
 
 namespace LagerhotellAPI.Services
@@ -18,12 +19,13 @@ namespace LagerhotellAPI.Services
             _users = database.GetCollection<Models.DbModels.User>("Users");
         }
 
-        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string address, string postalCode, string city, string password)
+        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password)
         {
             string userId = Guid.NewGuid().ToString();
-            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, address, postalCode, city, password);
+            Address userAddress = new(streetAddress, postalCode, city);
+            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password);
             _users.InsertOne(user);
-            User domainUser = new(user.Id, user.FirstName, user.LastName, phoneNumber, user.BirthDate, address, postalCode, user.City, user.Password);
+            User domainUser = new(user.Id, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password);
             return domainUser;
 
         }
@@ -35,7 +37,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User { Address = dbUser.Address, PostalCode = dbUser.PostalCode, PhoneNumber = dbUser.PhoneNumber, BirthDate = dbUser.BirthDate, City = dbUser.City, Password = dbUser.Password };
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password);
         }
 
         public string? Password(string phoneNumber)
@@ -56,7 +58,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User { Id = dbUser.UserId, FirstName = dbUser.FirstName, LastName = dbUser.LastName, PhoneNumber = dbUser.PhoneNumber, BirthDate = dbUser.BirthDate, Password = dbUser.Password, Address = dbUser.Address, PostalCode = dbUser.PostalCode, City = dbUser.City };
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password);
         }
 
         public bool DoPasswordsMatch(string password, string requestedPassword)
@@ -64,23 +66,13 @@ namespace LagerhotellAPI.Services
             return password == requestedPassword;
         }
 
-        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string address, string postalCode, string city)
+        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city)
         {
             User? domainUser = Get(phoneNumber);
             if (domainUser != null)
             {
-                Models.DbModels.User updatedUserDb = new Models.DbModels.User
-                {
-                    Id = domainUser.Id,
-                    PhoneNumber = domainUser.PhoneNumber,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    BirthDate = birthDate,
-                    Password = password,
-                    Address = address,
-                    PostalCode = postalCode,
-                    City = city
-                };
+                Address userAddress = new(streetAddress, postalCode, city);
+                Models.DbModels.User updatedUserDb = new(domainUser.Id, firstName, lastName, phoneNumber, birthDate, userAddress, password);
                 _users.ReplaceOne(u => u.Id == updatedUserDb.Id, updatedUserDb);
 
             }

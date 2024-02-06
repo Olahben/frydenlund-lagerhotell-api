@@ -14,7 +14,8 @@ namespace LagerhotellAPI.Services
         }
         public async Task AddOrder(Order order)
         {
-            LagerhotellAPI.Models.DbModels.Order dbOrder = new LagerhotellAPI.Models.DbModels.Order { OrderId = order.Id, OrderDate = order.OrderDate, EndDate = order.EndDate, UserId = order.UserId, StorageUnitId = order.StorageUnitId, Status = order.Status, CustomInstructions = order.CustomInstructions };
+            string orderId = Guid.NewGuid().ToString();
+            LagerhotellAPI.Models.DbModels.Order dbOrder = new(orderId, order.UserId, order.OrderPeriod, order.StorageUnitId, order.Status, order.CustomInstructions);
             await _orders.InsertOneAsync(dbOrder);
         }
         public async Task DeleteOrder(string orderId)
@@ -23,7 +24,7 @@ namespace LagerhotellAPI.Services
         }
         public async Task ModifyOrder(string orderId, Order updatedOrder)
         {
-            LagerhotellAPI.Models.DbModels.Order updatedDbOrder = new LagerhotellAPI.Models.DbModels.Order { OrderId = updatedOrder.Id, OrderDate = updatedOrder.OrderDate, EndDate = updatedOrder.EndDate, UserId = updatedOrder.UserId, StorageUnitId = updatedOrder.StorageUnitId, Status = updatedOrder.Status, CustomInstructions = updatedOrder.CustomInstructions };
+            LagerhotellAPI.Models.DbModels.Order updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.OrderPeriod, updatedOrder.StorageUnitId, updatedOrder.Status, updatedOrder.CustomInstructions);
             await _orders.ReplaceOneAsync(order => order.Id == orderId, updatedDbOrder);
         }
         public async Task<Order?> GetOrder(string orderId)
@@ -33,7 +34,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            LagerhotellAPI.Models.DomainModels.Order domainOrder = new LagerhotellAPI.Models.DomainModels.Order { Id = dbOrder.OrderId, OrderDate = dbOrder.OrderDate, UserId = dbOrder.UserId, StorageUnitId = dbOrder.StorageUnitId, CustomInstructions = dbOrder.CustomInstructions };
+            LagerhotellAPI.Models.DomainModels.Order domainOrder = new(dbOrder.OrderId, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions);
             return domainOrder;
         }
         public async Task<List<LagerhotellAPI.Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take)
@@ -49,16 +50,7 @@ namespace LagerhotellAPI.Services
 
             List<LagerhotellAPI.Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
             {
-                return new LagerhotellAPI.Models.DomainModels.Order
-                {
-                    Id = dbOrder.OrderId,
-                    OrderDate = dbOrder.OrderDate,
-                    EndDate = dbOrder.EndDate,
-                    UserId = dbOrder.UserId,
-                    StorageUnitId = dbOrder.StorageUnitId,
-                    Status = dbOrder.Status,
-                    CustomInstructions = dbOrder.CustomInstructions
-                };
+                return new LagerhotellAPI.Models.DomainModels.Order(dbOrder.Id, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions);
             });
 
             return domainOrders;
