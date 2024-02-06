@@ -1,11 +1,10 @@
-﻿namespace LagerhotellAPI.Models
+﻿namespace LagerhotellAPI.Models.DomainModels;
+
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-        Pending,
-        Confirmed,
-        Cancelled,
-        Completed,
-        Deleted
-    }
+    Pending,
+    Confirmed,
+    Cancelled,
+    Completed,
+    Deleted
 }
