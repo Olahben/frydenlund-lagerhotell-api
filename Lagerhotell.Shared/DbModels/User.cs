@@ -3,24 +3,38 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace LagerhotellAPI.DbModels;
+namespace LagerhotellAPI.Models.DbModels;
 
 [BsonIgnoreExtraElements]
 public class User
 {
+    public User(string id, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password)
+    {
+        UserId = id;
+        FirstName = firstName;
+        LastName = lastName;
+        PhoneNumber = phoneNumber;
+        BirthDate = birthDate;
+        Address = address;
+        Password = password;
+    }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public User()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    {
+
+    }
+
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public required string Id { get; set; }
+    public string Id { get; set; }
+    public string UserId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string PhoneNumber { get; set; }
+    public string BirthDate { get; set; }
 
-    // Should be generated upon registation
-    public required string UserId { get; set; }
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
-    public required string PhoneNumber { get; set; }
-    public required string BirthDate { get; set; }
-
-    public required string Address { get; set; }
-    public required string PostalCode { get; set; }
-    public required string City { get; set; }
-    public required string Password { get; set; }
+    public Address Address { get; set; }
+    public string Password { get; set; }
 }
