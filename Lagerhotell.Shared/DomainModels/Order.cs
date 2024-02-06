@@ -4,7 +4,7 @@ public class Order
 {
     public Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null)
     {
-        Id = orderId;
+        OrderId = orderId;
         OrderPeriod = orderPeriod;
         UserId = userId;
         StorageUnitId = storageUnitId;
@@ -20,7 +20,7 @@ public class Order
         Status = status;
         CustomInstructions = customInstructions;
     }
-    public string Id { get; set; }
+    public string OrderId { get; set; }
     public OrderPeriod OrderPeriod { get; set; }
     public string UserId { get; set; }
     public string StorageUnitId { get; set; }

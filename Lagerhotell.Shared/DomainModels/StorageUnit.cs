@@ -4,7 +4,7 @@ public class StorageUnit
 {
     public StorageUnit(string storageUnitId, Dimensions dimensions, bool temperated, string lockCode, string name, bool occupied, string userId, Coordinate coordinate, Money pricePerMonth)
     {
-        Id = storageUnitId;
+        StorageUnitId = storageUnitId;
         Dimensions = dimensions;
         Temperated = temperated;
         LockCode = lockCode;
@@ -14,7 +14,7 @@ public class StorageUnit
         Coordinate = coordinate;
         PricePerMonth = pricePerMonth;
     }
-    public string? Id { get; set; }
+    public string? StorageUnitId { get; set; }
     public Dimensions Dimensions { get; set; }
 
     public bool Temperated { get; set; }
