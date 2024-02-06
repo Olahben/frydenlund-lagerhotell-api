@@ -1,4 +1,5 @@
-﻿using LagerhotellAPI.Models;
+﻿global using LagerhotellAPI.Models.DomainModels;
+global using LagerhotellAPI.Models.FrontendModels;
 using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,13 +66,6 @@ namespace Controllers
         [HttpPost]
         public IActionResult Login([FromBody] Login.LoginRequest request)
         {
-            // Hent ut passordet fra brukeren, ved hjelp av mobilnummeret
-            // Lag en ny metode paa userRepository som sjekker om passordene er like
-            // den returnerer en bool
-            // Hvis passordene ikke er like, returner DeclineAccess eller noe saant
-            // Hvis passordene er like, returner JWT
-            // Hvis passord er feil, returner tom JWT
-            // Get user
             User? user = _userRepository.Get(request.PhoneNumber);
             if (user != null)
             {
@@ -96,7 +90,7 @@ namespace Controllers
             {
                 return NotFound();
             }
-            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address, user.PostalCode, user.City, user.Password));
+            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address.Street, user.Address.PostalCode, user.Address.City, user.Password));
         }
 
         [Authorize]
