@@ -13,6 +13,7 @@ public class AddUserRequest
 
     public required string City { get; set; }
     public required string Password { get; set; }
+    public required bool IsAdministrator { get; set; } = false;
 
 }
 public class AddUserResponse
