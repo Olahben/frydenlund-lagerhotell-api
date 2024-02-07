@@ -58,7 +58,7 @@ namespace Controllers
              request.City,
              request.Password);
 
-            Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
+            Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, request.IsAdministrator);
 
             return Ok(new AddUserResponse { UserId = user.Id, Token = jwt.Token });
         }
