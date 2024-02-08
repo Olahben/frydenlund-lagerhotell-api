@@ -29,11 +29,11 @@ namespace Controllers
             var user = _userRepository.Get(phoneNumber);
             if (user == null)
             {
-                return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
+                return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
             }
             else
             {
-                return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = false });
+                return Ok(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
             }
         }
 
@@ -56,7 +56,8 @@ namespace Controllers
              request.Address,
              request.PostalCode,
              request.City,
-             request.Password);
+             request.Password,
+             request.IsAdministrator);
 
             Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, request.IsAdministrator);
 
@@ -71,7 +72,7 @@ namespace Controllers
             {
                 if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
                 {
-                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber);
+                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, false);
                     return Ok(new Login.LoginResponse { Token = jwt.Token });
                 }
 
@@ -90,7 +91,7 @@ namespace Controllers
             {
                 return NotFound();
             }
-            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address.Street, user.Address.PostalCode, user.Address.City, user.Password));
+            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address.StreetAddress, user.Address.PostalCode, user.Address.City, user.Password, user.IsAdministrator));
         }
 
         [Authorize]
@@ -114,7 +115,7 @@ namespace Controllers
         {
             try
             {
-                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address, request.PostalCode, request.City);
+                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator);
                 return Ok();
             }
             catch (Exception ex)
