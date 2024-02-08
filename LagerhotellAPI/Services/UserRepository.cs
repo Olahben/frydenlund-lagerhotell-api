@@ -40,6 +40,16 @@ namespace LagerhotellAPI.Services
             return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
         }
 
+        public Models.DbModels.User? GetByPhoneDbModel(string phoneNumber)
+        {
+            var dbUser = _users.Find(User => User.PhoneNumber == phoneNumber).FirstOrDefault();
+            if (dbUser == null)
+            {
+                return null;
+            }
+            return dbUser;
+        }
+
         public string? Password(string phoneNumber)
         {
             var user = Get(phoneNumber);
@@ -68,13 +78,14 @@ namespace LagerhotellAPI.Services
 
         public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator)
         {
-            User? domainUser = Get(phoneNumber);
-            if (domainUser != null)
+            Models.DbModels.User oldDbUser = GetByPhoneDbModel(phoneNumber);
+            if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(domainUser.Id, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator);
-                _users.ReplaceOne(u => u.Id == updatedUserDb.Id, updatedUserDb);
-
+                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator);
+                var filter = Builders<Models.DbModels.User>.Filter.Eq(user => user.UserId, oldDbUser.UserId);
+                var options = new ReplaceOptions { IsUpsert = false };
+                _users.ReplaceOne(filter, updatedUserDb, options);
             }
             else
             {
