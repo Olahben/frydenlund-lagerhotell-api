@@ -10,9 +10,8 @@ public class UpdateUserValuesRequest
 
     public required string BirthDate { get; set; }
     public required string Password { get; set; }
-    public required string Address { get; set; }
-    public required string PostalCode { get; set; }
-    public required string City { get; set; }
+    public required Address Address { get; set; }
+    public required bool IsAdministrator { get; set; }
 }
 
 public class UpdateUserValuesResponse

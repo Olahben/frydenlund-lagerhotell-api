@@ -19,13 +19,13 @@ namespace LagerhotellAPI.Services
             _users = database.GetCollection<Models.DbModels.User>("Users");
         }
 
-        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password)
+        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator)
         {
             string userId = Guid.NewGuid().ToString();
             Address userAddress = new(streetAddress, postalCode, city);
-            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password);
+            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator);
             _users.InsertOne(user);
-            User domainUser = new(user.Id, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password);
+            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator);
             return domainUser;
 
         }
@@ -37,7 +37,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password);
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
         }
 
         public string? Password(string phoneNumber)
@@ -53,12 +53,12 @@ namespace LagerhotellAPI.Services
 
         public User? GetUserById(string id)
         {
-            var dbUser = _users.Find(user => user.Id == id).FirstOrDefault();
+            var dbUser = _users.Find(user => user.UserId == id).FirstOrDefault();
             if (dbUser == null)
             {
                 return null;
             }
-            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password);
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
         }
 
         public bool DoPasswordsMatch(string password, string requestedPassword)
@@ -66,13 +66,13 @@ namespace LagerhotellAPI.Services
             return password == requestedPassword;
         }
 
-        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city)
+        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator)
         {
             User? domainUser = Get(phoneNumber);
             if (domainUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(domainUser.Id, firstName, lastName, phoneNumber, birthDate, userAddress, password);
+                Models.DbModels.User updatedUserDb = new(domainUser.Id, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator);
                 _users.ReplaceOne(u => u.Id == updatedUserDb.Id, updatedUserDb);
 
             }
