@@ -8,7 +8,7 @@ namespace LagerhotellAPI.Models.DbModels;
 [BsonIgnoreExtraElements]
 public class User
 {
-    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator)
     {
         UserId = userId;
         FirstName = firstName;
@@ -17,6 +17,7 @@ public class User
         BirthDate = birthDate;
         Address = address;
         Password = password;
+        IsAdministrator = isAdministrator;
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -37,4 +38,5 @@ public class User
 
     public Address Address { get; set; }
     public string Password { get; set; }
+    public bool IsAdministrator { get; set; }
 }
