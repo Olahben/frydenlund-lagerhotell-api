@@ -58,7 +58,7 @@ namespace LagerhotellAPI.Controllers
         {
             try
             {
-                await _storageUnitService.ModifyStorageUnit(request.StorageUnit.Id, request.StorageUnit);
+                await _storageUnitService.ModifyStorageUnit(request.StorageUnit.StorageUnitId, request.StorageUnit);
                 return Ok();
             }
             catch (KeyNotFoundException)

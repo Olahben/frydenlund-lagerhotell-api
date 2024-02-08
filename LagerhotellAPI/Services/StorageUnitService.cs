@@ -16,7 +16,7 @@ namespace LagerhotellAPI.Services
 
         public async Task AddStorageUnit(StorageUnit storageUnit)
         {
-            if (await GetStorageUnitById(storageUnit.Id) == null)
+            if (await GetStorageUnitById(storageUnit.StorageUnitId) == null)
             {
                 string storageUnitId = Guid.NewGuid().ToString();
                 LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
@@ -37,7 +37,7 @@ namespace LagerhotellAPI.Services
         {
             if (await GetStorageUnitById(storageUnitId) != null)
             {
-                Models.DbModels.StorageUnit updatedDbStorageUnit = new(updatedStorageUnit.Id, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
+                Models.DbModels.StorageUnit updatedDbStorageUnit = new(updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
                 await _storageUnits.ReplaceOneAsync(unit => unit.Id == storageUnitId, updatedDbStorageUnit);
             }
             throw new KeyNotFoundException();
