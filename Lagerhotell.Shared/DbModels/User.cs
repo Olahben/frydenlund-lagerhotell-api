@@ -8,6 +8,19 @@ namespace LagerhotellAPI.Models.DbModels;
 [BsonIgnoreExtraElements]
 public class User
 {
+
+    public User(string id, string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator)
+    {
+        Id = id;
+        UserId = userId;
+        FirstName = firstName;
+        LastName = lastName;
+        PhoneNumber = phoneNumber;
+        BirthDate = birthDate;
+        Address = address;
+        Password = password;
+        IsAdministrator = isAdministrator;
+    }
     public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator)
     {
         UserId = userId;
