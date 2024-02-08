@@ -2,13 +2,13 @@
 
 public class Address
 {
-    public string Street { get; set; }
+    public string StreetAddress { get; set; }
     public string PostalCode { get; set; }
     public string City { get; set; }
 
-    public Address(string street, string postalCode, string city)
+    public Address(string? streetAddress, string? postalCode, string? city)
     {
-        Street = street;
+        StreetAddress = streetAddress;
         PostalCode = postalCode;
         City = city;
     }
