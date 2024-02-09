@@ -6,5 +6,5 @@ public class ModifyWarehouseHotelRequest
     {
         WarehouseHotel = warehouseHotel;
     }
-    WarehouseHotel WarehouseHotel { get; set; }
+    public WarehouseHotel WarehouseHotel { get; set; }
 }

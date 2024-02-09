@@ -2,7 +2,7 @@
 
 public class AddWarehouseHotelRequest
 {
-    WarehouseHotel WarehouseHotel { get; set; }
+    public WarehouseHotel WarehouseHotel { get; set; }
     public AddWarehouseHotelRequest(WarehouseHotel warehouseHotel)
     {
         WarehouseHotel = warehouseHotel;
