@@ -1,4 +1,5 @@
-﻿using LagerhotellAPI.Services;
+﻿using LagerhotelAPI.Models.FrontendModels;
+using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,9 @@ public class WarehouseHotelsController : ControllerBase
     [HttpPost]
     [Route("add")]
     [Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> AddWarehouseHotel([FromBody] WarehouseHotel warehouseHotel)
+    public async Task<IActionResult> AddWarehouseHotel([FromBody] AddWarehouseHotelRequest request)
     {
-        await _warehouseHotelService.AddWarehouseHotel(warehouseHotel);
+        await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
         return Ok("Warehouse hotel added successfully.");
     }
 
@@ -28,16 +29,18 @@ public class WarehouseHotelsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> DeleteWarehouseHotel(string id)
     {
-        await _warehouseHotelService.DeleteWarehouseHotel(id);
-        return Ok("Warehouse hotel deleted successfully.");
+        string warehouseHotelId;
+        string warehouseName;
+        (warehouseHotelId, warehouseName) = await _warehouseHotelService.DeleteWarehouseHotel(id);
+        return Ok(new DeleteWarehouseHotelResponse(warehouseHotelId, warehouseName));
     }
 
     [HttpPut]
     [Route("modify")]
     [Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> ModifyWarehouseHotel([FromBody] WarehouseHotel warehouseHotel)
+    public async Task<IActionResult> ModifyWarehouseHotel([FromBody] ModifyWarehouseHotelRequest request)
     {
-        await _warehouseHotelService.ModifyWarehouseHotel(warehouseHotel);
+        await _warehouseHotelService.ModifyWarehouseHotel(request.WarehouseHotel);
         return Ok("Warehouse hotel modified successfully.");
     }
 
@@ -47,7 +50,7 @@ public class WarehouseHotelsController : ControllerBase
         try
         {
             var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id);
-            return Ok(warehouseHotel);
+            return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
         {
@@ -61,7 +64,7 @@ public class WarehouseHotelsController : ControllerBase
         try
         {
             var warehouseHotels = await _warehouseHotelService.GetAllWarehouseHotels(skip, take);
-            return Ok(warehouseHotels);
+            return Ok(new GetAllWarehouseHotelsResponse(warehouseHotels));
         }
         catch (KeyNotFoundException)
         {
