@@ -1,4 +1,5 @@
 ﻿using LagerhotellAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers
@@ -16,6 +17,7 @@ namespace LagerhotellAPI.Controllers
 
         [HttpPost]
         [Route("add")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddStorageUnit([FromBody] CreateStorageUnitRequest request)
         {
             try
@@ -35,6 +37,7 @@ namespace LagerhotellAPI.Controllers
 
         [HttpDelete]
         [Route("delete")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteStorageUnit([FromQuery] string storageUnitId)
         {
             try
@@ -54,6 +57,7 @@ namespace LagerhotellAPI.Controllers
 
         [HttpPut]
         [Route("modify")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> ModifyStorageUnit([FromBody] ModifyStorageUnitRequest request)
         {
             try

@@ -17,7 +17,7 @@ public class WarehouseHotelsController : ControllerBase
 
     [HttpPost]
     [Route("add")]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> AddWarehouseHotel([FromBody] WarehouseHotel warehouseHotel)
     {
         await _warehouseHotelService.AddWarehouseHotel(warehouseHotel);
@@ -25,7 +25,7 @@ public class WarehouseHotelsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> DeleteWarehouseHotel(string id)
     {
         await _warehouseHotelService.DeleteWarehouseHotel(id);
@@ -34,7 +34,7 @@ public class WarehouseHotelsController : ControllerBase
 
     [HttpPut]
     [Route("modify")]
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> ModifyWarehouseHotel([FromBody] WarehouseHotel warehouseHotel)
     {
         await _warehouseHotelService.ModifyWarehouseHotel(warehouseHotel);
