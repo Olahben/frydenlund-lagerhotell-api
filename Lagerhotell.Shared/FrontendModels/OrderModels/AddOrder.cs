@@ -6,6 +6,10 @@ public class AddOrderRequest
 }
 public class AddOrderResponse
 {
-    public required bool Success { get; set; }
+    public AddOrderResponse(string id)
+    {
+        OrderId = id;
+    }
+    public string OrderId { get; set; }
 
 }
