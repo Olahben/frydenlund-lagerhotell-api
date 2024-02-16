@@ -3,7 +3,7 @@ using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LagerhotellAPI.Controllers;
+namespace Controllers;
 
 [Route("api/warehouse-hotels")]
 [ApiController]

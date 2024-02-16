@@ -14,7 +14,7 @@ public class WarehouseHotelService
     }
     public async Task AddWarehouseHotel(WarehouseHotel warehouseHotel)
     {
-        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.StorageUnitsSizes);
+        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes);
         await _warehouseHotels.InsertOneAsync(dbWarehouseHotel);
     }
 
@@ -30,7 +30,7 @@ public class WarehouseHotelService
         Models.DbModels.WarehouseHotel oldWarehouseHotel = await GetWarehouseHotelByIdDbModel(warehouseHotel.WarehouseHotelId);
         if (oldWarehouseHotel != null)
         {
-            LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.StorageUnitsSizes);
+            LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes);
             await _warehouseHotels.ReplaceOneAsync(hotel => hotel.WarehouseHotelId == warehouseHotel.WarehouseHotelId, dbWarehouseHotel);
         }
     }
@@ -42,7 +42,7 @@ public class WarehouseHotelService
         {
             throw new KeyNotFoundException();
         }
-        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.StorageUnitsSizes);
+        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes);
         return domainWarehouseHotel;
     }
 
@@ -65,7 +65,7 @@ public class WarehouseHotelService
             {
                 throw new KeyNotFoundException();
             }
-            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DetailedDescription, hotel.ContainsTemperatedStorageUnits, hotel.StorageUnitsSizes);
+            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DetailedDescription, hotel.ContainsTemperatedStorageUnits, hotel.IsActive, hotel.StorageUnitsSizes);
         });
         return domainWarehouseHotels;
     }
