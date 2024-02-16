@@ -12,11 +12,12 @@ namespace LagerhotellAPI.Services
             var database = client.GetDatabase("Lagerhotell");
             _orders = database.GetCollection<LagerhotellAPI.Models.DbModels.Order>("Orders");
         }
-        public async Task AddOrder(Order order)
+        public async Task<string> AddOrder(Order order)
         {
             string orderId = Guid.NewGuid().ToString();
             LagerhotellAPI.Models.DbModels.Order dbOrder = new(orderId, order.UserId, order.OrderPeriod, order.StorageUnitId, order.Status, order.CustomInstructions);
             await _orders.InsertOneAsync(dbOrder);
+            return orderId;
         }
         public async Task DeleteOrder(string orderId)
         {
@@ -25,7 +26,7 @@ namespace LagerhotellAPI.Services
         public async Task ModifyOrder(string orderId, Order updatedOrder)
         {
             LagerhotellAPI.Models.DbModels.Order updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.OrderPeriod, updatedOrder.StorageUnitId, updatedOrder.Status, updatedOrder.CustomInstructions);
-            await _orders.ReplaceOneAsync(order => order.Id == orderId, updatedDbOrder);
+            await _orders.ReplaceOneAsync(order => order.OrderId == orderId, updatedDbOrder);
         }
         public async Task<Order?> GetOrder(string orderId)
         {

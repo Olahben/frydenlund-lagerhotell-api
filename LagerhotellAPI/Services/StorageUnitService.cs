@@ -14,45 +14,48 @@ namespace LagerhotellAPI.Services
             _storageUnits = database.GetCollection<LagerhotellAPI.Models.DbModels.StorageUnit>("StorageUnits");
         }
 
-        public async Task AddStorageUnit(StorageUnit storageUnit)
+        public async Task<string> AddStorageUnit(StorageUnit storageUnit)
         {
-            if (await GetStorageUnitById(storageUnit.StorageUnitId) == null)
-            {
-                string storageUnitId = Guid.NewGuid().ToString();
-                LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
-                await _storageUnits.InsertOneAsync(dbStorageUnit);
-            }
-            throw new InvalidOperationException("Already exists");
+            string storageUnitId = Guid.NewGuid().ToString();
+            LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
+            await _storageUnits.InsertOneAsync(dbStorageUnit);
+            return storageUnitId;
         }
 
         public async Task DeleteStorageUnit(string storageUnitId)
         {
             if (await GetStorageUnitById(storageUnitId) != null)
             {
-                await _storageUnits.DeleteOneAsync(unit => unit.Id == storageUnitId);
+                await _storageUnits.DeleteOneAsync(unit => unit.StorageUnitId == storageUnitId);
             }
-            throw new KeyNotFoundException();
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
         public async Task ModifyStorageUnit(string storageUnitId, StorageUnit updatedStorageUnit)
         {
             Models.DbModels.StorageUnit oldStorageUnit = await GetStorageUnitByIdDbModel(storageUnitId);
             if (oldStorageUnit != null)
             {
-                Models.DbModels.StorageUnit updatedDbStorageUnit = new(updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
-                await _storageUnits.ReplaceOneAsync(unit => unit.Id == storageUnitId, updatedDbStorageUnit);
+                Models.DbModels.StorageUnit updatedDbStorageUnit = new(oldStorageUnit.Id, updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
+                await _storageUnits.ReplaceOneAsync(unit => unit.StorageUnitId == storageUnitId, updatedDbStorageUnit);
             }
-            throw new KeyNotFoundException();
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
 
         public async Task<StorageUnit> GetStorageUnitById(string storageUnitId)
         {
-            var dbStorageUnit = await _storageUnits.Find(unit => unit.Id == storageUnitId).FirstOrDefaultAsync();
+            var dbStorageUnit = await _storageUnits.Find(unit => unit.StorageUnitId == storageUnitId).FirstOrDefaultAsync();
             LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             return domainStorageUnit;
         }
         public async Task<Models.DbModels.StorageUnit> GetStorageUnitByIdDbModel(string storageUnitId)
         {
-            var dbStorageUnit = await _storageUnits.Find(unit => unit.Id == storageUnitId).FirstOrDefaultAsync();
+            var dbStorageUnit = await _storageUnits.Find(unit => unit.StorageUnitId == storageUnitId).FirstOrDefaultAsync();
             return dbStorageUnit;
         }
 
