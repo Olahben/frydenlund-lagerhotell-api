@@ -1,7 +1,7 @@
-﻿namespace LagerhotellAPI.Services;
-
-using LagerhotellAPI.Models;
+﻿using LagerhotellAPI.Models;
 using MongoDB.Driver;
+
+namespace LagerhotellAPI.Services;
 public class LocationService
 {
     private readonly IMongoCollection<Models.DbModels.Location> _locations;
@@ -47,16 +47,19 @@ public class LocationService
         catch (InvalidOperationException ex)
         {
             Console.WriteLine("Error in LocationService.Delete, could not delete the location with the name" + name, ex);
+            throw new InvalidOperationException($"Could not delete location {name}");
         }
     }
 
-    public async Task Modify(Location location)
+    public async Task Modify(Location location, string oldLocationName)
     {
         try
         {
-            if (await Get(location.Name) != null)
+            Models.DbModels.Location oldLocation = await GetDbModel(oldLocationName);
+            if (oldLocation != null)
             {
-                Models.DbModels.Location updatedLocation = new(location.Name, location.IsActive);
+                Models.DbModels.Location updatedLocation = new(oldLocation.Id, location.Name, location.IsActive);
+                await _locations.ReplaceOneAsync(location => location.Name == oldLocationName, updatedLocation);
             }
             else
             {
@@ -66,6 +69,7 @@ public class LocationService
         catch (InvalidOperationException ex)
         {
             Console.WriteLine("Error in LocationService.Modify", ex);
+            throw new InvalidOperationException($"Error in LocationService.Modify, could not modify the location with the name {oldLocationName}");
         }
     }
 
@@ -88,13 +92,32 @@ public class LocationService
         }
     }
 
-    public async Task<List<Location>>? GetAllActive(bool includeFlagged, int? skip, int? take)
+    public async Task<Models.DbModels.Location?> GetDbModel(string name)
     {
-        var filter = Builders<LagerhotellAPI.Models.DbModels.Location>.Filter.Empty;
-
-        if (includeFlagged)
+        try
         {
-            filter = Builders<LagerhotellAPI.Models.DbModels.Location>.Filter.Eq(Location => Location.IsActive, true);
+            Models.DbModels.Location dbLocation = await _locations.Find(location => location.Name == location.Name).FirstOrDefaultAsync();
+            if (dbLocation == null)
+            {
+                return null;
+            }
+            return dbLocation;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error in LocationService.Get", ex);
+            throw new KeyNotFoundException("No location found with the name" + name);
+        }
+    }
+
+    public async Task<List<Location>>? GetAll(bool includeNonActive, int? skip, int? take)
+    {
+        var builder = Builders<LagerhotellAPI.Models.DbModels.Location>.Filter;
+        var filter = builder.Empty;
+
+        if (!includeNonActive)
+        {
+            filter = builder.Eq(Location => Location.IsActive, true);
         }
 
         List<Models.DbModels.Location> dbLocations = await _locations.Find(filter).Skip(skip).Limit(take).ToListAsync();
