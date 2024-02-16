@@ -2,10 +2,13 @@
 
 public class Location
 {
-    public Location(string name)
+    public Location(string name, bool isActive)
     {
         Name = name;
+        IsActive = isActive;
     }
 
+
     public string Name { get; set; }
+    public bool IsActive { get; set; }
 }

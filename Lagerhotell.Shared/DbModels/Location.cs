@@ -5,9 +5,10 @@ namespace LagerhotellAPI.Models.DbModels;
 
 public class Location
 {
-    public Location(string name)
+    public Location(string name, bool isActive)
     {
         Name = name;
+        IsActive = isActive;
     }
 
     [BsonId]
@@ -15,4 +16,5 @@ public class Location
     public string Id { get; set; }
 
     public string Name { get; set; }
+    public bool IsActive { get; set; }
 }
