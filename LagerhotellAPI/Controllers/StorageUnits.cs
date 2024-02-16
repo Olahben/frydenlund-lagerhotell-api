@@ -22,8 +22,8 @@ namespace LagerhotellAPI.Controllers
         {
             try
             {
-                await _storageUnitService.AddStorageUnit(request.StorageUnit);
-                return Ok();
+                string storageUnitId = await _storageUnitService.AddStorageUnit(request.StorageUnit);
+                return Ok(new CreateStorageUnitResponse(storageUnitId));
             }
             catch (InvalidOperationException)
             {
@@ -35,10 +35,9 @@ namespace LagerhotellAPI.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("delete")]
+        [HttpDelete("{storageUnitId}")]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> DeleteStorageUnit([FromQuery] string storageUnitId)
+        public async Task<IActionResult> DeleteStorageUnit(string storageUnitId)
         {
             try
             {
@@ -49,9 +48,9 @@ namespace LagerhotellAPI.Controllers
             {
                 return NotFound("Storage unit not found.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex);
             }
         }
 
@@ -65,13 +64,13 @@ namespace LagerhotellAPI.Controllers
                 await _storageUnitService.ModifyStorageUnit(request.StorageUnit.StorageUnitId, request.StorageUnit);
                 return Ok();
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
-                return NotFound("Storage unit not found.");
+                return NotFound($"Storage unit not found, error: {ex}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex);
             }
         }
 
