@@ -18,12 +18,12 @@ namespace Controllers
         // AddOrder
         [HttpPost]
         [Route("add")]
-        public IActionResult AddOrder([FromBody] AddOrderRequest request)
+        public async Task<IActionResult> AddOrder([FromBody] AddOrderRequest request)
         {
             try
             {
-                var result = _orderService.AddOrder(request.Order);
-                return Ok(new AddOrderResponse { Success = true });
+                string orderId = await _orderService.AddOrder(request.Order);
+                return Ok(new AddOrderResponse(orderId));
             }
             catch
             {
