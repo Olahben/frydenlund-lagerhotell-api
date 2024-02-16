@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers;
 
-[Route("api/warehouse-hotels")]
+[Route("warehouse-hotels")]
 [ApiController]
 public class WarehouseHotelsController : ControllerBase
 {
@@ -21,8 +21,8 @@ public class WarehouseHotelsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> AddWarehouseHotel([FromBody] AddWarehouseHotelRequest request)
     {
-        await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
-        return Ok("Warehouse hotel added successfully.");
+        string warehouseHotelId = await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
+        return Ok(new AddWarehouseHotelResponse(warehouseHotelId));
     }
 
     [HttpDelete("{id}")]
