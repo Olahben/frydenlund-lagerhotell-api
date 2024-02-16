@@ -18,15 +18,21 @@ public class WarehouseHotelService
         await _warehouseHotels.InsertOneAsync(dbWarehouseHotel);
     }
 
-    public async Task DeleteWarehouseHotel(string id)
+    public async Task<(string, string)> DeleteWarehouseHotel(string id)
     {
-        await _warehouseHotels.DeleteOneAsync(hotel => hotel.Id == id);
+        WarehouseHotel deletedWarehouseHotel = await GetWarehouseHotelById(id);
+        await _warehouseHotels.DeleteOneAsync(hotel => hotel.WarehouseHotelId == id);
+        return (deletedWarehouseHotel.WarehouseHotelId, deletedWarehouseHotel.Name);
     }
 
     public async Task ModifyWarehouseHotel(WarehouseHotel warehouseHotel)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.StorageUnitsSizes);
-        await _warehouseHotels.ReplaceOneAsync(hotel => hotel.WarehouseHotelId == warehouseHotel.WarehouseHotelId, dbWarehouseHotel);
+        Models.DbModels.WarehouseHotel oldWarehouseHotel = await GetWarehouseHotelByIdDbModel(warehouseHotel.WarehouseHotelId);
+        if (oldWarehouseHotel != null)
+        {
+            LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.StorageUnitsSizes);
+            await _warehouseHotels.ReplaceOneAsync(hotel => hotel.WarehouseHotelId == warehouseHotel.WarehouseHotelId, dbWarehouseHotel);
+        }
     }
 
     public async Task<WarehouseHotel> GetWarehouseHotelById(string id)
@@ -38,6 +44,16 @@ public class WarehouseHotelService
         }
         WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.StorageUnitsSizes);
         return domainWarehouseHotel;
+    }
+
+    public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id)
+    {
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Id == id).FirstOrDefaultAsync();
+        if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
+        {
+            throw new KeyNotFoundException();
+        }
+        return dbWarehouseHotel;
     }
 
     public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0)

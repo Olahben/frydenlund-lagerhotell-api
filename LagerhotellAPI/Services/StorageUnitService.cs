@@ -35,7 +35,8 @@ namespace LagerhotellAPI.Services
         }
         public async Task ModifyStorageUnit(string storageUnitId, StorageUnit updatedStorageUnit)
         {
-            if (await GetStorageUnitById(storageUnitId) != null)
+            Models.DbModels.StorageUnit oldStorageUnit = await GetStorageUnitByIdDbModel(storageUnitId);
+            if (oldStorageUnit != null)
             {
                 Models.DbModels.StorageUnit updatedDbStorageUnit = new(updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
                 await _storageUnits.ReplaceOneAsync(unit => unit.Id == storageUnitId, updatedDbStorageUnit);
@@ -48,6 +49,11 @@ namespace LagerhotellAPI.Services
             var dbStorageUnit = await _storageUnits.Find(unit => unit.Id == storageUnitId).FirstOrDefaultAsync();
             LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             return domainStorageUnit;
+        }
+        public async Task<Models.DbModels.StorageUnit> GetStorageUnitByIdDbModel(string storageUnitId)
+        {
+            var dbStorageUnit = await _storageUnits.Find(unit => unit.Id == storageUnitId).FirstOrDefaultAsync();
+            return dbStorageUnit;
         }
 
         public async Task<List<LagerhotellAPI.Models.DomainModels.StorageUnit>> GetAllStorageUnits(int? skip, int? take)

@@ -37,6 +37,12 @@ namespace LagerhotellAPI.Services
             LagerhotellAPI.Models.DomainModels.Order domainOrder = new(dbOrder.OrderId, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions);
             return domainOrder;
         }
+
+        public async Task<Models.DbModels.Order> GetOrderDbModel(string orderId)
+        {
+            var dbOrder = await _orders.Find(order => order.Id == orderId).FirstOrDefaultAsync();
+            return dbOrder;
+        }
         public async Task<List<LagerhotellAPI.Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take)
         {
             var filter = Builders<LagerhotellAPI.Models.DbModels.Order>.Filter.Empty; // Default filter
