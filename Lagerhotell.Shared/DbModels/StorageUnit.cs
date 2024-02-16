@@ -17,6 +17,20 @@ public class StorageUnit
         Coordinate = coordinate;
         PricePerMonth = pricePerMonth;
     }
+
+    public StorageUnit(string mongoDbId, string storageUnitId, Dimensions dimensions, bool temperated, string lockCode, string name, bool occupied, string userId, Coordinate coordinate, Money pricePerMonth)
+    {
+        Id = mongoDbId;
+        StorageUnitId = storageUnitId;
+        Dimensions = dimensions;
+        Temperated = temperated;
+        LockCode = lockCode;
+        Name = name;
+        Occupied = occupied;
+        UserId = userId;
+        Coordinate = coordinate;
+        PricePerMonth = pricePerMonth;
+    }
     public StorageUnit() { }
 
     [BsonId]
