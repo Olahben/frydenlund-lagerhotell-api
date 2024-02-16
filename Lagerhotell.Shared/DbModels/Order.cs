@@ -1,5 +1,4 @@
 ﻿global using LagerhotellAPI.Models.DomainModels;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace LagerhotellAPI.Models.DbModels;
@@ -15,6 +14,8 @@ public class Order
         Status = status;
         CustomInstructions = customInstructions;
     }
+
+    public Order() { }
 
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

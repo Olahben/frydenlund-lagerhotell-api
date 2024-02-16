@@ -20,6 +20,8 @@ public class Order
         Status = status;
         CustomInstructions = customInstructions;
     }
+
+    public Order() { }
     public string OrderId { get; set; }
     public OrderPeriod OrderPeriod { get; set; }
     public string UserId { get; set; }

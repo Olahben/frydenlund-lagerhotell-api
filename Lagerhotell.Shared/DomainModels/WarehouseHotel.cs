@@ -38,4 +38,9 @@ public class WarehouseHotel
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
     }
+
+    public WarehouseHotel()
+    {
+        // Parameterless constructor
+    }
 }

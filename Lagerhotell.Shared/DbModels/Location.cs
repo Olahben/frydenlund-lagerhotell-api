@@ -18,6 +18,8 @@ public class Location
         IsActive = isActive;
     }
 
+    public Location() { }
+
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }

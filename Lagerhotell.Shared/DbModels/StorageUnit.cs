@@ -1,5 +1,4 @@
 ﻿global using LagerhotellAPI.Models.ValueTypes;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace LagerhotellAPI.Models.DbModels;
@@ -18,6 +17,7 @@ public class StorageUnit
         Coordinate = coordinate;
         PricePerMonth = pricePerMonth;
     }
+    public StorageUnit() { }
 
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

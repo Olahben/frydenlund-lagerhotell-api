@@ -59,4 +59,9 @@ public class WarehouseHotel
         StorageUnitsSizes = storageUnitSizes;
     }
 
+    public WarehouseHotel()
+    {
+        // Parameterless constructor
+    }
+
 }

@@ -14,6 +14,8 @@ public class StorageUnit
         Coordinate = coordinate;
         PricePerMonth = pricePerMonth;
     }
+
+    public StorageUnit() { }
     public string? StorageUnitId { get; set; }
     public Dimensions Dimensions { get; set; }
 
