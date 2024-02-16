@@ -12,10 +12,12 @@ public class WarehouseHotelService
         var database = client.GetDatabase("Lagerhotell");
         _warehouseHotels = database.GetCollection<LagerhotellAPI.Models.DbModels.WarehouseHotel>("WarehouseHotels");
     }
-    public async Task AddWarehouseHotel(WarehouseHotel warehouseHotel)
+    public async Task<string> AddWarehouseHotel(WarehouseHotel warehouseHotel)
     {
-        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes);
+        string id = Guid.NewGuid().ToString();
+        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes);
         await _warehouseHotels.InsertOneAsync(dbWarehouseHotel);
+        return id;
     }
 
     public async Task<(string, string)> DeleteWarehouseHotel(string id)
@@ -37,7 +39,7 @@ public class WarehouseHotelService
 
     public async Task<WarehouseHotel> GetWarehouseHotelById(string id)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Id == id).FirstOrDefaultAsync();
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
@@ -48,7 +50,7 @@ public class WarehouseHotelService
 
     public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Id == id).FirstOrDefaultAsync();
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
