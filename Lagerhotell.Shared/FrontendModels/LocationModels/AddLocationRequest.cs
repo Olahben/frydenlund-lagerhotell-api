@@ -1,11 +1,10 @@
-﻿namespace LagerhotellAPI.Models
+﻿namespace LagerhotellAPI.Models.FrontendModels;
+
+public class AddLocationRequest
 {
-    public class AddLocationRequest
+    public AddLocationRequest(Location location)
     {
-        public AddLocationRequest(Location location)
-        {
-            Location = location;
-        }
-        public Location Location { get; set; }
+        Location = location;
     }
+    public Location Location { get; set; }
 }

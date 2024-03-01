@@ -1,4 +1,4 @@
-﻿namespace LagerhotellAPI.Models;
+﻿namespace LagerhotellAPI.Models.FrontendModels;
 
 public class GetAllLocationsResponse
 {
