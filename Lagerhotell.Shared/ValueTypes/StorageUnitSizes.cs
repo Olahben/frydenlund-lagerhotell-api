@@ -14,4 +14,6 @@ public class StorageUnitSizes
         MinSize = minSize;
         MaxSize = maxSize;
     }
+
+    public StorageUnitSizes() { }
 }

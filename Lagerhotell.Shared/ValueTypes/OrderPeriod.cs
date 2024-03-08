@@ -15,4 +15,6 @@ public class OrderPeriod
         OrderDate = orderDate;
         EndDate = endDate;
     }
+
+    public OrderPeriod() { }
 }

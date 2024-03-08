@@ -10,5 +10,10 @@ public class Money
         Amount = amount;
         Currency = currency;
     }
+
+    public Money()
+    {
+
+    }
 }
 

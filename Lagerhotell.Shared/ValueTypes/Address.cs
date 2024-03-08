@@ -12,4 +12,6 @@ public class Address
         PostalCode = postalCode;
         City = city;
     }
+
+    public Address() { }
 }

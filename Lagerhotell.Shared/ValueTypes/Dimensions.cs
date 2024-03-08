@@ -16,6 +16,13 @@ public class Dimensions
         Height = height;
     }
 
+    public Dimensions()
+    {
+
+    }
+
     public double Area => Length * Width;
     public double Volume => Length * Width * Height;
 }
+
+

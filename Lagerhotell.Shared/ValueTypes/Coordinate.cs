@@ -2,6 +2,14 @@
 
 public class Coordinate
 {
-    public required double Latitude { get; set; }
-    public required double Longitude { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+
+    public Coordinate(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    public Coordinate() { }
 }

@@ -13,4 +13,6 @@ public class OpeningHours
         Opens = opens;
         Closes = closes;
     }
+
+    public OpeningHours() { }
 }
