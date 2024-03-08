@@ -1,4 +1,6 @@
-﻿namespace LagerhotellAPI.Models.FrontendModels;
+﻿using System.Text.Json.Serialization;
+
+namespace LagerhotellAPI.Models.FrontendModels;
 
 public class GetWarehouseHotelByIdResponse
 {
@@ -6,5 +8,6 @@ public class GetWarehouseHotelByIdResponse
     {
         WarehouseHotel = warehouseHotel;
     }
-    WarehouseHotel WarehouseHotel { get; set; }
+    [JsonPropertyName("warehouseHotel")]
+    public WarehouseHotel WarehouseHotel { get; set; }
 }
