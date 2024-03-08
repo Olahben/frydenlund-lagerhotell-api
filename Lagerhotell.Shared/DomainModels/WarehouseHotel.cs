@@ -12,8 +12,9 @@ public class WarehouseHotel
     public bool ContainsTemperatedStorageUnits { get; set; }
     public bool IsActive { get; set; }
     public StorageUnitSizes StorageUnitsSizes { get; set; }
+    public string LocationName { get; set; }
 
-    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes)
+    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
     {
         Coordinate = coordinate;
         Address = address;
@@ -24,8 +25,9 @@ public class WarehouseHotel
         ContainsTemperatedStorageUnits = containsTemperatedStorageUnits;
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
+        LocationName = locationName;
     }
-    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes)
+    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
     {
         WarehouseHotelId = warehouseHotelId;
         Coordinate = coordinate;
@@ -37,6 +39,7 @@ public class WarehouseHotel
         ContainsTemperatedStorageUnits = containsTemperatedStorageUnits;
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
+        LocationName = locationName;
     }
 
     public WarehouseHotel()
