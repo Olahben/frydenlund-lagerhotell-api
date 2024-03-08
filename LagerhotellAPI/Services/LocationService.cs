@@ -77,7 +77,7 @@ public class LocationService
     {
         try
         {
-            Models.DbModels.Location dbLocation = await _locations.Find(location => location.Name == location.Name).FirstOrDefaultAsync();
+            Models.DbModels.Location dbLocation = await _locations.Find(location => location.Name == name).FirstOrDefaultAsync();
             if (dbLocation == null)
             {
                 return null;
