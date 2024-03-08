@@ -1,5 +1,4 @@
-﻿using LagerhotelAPI.Models.FrontendModels;
-using LagerhotellAPI.Services;
+﻿using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,10 +28,17 @@ public class WarehouseHotelsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> DeleteWarehouseHotel(string id)
     {
-        string warehouseHotelId;
-        string warehouseName;
-        (warehouseHotelId, warehouseName) = await _warehouseHotelService.DeleteWarehouseHotel(id);
-        return Ok(new DeleteWarehouseHotelResponse(warehouseHotelId, warehouseName));
+        try
+        {
+            string warehouseHotelId;
+            string warehouseName;
+            (warehouseHotelId, warehouseName) = await _warehouseHotelService.DeleteWarehouseHotel(id);
+            return Ok(new DeleteWarehouseHotelResponse(warehouseHotelId, warehouseName));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpPut]
@@ -40,8 +46,16 @@ public class WarehouseHotelsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> ModifyWarehouseHotel([FromBody] ModifyWarehouseHotelRequest request)
     {
-        await _warehouseHotelService.ModifyWarehouseHotel(request.WarehouseHotel);
-        return Ok("Warehouse hotel modified successfully.");
+        try
+        {
+            await _warehouseHotelService.ModifyWarehouseHotel(request.WarehouseHotel, request.OldWarehouseHotelName);
+            return Ok("Warehouse hotel modified successfully.");
+        }
+        catch (KeyNotFoundException ex)
+        {
+            Console.WriteLine(ex);
+            return NotFound();
+        }
     }
 
     [HttpGet("{id}")]
@@ -50,6 +64,21 @@ public class WarehouseHotelsController : ControllerBase
         try
         {
             var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id);
+            return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet]
+    [Route("get-by-name/{name}")]
+    public async Task<IActionResult> GetWarehouseHotelByName([FromRoute] string name)
+    {
+        try
+        {
+            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(name);
             return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
