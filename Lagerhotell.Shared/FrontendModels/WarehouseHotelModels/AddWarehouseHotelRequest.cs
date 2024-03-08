@@ -1,4 +1,4 @@
-﻿namespace LagerhotelAPI.Models.FrontendModels;
+﻿namespace LagerhotellAPI.Models.FrontendModels;
 
 public class AddWarehouseHotelRequest
 {
