@@ -72,7 +72,7 @@ namespace Controllers
             {
                 if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
                 {
-                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, false);
+                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, user.IsAdministrator);
                     return Ok(new Login.LoginResponse { Token = jwt.Token });
                 }
 
@@ -120,6 +120,7 @@ namespace Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return NotFound(ex.Message);
             }
 
