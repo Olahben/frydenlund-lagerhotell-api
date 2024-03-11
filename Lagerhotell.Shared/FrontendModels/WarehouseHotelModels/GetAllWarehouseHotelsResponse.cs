@@ -6,5 +6,5 @@ public class GetAllWarehouseHotelsResponse
     {
         WarehouseHotels = warehouseHotels;
     }
-    List<WarehouseHotel> WarehouseHotels { get; set; }
+    public List<WarehouseHotel> WarehouseHotels { get; set; }
 }
