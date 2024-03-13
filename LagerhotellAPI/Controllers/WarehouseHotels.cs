@@ -20,8 +20,16 @@ public class WarehouseHotelsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> AddWarehouseHotel([FromBody] AddWarehouseHotelRequest request)
     {
-        string warehouseHotelId = await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
-        return Ok(new AddWarehouseHotelResponse(warehouseHotelId));
+        try
+        {
+            string warehouseHotelId = await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
+            return Ok(new AddWarehouseHotelResponse(warehouseHotelId));
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.WriteLine($"{ex}");
+            return Conflict("Warehouse hotel already exists");
+        }
     }
 
     [HttpDelete("{id}")]

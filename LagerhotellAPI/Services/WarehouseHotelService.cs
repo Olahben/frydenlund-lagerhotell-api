@@ -14,6 +14,10 @@ public class WarehouseHotelService
     }
     public async Task<string> AddWarehouseHotel(WarehouseHotel warehouseHotel)
     {
+        if (await GetWarehouseHotelByName(warehouseHotel.Name) != null)
+        {
+            throw new InvalidOperationException("Warehouse hotel already exists");
+        }
         string id = Guid.NewGuid().ToString();
         // Should check if there exists one with the same name
         Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName);
