@@ -15,22 +15,24 @@ namespace Controllers
             _orderService = orderService;
         }
 
-        // AddOrder
+        /// <summary>
+        /// Adds an order to the database, and returns the orderId
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>orderId</returns>
         [HttpPost]
         [Route("add")]
         public async Task<IActionResult> AddOrder([FromBody] AddOrderRequest request)
         {
-            try
-            {
-                string orderId = await _orderService.AddOrder(request.Order);
-                return Ok(new AddOrderResponse(orderId));
-            }
-            catch
-            {
-                return Conflict();
-            }
+            string orderId = await _orderService.AddOrder(request.Order);
+            return Ok(new AddOrderResponse(orderId));
         }
 
+        /// <summary>
+        /// Deletes an order with the given orderId
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Success bool</returns>
         // DeleteOrder
         [HttpDelete("{orderId}")]
         public IActionResult DeleteOrder([FromRoute] string orderId)
@@ -46,6 +48,11 @@ namespace Controllers
             }
         }
 
+        /// <summary>
+        /// Gets an order with the given orderId
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Order domain object</returns>
         // GetOrderById
         [HttpGet("{orderId}")]
         public IActionResult GetOrderById([FromRoute] string orderId)
@@ -65,6 +72,13 @@ namespace Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all orders in the database
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns>A list of all orders</returns>
         // GetAllOrders
         [HttpGet]
         public IActionResult GetAllOrders([FromQuery] string? userId, int? skip, int? take)
