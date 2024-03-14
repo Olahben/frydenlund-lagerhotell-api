@@ -19,6 +19,19 @@ namespace LagerhotellAPI.Services
             _users = database.GetCollection<Models.DbModels.User>("Users");
         }
 
+        /// <summary>
+        /// Adds a user to the database
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="birthDate"></param>
+        /// <param name="streetAddress"></param>
+        /// <param name="postalCode"></param>
+        /// <param name="city"></param>
+        /// <param name="password"></param>
+        /// <param name="isAdministrator"></param>
+        /// <returns>user object</returns>
         public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator)
         {
             string userId = Guid.NewGuid().ToString();
@@ -30,6 +43,11 @@ namespace LagerhotellAPI.Services
 
         }
 
+        /// <summary>
+        /// Gets a user from the database with the given phone number
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns>user object</returns>
         public User? Get(string phoneNumber)
         {
             var dbUser = _users.Find(User => User.PhoneNumber == phoneNumber).FirstOrDefault();
@@ -40,6 +58,11 @@ namespace LagerhotellAPI.Services
             return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
         }
 
+        /// <summary>
+        /// Gets a user from the database with the given phone number
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns>Database user object</returns>
         public Models.DbModels.User? GetByPhoneDbModel(string phoneNumber)
         {
             var dbUser = _users.Find(User => User.PhoneNumber == phoneNumber).FirstOrDefault();
@@ -50,10 +73,14 @@ namespace LagerhotellAPI.Services
             return dbUser;
         }
 
+        /// <summary>
+        /// Gets a users password from the database with the given phone number
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns>user password</returns>
         public string? Password(string phoneNumber)
         {
             var user = Get(phoneNumber);
-            // Handle if user is null
             if (user == null)
             {
                 return null;
@@ -61,6 +88,11 @@ namespace LagerhotellAPI.Services
             return user.Password;
         }
 
+        /// <summary>
+        /// Gets a user in the database with the given user Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>user object</returns>
         public User? GetUserById(string id)
         {
             var dbUser = _users.Find(user => user.UserId == id).FirstOrDefault();
@@ -71,11 +103,30 @@ namespace LagerhotellAPI.Services
             return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
         }
 
+        /// <summary>
+        /// Checks if the given password matches the password in the database
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="requestedPassword"></param>
+        /// <returns>bool</returns>
         public bool DoPasswordsMatch(string password, string requestedPassword)
         {
             return password == requestedPassword;
         }
 
+        /// <summary>
+        /// Updates a users data (except for phone number and Id) in the database
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="birthDate"></param>
+        /// <param name="password"></param>
+        /// <param name="streetAddress"></param>
+        /// <param name="postalCode"></param>
+        /// <param name="city"></param>
+        /// <param name="isAdministrator"></param>
+        /// <exception cref="KeyNotFoundException"></exception>
         public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator)
         {
             Models.DbModels.User oldDbUser = GetByPhoneDbModel(phoneNumber);

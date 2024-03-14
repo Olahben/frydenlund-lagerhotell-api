@@ -14,6 +14,11 @@ namespace LagerhotellAPI.Services
             _storageUnits = database.GetCollection<LagerhotellAPI.Models.DbModels.StorageUnit>("StorageUnits");
         }
 
+        /// <summary>
+        /// Adds a storage unit to the database
+        /// </summary>
+        /// <param name="storageUnit"></param>
+        /// <returns>storage unit Id</returns>
         public async Task<string> AddStorageUnit(StorageUnit storageUnit)
         {
             string storageUnitId = Guid.NewGuid().ToString();
@@ -22,6 +27,12 @@ namespace LagerhotellAPI.Services
             return storageUnitId;
         }
 
+        /// <summary>
+        /// Deletes a storage unit from the database
+        /// </summary>
+        /// <param name="storageUnitId"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
         public async Task DeleteStorageUnit(string storageUnitId)
         {
             if (await GetStorageUnitById(storageUnitId) != null)
@@ -33,6 +44,14 @@ namespace LagerhotellAPI.Services
                 throw new KeyNotFoundException();
             }
         }
+
+        /// <summary>
+        /// Modifies a storage unit in the database (does not modify the storage unit Id)
+        /// </summary>
+        /// <param name="storageUnitId"></param>
+        /// <param name="updatedStorageUnit"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
         public async Task ModifyStorageUnit(string storageUnitId, StorageUnit updatedStorageUnit)
         {
             Models.DbModels.StorageUnit oldStorageUnit = await GetStorageUnitByIdDbModel(storageUnitId);
@@ -47,18 +66,35 @@ namespace LagerhotellAPI.Services
             }
         }
 
+        /// <summary>
+        /// Gets a storage unit from the database with the given storage unit Id
+        /// </summary>
+        /// <param name="storageUnitId"></param>
+        /// <returns>storage unit object</returns>
         public async Task<StorageUnit> GetStorageUnitById(string storageUnitId)
         {
             var dbStorageUnit = await _storageUnits.Find(unit => unit.StorageUnitId == storageUnitId).FirstOrDefaultAsync();
             LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             return domainStorageUnit;
         }
+
+        /// <summary>
+        /// Gets the storage unit with the given storage unit Id from the database
+        /// </summary>
+        /// <param name="storageUnitId"></param>
+        /// <returns>Database storage unit object</returns>
         public async Task<Models.DbModels.StorageUnit> GetStorageUnitByIdDbModel(string storageUnitId)
         {
             var dbStorageUnit = await _storageUnits.Find(unit => unit.StorageUnitId == storageUnitId).FirstOrDefaultAsync();
             return dbStorageUnit;
         }
 
+        /// <summary>
+        /// Gets all storage units in the database
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns>A list of all storage units</returns>
         public async Task<List<LagerhotellAPI.Models.DomainModels.StorageUnit>> GetAllStorageUnits(int? skip, int? take)
         {
             List<LagerhotellAPI.Models.DbModels.StorageUnit> dbStorageUnits = await _storageUnits.Find(_ => true).Limit(take).Skip(skip).ToListAsync();

@@ -12,6 +12,12 @@ public class LocationService
         _locations = database.GetCollection<Models.DbModels.Location>("Locations");
     }
 
+    /// <summary>
+    /// Adds a location to the database
+    /// </summary>
+    /// <param name="location"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task Add(Location location)
     {
         try
@@ -30,6 +36,12 @@ public class LocationService
         }
     }
 
+    /// <summary>
+    /// Deletes a location from the database
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task Delete(string name)
     {
         try
@@ -51,6 +63,13 @@ public class LocationService
         }
     }
 
+    /// <summary>
+    /// Modifies a location in the database
+    /// </summary>
+    /// <param name="location"></param>
+    /// <param name="oldLocationName"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task Modify(Location location, string oldLocationName)
     {
         try
@@ -73,6 +92,12 @@ public class LocationService
         }
     }
 
+    /// <summary>
+    /// Gets a location from the database with the given name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>Location</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<Location?> Get(string name)
     {
         try
@@ -92,6 +117,12 @@ public class LocationService
         }
     }
 
+    /// <summary>
+    /// Gets a location from the database with the given name, and returns the database model version
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>Database model location</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<Models.DbModels.Location?> GetDbModel(string name)
     {
         try
@@ -110,6 +141,13 @@ public class LocationService
         }
     }
 
+    /// <summary>
+    /// Gets all the locations from the database
+    /// </summary>
+    /// <param name="includeNonActive"></param>
+    /// <param name="skip"></param>
+    /// <param name="take"></param>
+    /// <returns>A list of all the locations</returns>
     public async Task<List<Location>>? GetAll(bool includeNonActive, int? skip, int? take)
     {
         var builder = Builders<LagerhotellAPI.Models.DbModels.Location>.Filter;

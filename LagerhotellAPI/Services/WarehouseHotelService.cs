@@ -12,6 +12,13 @@ public class WarehouseHotelService
         var database = client.GetDatabase("Lagerhotell");
         _warehouseHotels = database.GetCollection<LagerhotellAPI.Models.DbModels.WarehouseHotel>("WarehouseHotels");
     }
+
+    /// <summary>
+    /// Adds a warehouse hotel to the database and assigns the Id
+    /// </summary>
+    /// <param name="warehouseHotel"></param>
+    /// <returns>Id</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<string> AddWarehouseHotel(WarehouseHotel warehouseHotel)
     {
         if (await GetWarehouseHotelByName(warehouseHotel.Name) != null)
@@ -25,6 +32,12 @@ public class WarehouseHotelService
         return id;
     }
 
+    /// <summary>
+    /// Deletes a warehouse hotel from the database with the given Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Id, name</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<(string, string)> DeleteWarehouseHotel(string id)
     {
         WarehouseHotel deletedWarehouseHotel = await GetWarehouseHotelById(id);
@@ -36,6 +49,13 @@ public class WarehouseHotelService
         return (deletedWarehouseHotel.WarehouseHotelId, deletedWarehouseHotel.Name);
     }
 
+    /// <summary>
+    /// Modifies a warehouse hotel with the given Id (Does not modify the Id)
+    /// </summary>
+    /// <param name="warehouseHotel"></param>
+    /// <param name="oldName"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task ModifyWarehouseHotel(WarehouseHotel warehouseHotel, string oldName)
     {
         Models.DbModels.WarehouseHotel oldWarehouseHotel = await GetWarehouseHotelByIdDbModel(warehouseHotel.WarehouseHotelId);
@@ -50,6 +70,12 @@ public class WarehouseHotelService
         }
     }
 
+    /// <summary>
+    /// Gets a warehouse hotel by Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>warehouse hotel object</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<WarehouseHotel> GetWarehouseHotelById(string id)
     {
         LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
@@ -61,6 +87,12 @@ public class WarehouseHotelService
         return domainWarehouseHotel;
     }
 
+    /// <summary>
+    /// Gets a warehouse hotel by name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>warehouse hotel object</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<WarehouseHotel> GetWarehouseHotelByName(string name)
     {
         LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).FirstOrDefaultAsync();
@@ -72,6 +104,12 @@ public class WarehouseHotelService
         return domainWarehouseHotel;
     }
 
+    /// <summary>
+    /// Gets a warehouse hotel by Id from the database
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>The database version of the warehouse hotel object</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id)
     {
         LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
@@ -82,6 +120,13 @@ public class WarehouseHotelService
         return dbWarehouseHotel;
     }
 
+    /// <summary>
+    /// Gets all warehouse hotels from the database
+    /// </summary>
+    /// <param name="skip"></param>
+    /// <param name="take"></param>
+    /// <returns>A list of all the warehouse hotels</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0)
     {
         List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
