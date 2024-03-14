@@ -40,11 +40,7 @@ public class WarehouseHotelService
     /// <exception cref="KeyNotFoundException"></exception>
     public async Task<(string, string)> DeleteWarehouseHotel(string id)
     {
-        WarehouseHotel deletedWarehouseHotel = await GetWarehouseHotelById(id);
-        if (deletedWarehouseHotel == null)
-        {
-            throw new KeyNotFoundException();
-        }
+        WarehouseHotel deletedWarehouseHotel = await GetWarehouseHotelById(id) ?? throw new KeyNotFoundException();
         await _warehouseHotels.DeleteOneAsync(hotel => hotel.WarehouseHotelId == id);
         return (deletedWarehouseHotel.WarehouseHotelId, deletedWarehouseHotel.Name);
     }
