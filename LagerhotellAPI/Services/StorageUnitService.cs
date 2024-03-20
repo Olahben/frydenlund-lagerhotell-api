@@ -79,6 +79,25 @@ namespace LagerhotellAPI.Services
         }
 
         /// <summary>
+        /// Gets all storage units in the database with the given warehouse hotel Id
+        /// </summary>
+        /// <param name="warehouseHotelId"></param>
+        /// <returns>A list of storage units</returns>
+        public async Task<List<StorageUnit>> GetStorageUnitsByWarehouseHotelId(string warehouseHotelId)
+        {
+            var dbStorageUnits = await _storageUnits.Find(unit => unit.WarehouseHotelId == warehouseHotelId).ToListAsync();
+            if (dbStorageUnits.Count == 0)
+            {
+                throw new KeyNotFoundException();
+            }
+            List<LagerhotellAPI.Models.DomainModels.StorageUnit> domainStorageUnits = dbStorageUnits.ConvertAll(dbStorageUnit =>
+            {
+                return new LagerhotellAPI.Models.DomainModels.StorageUnit(dbStorageUnit.StorageUnitId, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.WarehouseHotelId, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
+            });
+            return domainStorageUnits;
+        }
+
+        /// <summary>
         /// Gets the storage unit with the given storage unit Id from the database
         /// </summary>
         /// <param name="storageUnitId"></param>

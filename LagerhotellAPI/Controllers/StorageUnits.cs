@@ -97,6 +97,26 @@ namespace LagerhotellAPI.Controllers
         }
 
         [HttpGet]
+        [Route("get-by-warehouse-hotel-id")]
+        public async Task<IActionResult> GetStorageUnitsByWarehouseHotelId([FromQuery] string warehouseHotelId)
+        {
+            try
+            {
+                var storageUnits = await _storageUnitService.GetStorageUnitsByWarehouseHotelId(warehouseHotelId);
+                return Ok(storageUnits);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("No storage units found for the given warehouse hotel Id.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e}");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAllStorageUnits([FromQuery] int? skip, int? take)
         {
             try
