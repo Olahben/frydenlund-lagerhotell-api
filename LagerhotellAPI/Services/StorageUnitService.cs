@@ -22,7 +22,7 @@ namespace LagerhotellAPI.Services
         public async Task<string> AddStorageUnit(StorageUnit storageUnit)
         {
             string storageUnitId = Guid.NewGuid().ToString();
-            LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
+            LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.WarehouseHotelId, storageUnit.Coordinate, storageUnit.PricePerMonth);
             await _storageUnits.InsertOneAsync(dbStorageUnit);
             return storageUnitId;
         }
@@ -57,7 +57,7 @@ namespace LagerhotellAPI.Services
             Models.DbModels.StorageUnit oldStorageUnit = await GetStorageUnitByIdDbModel(storageUnitId);
             if (oldStorageUnit != null)
             {
-                Models.DbModels.StorageUnit updatedDbStorageUnit = new(oldStorageUnit.Id, updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
+                Models.DbModels.StorageUnit updatedDbStorageUnit = new(oldStorageUnit.Id, updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.StorageUnitId, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
                 await _storageUnits.ReplaceOneAsync(unit => unit.StorageUnitId == storageUnitId, updatedDbStorageUnit);
             }
             else
@@ -74,7 +74,7 @@ namespace LagerhotellAPI.Services
         public async Task<StorageUnit> GetStorageUnitById(string storageUnitId)
         {
             var dbStorageUnit = await _storageUnits.Find(unit => unit.StorageUnitId == storageUnitId).FirstOrDefaultAsync();
-            LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
+            LagerhotellAPI.Models.DomainModels.StorageUnit domainStorageUnit = new(dbStorageUnit.Id, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.WarehouseHotelId, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             return domainStorageUnit;
         }
 
@@ -101,7 +101,7 @@ namespace LagerhotellAPI.Services
             List<LagerhotellAPI.Models.DomainModels.StorageUnit> domainStorageUnits = dbStorageUnits.ConvertAll(dbStorageUnit =>
             {
 
-                return new LagerhotellAPI.Models.DomainModels.StorageUnit(dbStorageUnit.StorageUnitId, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
+                return new LagerhotellAPI.Models.DomainModels.StorageUnit(dbStorageUnit.StorageUnitId, dbStorageUnit.Dimensions, dbStorageUnit.Temperated, dbStorageUnit.LockCode, dbStorageUnit.Name, dbStorageUnit.Occupied, dbStorageUnit.WarehouseHotelId, dbStorageUnit.UserId, dbStorageUnit.Coordinate, dbStorageUnit.PricePerMonth);
             });
             return domainStorageUnits;
         }
