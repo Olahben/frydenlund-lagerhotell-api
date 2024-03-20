@@ -52,7 +52,7 @@ public class StorageUnit
 
     public string WarehouseHotelId { get; set; }
 
-    public Coordinate? Coordinate { get; set; }
+    public Coordinate Coordinate { get; set; }
 
     public Money PricePerMonth { get; set; }
 }
