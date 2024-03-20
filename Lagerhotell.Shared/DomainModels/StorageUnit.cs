@@ -2,7 +2,7 @@
 
 public class StorageUnit
 {
-    public StorageUnit(string storageUnitId, Dimensions dimensions, bool temperated, string lockCode, string name, bool occupied, string userId, Coordinate coordinate, Money pricePerMonth)
+    public StorageUnit(string storageUnitId, Dimensions dimensions, bool temperated, string lockCode, string name, bool occupied, string warehouseHotelId, string userId, Coordinate coordinate, Money pricePerMonth)
     {
         StorageUnitId = storageUnitId;
         Dimensions = dimensions;
@@ -11,6 +11,7 @@ public class StorageUnit
         Name = name;
         Occupied = occupied;
         UserId = userId;
+        WarehouseHotelId = warehouseHotelId;
         Coordinate = coordinate;
         PricePerMonth = pricePerMonth;
     }
@@ -27,6 +28,8 @@ public class StorageUnit
     public bool Occupied { get; set; } = false;
 
     public string? UserId { get; set; }
+
+    public string WarehouseHotelId { get; set; }
 
     public Coordinate? Coordinate { get; set; }
 
