@@ -14,7 +14,9 @@ public class WarehouseHotel
     public StorageUnitSizes StorageUnitsSizes { get; set; }
     public string LocationName { get; set; }
 
-    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
+    public byte[] ImageData { get; set; }
+
+    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName, byte[] imageData)
     {
         Coordinate = coordinate;
         Address = address;
@@ -26,8 +28,9 @@ public class WarehouseHotel
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
         LocationName = locationName;
+        ImageData = imageData;
     }
-    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
+    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName, byte[] imageData)
     {
         WarehouseHotelId = warehouseHotelId;
         Coordinate = coordinate;
@@ -40,6 +43,7 @@ public class WarehouseHotel
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
         LocationName = locationName;
+        ImageData = imageData;
     }
 
     public WarehouseHotel()

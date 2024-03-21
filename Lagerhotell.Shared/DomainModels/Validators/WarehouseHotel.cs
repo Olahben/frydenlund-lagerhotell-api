@@ -29,7 +29,8 @@ public class WarehouseHotelValidator : AbstractValidator<DomainModels.WarehouseH
         RuleFor(x => x.IsActive).NotNull().NotEmpty().WithMessage("Aktiv status kan ikke være tom");
         RuleFor(x => x.StorageUnitsSizes).NotNull().NotEmpty().WithMessage("Lagereenhetsstørrelser kan ikke være tom");
         RuleFor(x => x.StorageUnitsSizes.MinSize).Must((x, y) => x.StorageUnitsSizes.MinSize < x.StorageUnitsSizes.MaxSize).WithMessage("Minimumsstørrelse må være mindre enn maksimumsstørrelse");
-
+        RuleFor(x => x.ImageData).NotNull().NotEmpty().WithMessage("Bilde kan ikke være tomt");
+        RuleFor(x => x.ImageData).Must(x => x.Length < 5000000).WithMessage("Bilde kan ikke være større enn 5MB");
     }
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {
