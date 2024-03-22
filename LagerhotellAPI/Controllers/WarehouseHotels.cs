@@ -30,6 +30,11 @@ public class WarehouseHotelsController : ControllerBase
             Console.WriteLine($"{ex}");
             return Conflict("Warehouse hotel already exists");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
     }
 
     [HttpDelete("{id}")]
