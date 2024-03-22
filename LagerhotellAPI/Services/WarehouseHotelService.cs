@@ -21,9 +21,16 @@ public class WarehouseHotelService
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<string> AddWarehouseHotel(WarehouseHotel warehouseHotel)
     {
-        if (await GetWarehouseHotelByName(warehouseHotel.Name) != null)
+        try
         {
-            throw new InvalidOperationException("Warehouse hotel already exists");
+            if (await GetWarehouseHotelByName(warehouseHotel.Name) != null)
+            {
+                throw new InvalidOperationException("Warehouse hotel already exists");
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            // Continue
         }
         string id = Guid.NewGuid().ToString();
         // Should check if there exists one with the same name
@@ -125,7 +132,7 @@ public class WarehouseHotelService
     /// <exception cref="KeyNotFoundException"></exception>
     public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0)
     {
-        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
+        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).Project(_ => _).ToListAsync();
         List<WarehouseHotel> domainWarehouseHotels = dbWarehouseHotels.ConvertAll(hotel =>
         {
             if (hotel == null || hotel.WarehouseHotelId == null)
