@@ -79,9 +79,18 @@ public class WarehouseHotelService
     /// <param name="id"></param>
     /// <returns>warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<WarehouseHotel> GetWarehouseHotelById(string id)
+    public async Task<WarehouseHotel> GetWarehouseHotelById(string id, bool? includeImage = true)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
+        if (includeImage == true || includeImage == null)
+        {
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
+        }
+        else
+        {
+            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
+        }
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
@@ -96,9 +105,18 @@ public class WarehouseHotelService
     /// <param name="name"></param>
     /// <returns>warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<WarehouseHotel> GetWarehouseHotelByName(string name)
+    public async Task<WarehouseHotel> GetWarehouseHotelByName(string name, bool? includeImage = true)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).FirstOrDefaultAsync();
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
+        if (includeImage == true || includeImage == null)
+        {
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).FirstOrDefaultAsync();
+        }
+        else
+        {
+            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
+        }
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
@@ -113,9 +131,18 @@ public class WarehouseHotelService
     /// <param name="id"></param>
     /// <returns>The database version of the warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id)
+    public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id, bool? includeImage = true)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
+        if (includeImage == true || includeImage == null)
+        {
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
+        }
+        else
+        {
+            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
+            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
+        }
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
@@ -130,9 +157,19 @@ public class WarehouseHotelService
     /// <param name="take"></param>
     /// <returns>A list of all the warehouse hotels</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0)
+    public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0, bool? includeImage = true)
     {
-        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).Project(_ => _).ToListAsync();
+        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = new();
+        if (includeImage == true || includeImage == null)
+        {
+            dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
+
+        }
+        else if (includeImage == false)
+        {
+            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
+            dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Project<Models.DbModels.WarehouseHotel>(projection).Skip(skip).Limit(take).ToListAsync();
+        }
         List<WarehouseHotel> domainWarehouseHotels = dbWarehouseHotels.ConvertAll(hotel =>
         {
             if (hotel == null || hotel.WarehouseHotelId == null)

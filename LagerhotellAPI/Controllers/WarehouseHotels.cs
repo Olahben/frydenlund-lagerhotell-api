@@ -72,11 +72,11 @@ public class WarehouseHotelsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetWarehouseHotelById(string id)
+    public async Task<IActionResult> GetWarehouseHotelById(string id, bool? includeImage)
     {
         try
         {
-            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id);
+            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id, includeImage);
             return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
@@ -87,11 +87,11 @@ public class WarehouseHotelsController : ControllerBase
 
     [HttpGet]
     [Route("get-by-name/{name}")]
-    public async Task<IActionResult> GetWarehouseHotelByName([FromRoute] string name)
+    public async Task<IActionResult> GetWarehouseHotelByName([FromRoute] string name, bool? includeImage)
     {
         try
         {
-            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(name);
+            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(name, includeImage);
             return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
@@ -101,11 +101,11 @@ public class WarehouseHotelsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllWarehouseHotels([FromQuery] int? skip, int? take)
+    public async Task<IActionResult> GetAllWarehouseHotels([FromQuery] int? skip, int? take, bool? includeImage)
     {
         try
         {
-            var warehouseHotels = await _warehouseHotelService.GetAllWarehouseHotels(skip, take);
+            var warehouseHotels = await _warehouseHotelService.GetAllWarehouseHotels(skip, take, includeImage);
             return Ok(new GetAllWarehouseHotelsResponse(warehouseHotels));
         }
         catch (KeyNotFoundException)
