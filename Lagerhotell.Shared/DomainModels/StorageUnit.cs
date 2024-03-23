@@ -29,7 +29,7 @@ public class StorageUnit
 
     public string? UserId { get; set; }
 
-    public string WarehouseHotelId { get; set; }
+    public string? WarehouseHotelId { get; set; }
 
     public Coordinate Coordinate { get; set; }
 
