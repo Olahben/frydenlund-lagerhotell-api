@@ -19,10 +19,10 @@ namespace LagerhotellAPI.Services
         /// </summary>
         /// <param name="storageUnit"></param>
         /// <returns>storage unit Id</returns>
-        public async Task<string> AddStorageUnit(StorageUnit storageUnit)
+        public async Task<string> AddStorageUnit(StorageUnit storageUnit, string linkedWarehouseHotelId)
         {
             string storageUnitId = Guid.NewGuid().ToString();
-            LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, storageUnit.UserId, storageUnit.WarehouseHotelId, storageUnit.Coordinate, storageUnit.PricePerMonth);
+            LagerhotellAPI.Models.DbModels.StorageUnit dbStorageUnit = new(storageUnitId, storageUnit.Dimensions, storageUnit.Temperated, storageUnit.LockCode, storageUnit.Name, storageUnit.Occupied, linkedWarehouseHotelId, storageUnit.UserId, storageUnit.Coordinate, storageUnit.PricePerMonth);
             await _storageUnits.InsertOneAsync(dbStorageUnit);
             return storageUnitId;
         }

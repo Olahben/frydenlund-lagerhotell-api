@@ -9,10 +9,12 @@ namespace LagerhotellAPI.Controllers
     public class StorageUnitsController : ControllerBase
     {
         private readonly StorageUnitService _storageUnitService;
+        private readonly WarehouseHotelService _warehouseHotelService;
 
-        public StorageUnitsController(StorageUnitService storageUnitService)
+        public StorageUnitsController(StorageUnitService storageUnitService, WarehouseHotelService warehouseHotelService)
         {
             _storageUnitService = storageUnitService;
+            _warehouseHotelService = warehouseHotelService;
         }
 
         [HttpPost]
@@ -22,7 +24,16 @@ namespace LagerhotellAPI.Controllers
         {
             try
             {
-                string storageUnitId = await _storageUnitService.AddStorageUnit(request.StorageUnit);
+                WarehouseHotel linkedWarehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(request.LinkedWarehouseHotelName);
+                if (linkedWarehouseHotel == null)
+                {
+                    return NotFound("Warehouse hotel not found.");
+                }
+                else if (linkedWarehouseHotel.WarehouseHotelId == null)
+                {
+                    return NotFound("Warehouse hotel Id not found.");
+                }
+                string storageUnitId = await _storageUnitService.AddStorageUnit(request.StorageUnit, linkedWarehouseHotel.WarehouseHotelId);
                 return Ok(new CreateStorageUnitResponse(storageUnitId));
             }
             catch (InvalidOperationException)
