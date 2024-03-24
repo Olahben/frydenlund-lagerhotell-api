@@ -8,9 +8,9 @@ public class CreateStorageUnitRequest
 
 public class CreateStorageUnitResponse
 {
-    public CreateStorageUnitResponse(string id)
+    public CreateStorageUnitResponse(string storageUnitId)
     {
-        StorageUnitId = id;
+        StorageUnitId = storageUnitId;
     }
     public string StorageUnitId { get; set; }
 }
