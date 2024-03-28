@@ -108,8 +108,8 @@ namespace LagerhotellAPI.Controllers
         }
 
         [HttpGet]
-        [Route("get-by-warehouse-hotel-id")]
-        public async Task<IActionResult> GetStorageUnitsByWarehouseHotelId([FromQuery] string warehouseHotelId)
+        [Route("get-by-warehouse-hotel-id/{warehouseHotelId}")]
+        public async Task<IActionResult> GetStorageUnitsByWarehouseHotelId(string warehouseHotelId)
         {
             try
             {
