@@ -23,8 +23,7 @@ public class WarehouseHotelValidator : AbstractValidator<DomainModels.WarehouseH
         RuleFor(x => x.OpeningHours.Closes).Must((x, y) => x.OpeningHours.Opens < y).WithMessage("Åpningstid må være før stengetid");
         RuleFor(x => x.PhoneNumber).NotNull().NotEmpty().WithMessage("Telefonnummer kan ikke være tom");
         RuleFor(x => x.PhoneNumber).NotEmpty().NotNull().WithMessage("Telefonnummer er obligatorisk").MinimumLength(8).WithMessage("Telefonnummer må være åtte siffer langt").MaximumLength(8).WithMessage("Telefonnummer må være åtte siffer langt").Matches(new Regex(@"^\d{8}$")).WithMessage("Telefonnummer er ikke gyldig");
-        RuleFor(x => x.DetailedDescription).NotNull().NotEmpty().WithMessage("Detaljert beskrivelse kan ikke være tom");
-        RuleFor(x => x.DetailedDescription).MaximumLength(1500).WithMessage("Detaljert beskrivelse kan ikke være lengre enn 1500 tegn eller bokstaver");
+        RuleFor(x => x.DescriptionParas).NotNull().NotEmpty().WithMessage("De Detaljerte beskrivelsene kan ikke være tomme");
         RuleFor(x => x.ContainsTemperatedStorageUnits).NotNull().NotEmpty().WithMessage("Lagerhotellet må inneholde tempererte lagerenheter");
         RuleFor(x => x.IsActive).NotNull().NotEmpty().WithMessage("Aktiv status kan ikke være tom");
         RuleFor(x => x.StorageUnitsSizes).NotNull().NotEmpty().WithMessage("Lagereenhetsstørrelser kan ikke være tom");
