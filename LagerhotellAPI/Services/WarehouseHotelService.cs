@@ -34,7 +34,7 @@ public class WarehouseHotelService
         }
         string id = Guid.NewGuid().ToString();
         // Should check if there exists one with the same name
-        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName, warehouseHotel.ImageData);
+        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DescriptionParaOne, warehouseHotel.DescriptionParaTwo, warehouseHotel.DescriptionParaThree, warehouseHotel.DescriptionParaFour, warehouseHotel.DescriptionParaFive, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName, warehouseHotel.ImageData);
         await _warehouseHotels.InsertOneAsync(dbWarehouseHotel);
         return id;
     }
@@ -64,7 +64,7 @@ public class WarehouseHotelService
         Models.DbModels.WarehouseHotel oldWarehouseHotel = await GetWarehouseHotelByIdDbModel(warehouseHotel.WarehouseHotelId);
         if (oldWarehouseHotel != null)
         {
-            LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName);
+            LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DescriptionParaOne, warehouseHotel.DescriptionParaTwo, warehouseHotel.DescriptionParaThree, warehouseHotel.DescriptionParaFour, warehouseHotel.DescriptionParaFive, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName);
             await _warehouseHotels.ReplaceOneAsync(hotel => hotel.Name == oldName, dbWarehouseHotel);
         }
         else
@@ -95,7 +95,7 @@ public class WarehouseHotelService
         {
             throw new KeyNotFoundException();
         }
-        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
+        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DescriptionParaOne, dbWarehouseHotel.DescriptionParaTwo, dbWarehouseHotel.DescriptionParaThree, dbWarehouseHotel.DescriptionParaFour, dbWarehouseHotel.DescriptionParaFive, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
         return domainWarehouseHotel;
     }
 
@@ -121,7 +121,7 @@ public class WarehouseHotelService
         {
             throw new KeyNotFoundException();
         }
-        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
+        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DescriptionParaOne, dbWarehouseHotel.DescriptionParaTwo, dbWarehouseHotel.DescriptionParaThree, dbWarehouseHotel.DescriptionParaFour, dbWarehouseHotel.DescriptionParaFive, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
         return domainWarehouseHotel;
     }
 
@@ -163,7 +163,6 @@ public class WarehouseHotelService
         if (includeImage == true || includeImage == null)
         {
             dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
-
         }
         else if (includeImage == false)
         {
@@ -176,7 +175,7 @@ public class WarehouseHotelService
             {
                 throw new KeyNotFoundException();
             }
-            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DetailedDescription, hotel.ContainsTemperatedStorageUnits, hotel.IsActive, hotel.StorageUnitsSizes, hotel.LocationName, hotel.ImageData);
+            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DescriptionParaOne, hotel.DescriptionParaTwo, hotel.DescriptionParaThree, hotel.DescriptionParaFour, hotel.DescriptionParaFive, hotel.ContainsTemperatedStorageUnits, hotel.IsActive, hotel.StorageUnitsSizes, hotel.LocationName, hotel.ImageData);
         });
         return domainWarehouseHotels;
     }
