@@ -2,9 +2,9 @@
 
 public class Dimensions
 {
-    public double Length { get; set; }
-    public double Width { get; set; }
-    public double Height { get; set; }
+    public double? Length { get; set; }
+    public double? Width { get; set; }
+    public double? Height { get; set; }
 
     public Dimensions(double length, double width, double height)
     {
@@ -21,8 +21,8 @@ public class Dimensions
 
     }
 
-    public double Area => Length * Width;
-    public double Volume => Length * Width * Height;
+    public double? Area => Length * Width;
+    public double? Volume => Length * Width * Height;
 }
 
 

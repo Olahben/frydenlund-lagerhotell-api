@@ -2,8 +2,8 @@
 
 public class StorageUnitSizes
 {
-    public double MinSize { get; set; }
-    public double MaxSize { get; set; } = 0;
+    public double? MinSize { get; set; }
+    public double? MaxSize { get; set; } = 0;
 
     public StorageUnitSizes(double minSize, double maxSize)
     {
