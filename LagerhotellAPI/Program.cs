@@ -19,6 +19,7 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<StorageUnitService>();
 builder.Services.AddScoped<WarehouseHotelService>();
 builder.Services.AddScoped<LocationService>();
+builder.Services.AddScoped<AssetService>();
 
 // Configure CORS policy
 builder.Services.AddCors(options =>
