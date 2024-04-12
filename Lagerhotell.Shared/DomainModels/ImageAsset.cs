@@ -7,6 +7,7 @@ public class ImageAsset
         // empty constructor
     }
 
+    public string? AssetId { get; set; }
     public string Name { get; set; }
     public List<string> Tags { get; set; }
     public byte[] ImageBytes { get; set; }

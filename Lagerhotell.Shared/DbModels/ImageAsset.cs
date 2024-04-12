@@ -10,7 +10,7 @@ public class ImageAsset
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
-
+    public string? AssetId { get; set; }
     public string Name { get; set; }
     public List<string> Tags { get; set; }
     public byte[] ImageBytes { get; set; }
