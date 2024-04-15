@@ -3,8 +3,8 @@
 public class AddWarehouseHotelRequest
 {
     public WarehouseHotel WarehouseHotel { get; set; }
-    public List<byte[]> Images { get; set; }
-    public AddWarehouseHotelRequest(WarehouseHotel warehouseHotel, List<byte[]> images)
+    public List<ImageAsset> Images { get; set; }
+    public AddWarehouseHotelRequest(WarehouseHotel warehouseHotel, List<ImageAsset> images)
     {
         WarehouseHotel = warehouseHotel;
         Images = images;

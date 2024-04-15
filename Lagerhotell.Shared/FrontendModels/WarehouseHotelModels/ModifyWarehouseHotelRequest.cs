@@ -2,7 +2,7 @@
 
 public class ModifyWarehouseHotelRequest
 {
-    public ModifyWarehouseHotelRequest(WarehouseHotel warehouseHotel, string oldWarehouseHotelName, List<byte[]> images)
+    public ModifyWarehouseHotelRequest(WarehouseHotel warehouseHotel, string oldWarehouseHotelName, List<ImageAsset> images)
     {
         WarehouseHotel = warehouseHotel;
         OldWarehouseHotelName = oldWarehouseHotelName;
@@ -10,5 +10,5 @@ public class ModifyWarehouseHotelRequest
     }
     public WarehouseHotel WarehouseHotel { get; set; }
     public string OldWarehouseHotelName { get; set; }
-    public List<byte[]> Images { get; set; }
+    public List<ImageAsset> Images { get; set; }
 }
