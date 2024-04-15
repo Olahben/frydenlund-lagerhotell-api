@@ -51,11 +51,12 @@ public class AssetService
     /// <returns></returns>
     public async Task ModifyAsset(string assetId, ImageAsset updatedAsset)
     {
-        if (await GetAsset(assetId) == null)
+        Models.DbModels.ImageAsset? dbAsset = await GetAssetDbModel(assetId);
+        if (dbAsset == null)
         {
             throw new KeyNotFoundException("Asset not found");
         }
-        Models.DbModels.ImageAsset updatedDbAsset = new() { AssetId = assetId, Name = updatedAsset.Name, Tags = updatedAsset.Tags, ImageBytes = updatedAsset.ImageBytes, WarehouseHotelId = updatedAsset.WarehouseHotelId };
+        Models.DbModels.ImageAsset updatedDbAsset = new() { Id = dbAsset.Id, AssetId = assetId, Name = updatedAsset.Name, Tags = updatedAsset.Tags, ImageBytes = updatedAsset.ImageBytes, WarehouseHotelId = updatedAsset.WarehouseHotelId };
         await _assets.ReplaceOneAsync(asset => asset.AssetId == assetId, updatedDbAsset);
     }
 
@@ -67,6 +68,16 @@ public class AssetService
             return null;
         }
         return new ImageAsset() { AssetId = dbAsset.AssetId, Name = dbAsset.Name, Tags = dbAsset.Tags, ImageBytes = dbAsset.ImageBytes, WarehouseHotelId = dbAsset.WarehouseHotelId };
+    }
+
+    public async Task<Models.DbModels.ImageAsset?> GetAssetDbModel(string assetId)
+    {
+        var dbAsset = await _assets.Find(asset => asset.AssetId == assetId).FirstOrDefaultAsync();
+        if (dbAsset == null)
+        {
+            return null;
+        }
+        return dbAsset;
     }
 
     public async Task<List<ImageAsset>> GetAssets(int? skip, int? take, string? warehouseHotelId)
