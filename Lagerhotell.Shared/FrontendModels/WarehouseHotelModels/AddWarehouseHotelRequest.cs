@@ -3,8 +3,10 @@
 public class AddWarehouseHotelRequest
 {
     public WarehouseHotel WarehouseHotel { get; set; }
-    public AddWarehouseHotelRequest(WarehouseHotel warehouseHotel)
+    public List<byte[]> Images { get; set; }
+    public AddWarehouseHotelRequest(WarehouseHotel warehouseHotel, List<byte[]> images)
     {
         WarehouseHotel = warehouseHotel;
+        Images = images;
     }
 }
