@@ -9,7 +9,7 @@ public class ImageAsset
 
     public string? AssetId { get; set; }
     public string Name { get; set; }
-    public List<string> Tags { get; set; }
+    public List<string>? Tags { get; set; }
     public byte[] ImageBytes { get; set; }
     public string? WarehouseHotelId { get; set; }
 }
