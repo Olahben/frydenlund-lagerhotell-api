@@ -34,7 +34,7 @@ public class WarehouseHotelService
         }
         string id = Guid.NewGuid().ToString();
         // Should check if there exists one with the same name
-        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.BulletPoints, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName, warehouseHotel.ImageData);
+        Models.DbModels.WarehouseHotel dbWarehouseHotel = new(id, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.BulletPoints, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName);
         await _warehouseHotels.InsertOneAsync(dbWarehouseHotel);
         return id;
     }
@@ -59,13 +59,14 @@ public class WarehouseHotelService
     /// <param name="oldName"></param>
     /// <returns></returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task ModifyWarehouseHotel(WarehouseHotel warehouseHotel, string oldName)
+    public async Task<string>? ModifyWarehouseHotel(WarehouseHotel warehouseHotel, string oldName)
     {
         Models.DbModels.WarehouseHotel oldWarehouseHotel = await GetWarehouseHotelByIdDbModel(warehouseHotel.WarehouseHotelId);
         if (oldWarehouseHotel != null)
         {
             LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = new(oldWarehouseHotel.Id, warehouseHotel.WarehouseHotelId, warehouseHotel.Coordinate, warehouseHotel.Address, warehouseHotel.Name, warehouseHotel.OpeningHours, warehouseHotel.PhoneNumber, warehouseHotel.DetailedDescription, warehouseHotel.BulletPoints, warehouseHotel.ContainsTemperatedStorageUnits, warehouseHotel.IsActive, warehouseHotel.StorageUnitsSizes, warehouseHotel.LocationName);
             await _warehouseHotels.ReplaceOneAsync(hotel => hotel.Name == oldName, dbWarehouseHotel);
+            return dbWarehouseHotel.WarehouseHotelId;
         }
         else
         {
@@ -79,23 +80,14 @@ public class WarehouseHotelService
     /// <param name="id"></param>
     /// <returns>warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<WarehouseHotel> GetWarehouseHotelById(string id, bool? includeImage = true)
+    public async Task<WarehouseHotel> GetWarehouseHotelById(string id)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
-        if (includeImage == true || includeImage == null)
-        {
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
-        }
-        else
-        {
-            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
-        }
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
         }
-        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.BulletPoints, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
+        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.BulletPoints, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName);
         return domainWarehouseHotel;
     }
 
@@ -105,23 +97,15 @@ public class WarehouseHotelService
     /// <param name="name"></param>
     /// <returns>warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<WarehouseHotel> GetWarehouseHotelByName(string name, bool? includeImage = true)
+    public async Task<WarehouseHotel> GetWarehouseHotelByName(string name)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
-        if (includeImage == true || includeImage == null)
-        {
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).FirstOrDefaultAsync();
-        }
-        else
-        {
-            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
-        }
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.Name == name).FirstOrDefaultAsync();
+
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
         }
-        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.BulletPoints, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName, dbWarehouseHotel.ImageData);
+        WarehouseHotel domainWarehouseHotel = new(dbWarehouseHotel.WarehouseHotelId, dbWarehouseHotel.Coordinate, dbWarehouseHotel.Address, dbWarehouseHotel.Name, dbWarehouseHotel.OpeningHours, dbWarehouseHotel.PhoneNumber, dbWarehouseHotel.DetailedDescription, dbWarehouseHotel.BulletPoints, dbWarehouseHotel.ContainsTemperatedStorageUnits, dbWarehouseHotel.IsActive, dbWarehouseHotel.StorageUnitsSizes, dbWarehouseHotel.LocationName);
         return domainWarehouseHotel;
     }
 
@@ -131,18 +115,9 @@ public class WarehouseHotelService
     /// <param name="id"></param>
     /// <returns>The database version of the warehouse hotel object</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id, bool? includeImage = true)
+    public async Task<Models.DbModels.WarehouseHotel> GetWarehouseHotelByIdDbModel(string id)
     {
-        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel;
-        if (includeImage == true || includeImage == null)
-        {
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
-        }
-        else
-        {
-            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
-            dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).Project<Models.DbModels.WarehouseHotel>(projection).FirstOrDefaultAsync();
-        }
+        LagerhotellAPI.Models.DbModels.WarehouseHotel dbWarehouseHotel = await _warehouseHotels.Find(hotel => hotel.WarehouseHotelId == id).FirstOrDefaultAsync();
         if (dbWarehouseHotel == null || dbWarehouseHotel.WarehouseHotelId == null)
         {
             throw new KeyNotFoundException();
@@ -157,25 +132,16 @@ public class WarehouseHotelService
     /// <param name="take"></param>
     /// <returns>A list of all the warehouse hotels</returns>
     /// <exception cref="KeyNotFoundException"></exception>
-    public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0, bool? includeImage = true)
+    public async Task<List<WarehouseHotel>> GetAllWarehouseHotels(int? skip = 0, int? take = 0)
     {
-        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = new();
-        if (includeImage == true || includeImage == null)
-        {
-            dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
-        }
-        else if (includeImage == false)
-        {
-            ProjectionDefinition<Models.DbModels.WarehouseHotel> projection = Builders<Models.DbModels.WarehouseHotel>.Projection.Exclude(x => x.ImageData);
-            dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Project<Models.DbModels.WarehouseHotel>(projection).Skip(skip).Limit(take).ToListAsync();
-        }
+        List<Models.DbModels.WarehouseHotel> dbWarehouseHotels = await _warehouseHotels.Find(hotel => true).Skip(skip).Limit(take).ToListAsync();
         List<WarehouseHotel> domainWarehouseHotels = dbWarehouseHotels.ConvertAll(hotel =>
         {
             if (hotel == null || hotel.WarehouseHotelId == null)
             {
                 throw new KeyNotFoundException();
             }
-            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DetailedDescription, hotel.BulletPoints, hotel.ContainsTemperatedStorageUnits, hotel.IsActive, hotel.StorageUnitsSizes, hotel.LocationName, hotel.ImageData);
+            return new WarehouseHotel(hotel.WarehouseHotelId, hotel.Coordinate, hotel.Address, hotel.Name, hotel.OpeningHours, hotel.PhoneNumber, hotel.DetailedDescription, hotel.BulletPoints, hotel.ContainsTemperatedStorageUnits, hotel.IsActive, hotel.StorageUnitsSizes, hotel.LocationName);
         });
         return domainWarehouseHotels;
     }
