@@ -20,7 +20,7 @@ public class WarehouseHotel
     public StorageUnitSizes StorageUnitsSizes { get; set; }
     public string LocationName { get; set; }
 
-    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName, byte[] imageData)
+    public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
     {
         Coordinate = coordinate;
         Address = address;
@@ -33,9 +33,8 @@ public class WarehouseHotel
         StorageUnitsSizes = storageUnitSizes;
         IsActive = isActive;
         LocationName = locationName;
-        ImageData = imageData;
     }
-    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName, byte[] imageData)
+    public WarehouseHotel(string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
     {
         WarehouseHotelId = warehouseHotelId;
         Coordinate = coordinate;
@@ -49,7 +48,6 @@ public class WarehouseHotel
         IsActive = isActive;
         StorageUnitsSizes = storageUnitSizes;
         LocationName = locationName;
-        ImageData = imageData;
     }
 
     public WarehouseHotel(string id, string warehouseHotelId, Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName)
