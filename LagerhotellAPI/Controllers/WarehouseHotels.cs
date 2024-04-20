@@ -9,10 +9,12 @@ namespace Controllers;
 public class WarehouseHotelsController : ControllerBase
 {
     private readonly WarehouseHotelService _warehouseHotelService;
+    private readonly AssetService _assetService;
 
-    public WarehouseHotelsController(WarehouseHotelService warehouseHotelService)
+    public WarehouseHotelsController(WarehouseHotelService warehouseHotelService, AssetService assetService)
     {
         _warehouseHotelService = warehouseHotelService;
+        _assetService = assetService;
     }
 
     [HttpPost]
@@ -23,6 +25,11 @@ public class WarehouseHotelsController : ControllerBase
         try
         {
             string warehouseHotelId = await _warehouseHotelService.AddWarehouseHotel(request.WarehouseHotel);
+            foreach (var image in request.Images)
+            {
+                image.WarehouseHotelId = warehouseHotelId;
+                await _assetService.AddAsset(image);
+            }
             return Ok(new AddWarehouseHotelResponse(warehouseHotelId));
         }
         catch (InvalidOperationException ex)
@@ -61,7 +68,8 @@ public class WarehouseHotelsController : ControllerBase
     {
         try
         {
-            await _warehouseHotelService.ModifyWarehouseHotel(request.WarehouseHotel, request.OldWarehouseHotelName);
+            string warehouseHotelId = await _warehouseHotelService.ModifyWarehouseHotel(request.WarehouseHotel, request.OldWarehouseHotelName);
+            await _assetService.ModifyWarehouseHotelAssets(warehouseHotelId, request.Images);
             return Ok("Warehouse hotel modified successfully.");
         }
         catch (KeyNotFoundException ex)
@@ -76,7 +84,7 @@ public class WarehouseHotelsController : ControllerBase
     {
         try
         {
-            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id, includeImage);
+            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelById(id);
             return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
@@ -87,11 +95,11 @@ public class WarehouseHotelsController : ControllerBase
 
     [HttpGet]
     [Route("get-by-name/{name}")]
-    public async Task<IActionResult> GetWarehouseHotelByName([FromRoute] string name, bool? includeImage)
+    public async Task<IActionResult> GetWarehouseHotelByName([FromRoute] string name)
     {
         try
         {
-            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(name, includeImage);
+            var warehouseHotel = await _warehouseHotelService.GetWarehouseHotelByName(name);
             return Ok(new GetWarehouseHotelByIdResponse(warehouseHotel));
         }
         catch (KeyNotFoundException)
@@ -101,11 +109,11 @@ public class WarehouseHotelsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllWarehouseHotels([FromQuery] int? skip, int? take, bool? includeImage)
+    public async Task<IActionResult> GetAllWarehouseHotels([FromQuery] int? skip, int? take)
     {
         try
         {
-            var warehouseHotels = await _warehouseHotelService.GetAllWarehouseHotels(skip, take, includeImage);
+            var warehouseHotels = await _warehouseHotelService.GetAllWarehouseHotels(skip);
             return Ok(new GetAllWarehouseHotelsResponse(warehouseHotels));
         }
         catch (KeyNotFoundException)
