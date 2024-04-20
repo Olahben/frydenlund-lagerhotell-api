@@ -16,8 +16,6 @@ public class WarehouseHotel
     public StorageUnitSizes StorageUnitsSizes { get; set; }
     public string LocationName { get; set; }
 
-    public byte[]? ImageData { get; set; }
-
     public WarehouseHotel(Coordinate coordinate, Address address, string name, OpeningHours openingHours, string phoneNumber, string detailedDescription, string bulletPoints, bool containsTemperatedStorageUnits, bool isActive, StorageUnitSizes storageUnitSizes, string locationName, byte[] imageData)
     {
         Coordinate = coordinate;
