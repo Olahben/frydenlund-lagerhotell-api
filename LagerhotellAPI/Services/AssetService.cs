@@ -60,6 +60,27 @@ public class AssetService
         await _assets.ReplaceOneAsync(asset => asset.AssetId == assetId, updatedDbAsset);
     }
 
+    public async Task ModifyWarehouseHotelAssets(string warehouseHotelId, List<ImageAsset> updatedAssets)
+    {
+        if (_warehouseHotelService.GetWarehouseHotelById(warehouseHotelId) == null)
+        {
+            throw new KeyNotFoundException("Warehouse hotel not found");
+        }
+        List<ImageAsset> relevantAssets = await GetAssets(null, null, warehouseHotelId);
+        if (relevantAssets == null)
+        {
+            throw new KeyNotFoundException("No assets found for this warehouse hotel");
+        }
+        foreach (var asset in relevantAssets)
+        {
+            await DeleteAsset(asset.AssetId);
+        }
+        foreach (var asset in updatedAssets)
+        {
+            await AddAsset(asset);
+        }
+    }
+
     public async Task<ImageAsset?> GetAsset(string assetId)
     {
         var dbAsset = await _assets.Find(asset => asset.AssetId == assetId).FirstOrDefaultAsync();
