@@ -1,4 +1,6 @@
-﻿using LagerhotellAPI.Services;
+﻿using FluentValidation;
+using LagerhotellAPI.Models.DomainModels.Validators;
+using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,7 @@ namespace Controllers;
 public class AssetsController : ControllerBase
 {
     private readonly AssetService _assetService;
+    private readonly ImageAssetValidator _imageAssetValidator = new();
 
     public AssetsController(AssetService assetService)
     {
@@ -22,6 +25,14 @@ public class AssetsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> AddAsset([FromBody] AddImageAssetRequest request)
     {
+        try
+        {
+            _imageAssetValidator.ValidateAndThrow(request.Asset);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex);
+        }
         try
         {
             string assetId = await _assetService.AddAsset(request.Asset);
@@ -52,6 +63,11 @@ public class AssetsController : ControllerBase
         {
             return NotFound();
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
     }
 
     [HttpPut]
@@ -59,6 +75,20 @@ public class AssetsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> ModifyAsset([FromBody] ModifyAssetRequest request)
     {
+        try
+        {
+            _imageAssetValidator.ValidateAndThrow(request.Asset);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+
         try
         {
             await _assetService.ModifyAsset(request.AssetId, request.Asset);
