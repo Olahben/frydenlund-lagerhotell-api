@@ -77,6 +77,10 @@ public class AssetService
         }
         foreach (var asset in updatedAssets)
         {
+            if (asset.WarehouseHotelId == null)
+            {
+                asset.WarehouseHotelId = warehouseHotelId;
+            }
             await AddAsset(asset);
         }
     }
