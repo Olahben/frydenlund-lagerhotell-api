@@ -1,5 +1,4 @@
-﻿using LagerhotellAPI.Models;
-using LagerhotellAPI.Services;
+﻿using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
