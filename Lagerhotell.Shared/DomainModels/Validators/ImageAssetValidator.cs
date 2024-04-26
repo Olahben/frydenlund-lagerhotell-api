@@ -6,7 +6,14 @@ public class ImageAssetValidator : AbstractValidator<ImageAsset>
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Navn er obligatorisk");
         RuleFor(x => x.Name).MaximumLength(500).WithMessage("Navn kan ikke være lengre enn 500 bokstaver");
-        RuleFor(x => x.Tags).NotNull().WithMessage("Tags er obligatorisk");
+        When(x => x.Tags != null, () =>
+        {
+            RuleFor(x => x.Tags)
+                .Must(list => list.Count <= 2000).WithMessage("Maks 2000 tags")
+                .ForEach(tag => tag
+                    .NotEmpty().WithMessage("Tag må ikke være tom")
+                    .MaximumLength(100).WithMessage("Tags kan ikke være lengre enn 100 bokstaver"));
+        });
         RuleFor(x => x.ImageBytes).NotNull().WithMessage("Bilde er obligatorisk");
         RuleFor(x => x.ImageBytes).Must(x => x.Length < 5000000).WithMessage("Bilde kan ikke være større enn 5MB");
 
