@@ -33,7 +33,7 @@ namespace LagerhotellAPI.Services
                     new Claim(ClaimTypes.MobilePhone, phoneNumber),
                     new Claim(ClaimTypes.Role, "Administrator")
                     },
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddMinutes(10000),
                     signingCredentials: signinCredentials
                 );
             }
@@ -47,7 +47,7 @@ namespace LagerhotellAPI.Services
                     new Claim(ClaimTypes.Sid, id),
                     new Claim(ClaimTypes.MobilePhone, phoneNumber)
                     },
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddMinutes(240),
                     signingCredentials: signinCredentials
                 );
             }
