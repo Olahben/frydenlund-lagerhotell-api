@@ -6,4 +6,5 @@ public struct StorageUnitSize
     public double? Volume { get; set; }
     public Money Price { get; set; }
     public bool Temperated { get; set; }
+    public string? InfoText { get; set; }
 }
