@@ -19,9 +19,9 @@ public class InfoTextService
     /// Gets all InfoTexts
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Models.DbModels.InfoText>> GetInfoTexts()
+    public async Task<List<Models.DbModels.InfoText>> GetInfoTexts(int? skip, int? take)
     {
-        return await _infoTexts.Find(infoText => true).ToListAsync();
+        return await _infoTexts.Find(infoText => true).Limit(take).Skip(skip).ToListAsync();
     }
 
     /// <summary>
