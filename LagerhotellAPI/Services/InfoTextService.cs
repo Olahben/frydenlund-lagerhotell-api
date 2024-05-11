@@ -19,9 +19,11 @@ public class InfoTextService
     /// Gets all InfoTexts
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Models.DbModels.InfoText>> GetInfoTexts(int? skip, int? take)
+    public async Task<List<InfoText>> GetInfoTexts(int? skip, int? take)
     {
-        return await _infoTexts.Find(infoText => true).Limit(take).Skip(skip).ToListAsync();
+        List<Models.DbModels.InfoText> infoTexts = await _infoTexts.Find(infoText => true).Limit(take).Skip(skip).ToListAsync();
+        List<InfoText> infoTextsDomainModels = infoTexts.ConvertAll(infoText => new InfoText() { InfoTextId = infoText.InfoTextId, StorageUnitSizeGroup = infoText.StorageUnitSizeGroup, Text = infoText.Text, Type = infoText.Type });
+        return infoTextsDomainModels;
     }
 
     /// <summary>
@@ -29,10 +31,12 @@ public class InfoTextService
     /// </summary>
     /// <param name="sizeGroup"></param>
     /// <returns></returns>
-    public async Task<Models.DbModels.InfoText?> GetInfoTextStorageUnit(StorageUnitSizesGroup? sizeGroup)
+    public async Task<InfoText?> GetInfoTextStorageUnit(StorageUnitSizesGroup? sizeGroup)
     {
         if (sizeGroup == null) { return null; }
-        return await _infoTexts.Find(infoText => infoText.StorageUnitSizeGroup == sizeGroup).FirstOrDefaultAsync();
+        Models.DbModels.InfoText infoTexts = await _infoTexts.Find(infoText => infoText.StorageUnitSizeGroup == sizeGroup).FirstOrDefaultAsync();
+        InfoText infoText = new() { InfoTextId = infoTexts.InfoTextId, StorageUnitSizeGroup = infoTexts.StorageUnitSizeGroup, Text = infoTexts.Text, Type = infoTexts.Type };
+        return infoText;
     }
 
     /// <summary>
