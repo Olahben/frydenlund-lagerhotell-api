@@ -22,7 +22,7 @@ public class InfoTextsController : ControllerBase
         return Ok(new GetInfoTexts() { InfoTexts = infoTexts });
     }
 
-    [HttpGet("{sizeGroup}")]
+    [HttpGet]
     [Route("storage-unit")]
     public async Task<IActionResult> GetInfoTextStorageUnit([FromRoute] StorageUnitSizesGroup? sizeGroup)
     {
