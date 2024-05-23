@@ -1,7 +1,6 @@
-﻿using FluentValidation;
+﻿global using Microsoft.AspNetCore.Authorization;
+using FluentValidation;
 using LagerhotellAPI.Models.DomainModels.Validators;
-using LagerhotellAPI.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers;
