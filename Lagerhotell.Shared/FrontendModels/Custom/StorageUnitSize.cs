@@ -7,4 +7,5 @@ public struct StorageUnitSize
     public Money Price { get; set; }
     public bool Temperated { get; set; }
     public string? InfoText { get; set; }
+    public List<string> storageUnitIds { get; set; }
 }
