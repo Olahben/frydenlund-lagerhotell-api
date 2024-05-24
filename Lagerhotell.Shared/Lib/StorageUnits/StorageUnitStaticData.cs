@@ -1,7 +1,7 @@
 ﻿namespace Lagerhotell.Shared.Lib;
 using System.Collections.Immutable;
 
-public class StorageUnitStaticData
+public static class StorageUnitStaticData
 {
     public enum StorageUnitInfoTexts
     {
