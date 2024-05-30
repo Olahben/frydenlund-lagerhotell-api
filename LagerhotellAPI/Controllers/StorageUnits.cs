@@ -1,6 +1,4 @@
-﻿using LagerhotellAPI.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers
 {
@@ -86,8 +84,8 @@ namespace LagerhotellAPI.Controllers
         }
 
         [HttpGet]
-        [Route("get-by-id")]
-        public async Task<IActionResult> GetStorageUnitById([FromQuery] string storageUnitId)
+        [Route("get-by-id/{storageUnitId}")]
+        public async Task<IActionResult> GetStorageUnitById([FromRoute] string storageUnitId)
         {
             try
             {
