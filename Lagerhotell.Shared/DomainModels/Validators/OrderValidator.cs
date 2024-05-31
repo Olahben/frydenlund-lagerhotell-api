@@ -7,6 +7,7 @@ public class OrderValidator : AbstractValidator<Order>
         RuleFor(x => x.OrderId).NotEmpty().WithMessage("OrdreId er obligatorisk");
         RuleFor(x => x.UserId).NotEmpty().WithMessage("BrukerId er obligatorisk");
         RuleFor(x => x.OrderPeriod.OrderDate).NotEmpty().WithMessage("Startdato er obligatorisk");
+        RuleFor(x => x.OrderPeriod.OrderDate).GreaterThan(x => DateTime.Today.AddDays(-1)).WithMessage("Du kan kun bestille fra den dag i dag");
         RuleFor(x => x.OrderPeriod.EndDate).NotEmpty().WithMessage("Sluttdato er obligatorisk");
         RuleFor(x => x.OrderPeriod.OrderDate).LessThan(x => x.OrderPeriod.EndDate).WithMessage("Start");
         RuleFor(x => x.StorageUnitId).NotEmpty().WithMessage("LagerenhetId er obligatorisk");
