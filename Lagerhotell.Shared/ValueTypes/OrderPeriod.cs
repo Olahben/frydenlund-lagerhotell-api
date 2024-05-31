@@ -2,7 +2,7 @@
 
 public class OrderPeriod
 {
-    public required DateTime OrderDate { get; set; }
+    public required DateTime? OrderDate { get; set; }
     public DateTime? EndDate { get; set; }
 
     public OrderPeriod(DateTime orderDate, DateTime? endDate = null)
