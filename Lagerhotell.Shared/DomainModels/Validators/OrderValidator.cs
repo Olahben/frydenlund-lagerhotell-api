@@ -12,6 +12,7 @@ public class OrderValidator : AbstractValidator<Order>
         RuleFor(x => x.StorageUnitId).NotEmpty().WithMessage("LagerenhetId er obligatorisk");
         RuleFor(x => x.Status).NotNull().WithMessage("Status er obligatorisk");
         RuleFor(x => x.CustomInstructions).MaximumLength(500).WithMessage("Tilleggsinformasjon kan ikke være lengre enn 500 bokstaver");
+        RuleFor(x => x.Insurance).NotNull().WithMessage("Forsikring er obligatorisk");
     }
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
     {
