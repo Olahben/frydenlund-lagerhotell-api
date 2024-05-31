@@ -1,10 +1,17 @@
-﻿namespace LagerhotellAPI.Models.ValueTypes;
+﻿using System.ComponentModel;
+
+namespace LagerhotellAPI.Models.ValueTypes;
 
 public enum OrderInsurance
 {
-    None, // No insurance
-    Low, // Up to 50 000KR
-    Medium, // Up to 100 000KR
-    High, // Up to 200 000KR
-    Full, // Up to 500 000KR
+    [Description("None")]
+    None,
+    [Description("50000KR")]
+    FiftyThousand,
+    [Description("100000KR")]
+    OneHundredThousand,
+    [Description("200000KR")]
+    TwoHundredThousand,
+    [Description("300000KR")]
+    ThreeHundredThousand,
 }
