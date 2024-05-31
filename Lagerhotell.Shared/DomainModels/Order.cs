@@ -27,6 +27,7 @@ public class Order
     public string UserId { get; set; }
     public string StorageUnitId { get; set; }
     public OrderStatus Status { get; set; }
+    public OrderInsurance Insurance { get; set; } = new OrderInsurance();
 
     public string? CustomInstructions { get; set; }
 
