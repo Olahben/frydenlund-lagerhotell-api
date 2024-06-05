@@ -18,7 +18,7 @@ public class StorageUnit
 
     public StorageUnit() { }
     public string? StorageUnitId { get; set; }
-    public Dimensions Dimensions { get; set; }
+    public Dimensions Dimensions { get; set; } = new();
 
     public bool Temperated { get; set; }
 
@@ -31,7 +31,7 @@ public class StorageUnit
 
     public string? WarehouseHotelId { get; set; }
 
-    public Coordinate Coordinate { get; set; }
+    public Coordinate Coordinate { get; set; } = new();
 
-    public Money PricePerMonth { get; set; }
+    public Money PricePerMonth { get; set; } = new();
 }
