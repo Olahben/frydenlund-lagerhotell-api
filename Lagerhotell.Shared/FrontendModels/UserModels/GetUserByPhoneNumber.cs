@@ -9,7 +9,8 @@ public class GetUserByPhoneNumber
     }
     public class GetUserByPhoneNumberResponse
     {
-        public string? Id { get; set; }
+        public User User { get; set; }
+        public string Id { get; set; }
     }
 
 }

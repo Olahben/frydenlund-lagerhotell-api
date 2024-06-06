@@ -1,7 +1,5 @@
 ﻿global using LagerhotellAPI.Models.DomainModels;
 global using LagerhotellAPI.Models.FrontendModels;
-using LagerhotellAPI.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -102,7 +100,7 @@ namespace Controllers
             var user = _userRepository.Get(phoneNumber);
             if (user != null)
             {
-                return Ok(new GetUserByPhoneNumber.GetUserByPhoneNumberResponse { Id = user.Id, });
+                return Ok(new GetUserByPhoneNumber.GetUserByPhoneNumberResponse { User = user, Id = user.Id });
             }
             return NotFound();
 
