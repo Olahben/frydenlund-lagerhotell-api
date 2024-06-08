@@ -1,5 +1,4 @@
 ﻿using LagerhotellAPI.Models;
-using LagerhotellAPI.Models.ValueTypes;
 using MongoDB.Driver;
 
 namespace LagerhotellAPI.Services
@@ -32,13 +31,13 @@ namespace LagerhotellAPI.Services
         /// <param name="password"></param>
         /// <param name="isAdministrator"></param>
         /// <returns>user object</returns>
-        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator)
+        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email)
         {
             string userId = Guid.NewGuid().ToString();
             Address userAddress = new(streetAddress, postalCode, city);
-            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator);
+            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email);
             _users.InsertOne(user);
-            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator);
+            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email);
             return domainUser;
 
         }
@@ -55,7 +54,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
         }
 
         /// <summary>
@@ -100,7 +99,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator);
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
         }
 
         /// <summary>
@@ -127,13 +126,13 @@ namespace LagerhotellAPI.Services
         /// <param name="city"></param>
         /// <param name="isAdministrator"></param>
         /// <exception cref="KeyNotFoundException"></exception>
-        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator)
+        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator, string email)
         {
             Models.DbModels.User oldDbUser = GetByPhoneDbModel(phoneNumber);
             if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator);
+                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email);
                 var filter = Builders<Models.DbModels.User>.Filter.Eq(user => user.UserId, oldDbUser.UserId);
                 var options = new ReplaceOptions { IsUpsert = false };
                 _users.ReplaceOne(filter, updatedUserDb, options);

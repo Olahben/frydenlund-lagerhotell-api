@@ -1,12 +1,13 @@
 ﻿namespace LagerhotellAPI.Models.DomainModels;
 public class User
 {
-    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email)
     {
         Id = userId;
         FirstName = firstName;
         LastName = lastName;
         PhoneNumber = phoneNumber;
+        Email = email;
         BirthDate = birthDate;
         Address = address;
         Password = password;
@@ -23,6 +24,7 @@ public class User
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
+    public string Email { get; set; }
     public string BirthDate { get; set; }
 
     public Address Address { get; set; }

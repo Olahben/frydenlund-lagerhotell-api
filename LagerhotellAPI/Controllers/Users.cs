@@ -55,7 +55,8 @@ namespace Controllers
              request.PostalCode,
              request.City,
              request.Password,
-             request.IsAdministrator);
+             request.IsAdministrator,
+             request.Email);
 
             Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, request.IsAdministrator);
 
@@ -89,7 +90,7 @@ namespace Controllers
             {
                 return NotFound();
             }
-            return Ok(_getuserResponse.GetUserResponseFunc(user.Id, user.FirstName, user.LastName, user.PhoneNumber, user.BirthDate, user.Address.StreetAddress, user.Address.PostalCode, user.Address.City, user.Password, user.IsAdministrator));
+            return Ok(new GetUser.GetUserResponse() { User = user });
         }
 
         [Authorize]
@@ -113,7 +114,7 @@ namespace Controllers
         {
             try
             {
-                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator);
+                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator, request.Email);
                 return Ok();
             }
             catch (Exception ex)
