@@ -4,6 +4,7 @@ public class OrderPeriod
 {
     public required DateTime? OrderDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public DateTime TimeCreated { get; set; } = DateTime.Now;
 
     public OrderPeriod(DateTime orderDate, DateTime? endDate = null)
     {
