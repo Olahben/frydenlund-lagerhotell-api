@@ -21,7 +21,18 @@ namespace LagerhotellAPI.Services
         public async Task<string> AddOrder(Order order)
         {
             string orderId = Guid.NewGuid().ToString();
-            LagerhotellAPI.Models.DbModels.Order dbOrder = new(orderId, order.UserId, order.OrderPeriod, order.StorageUnitId, order.Status, order.CustomInstructions);
+            // Id is set automatically by mongoDB
+            LagerhotellAPI.Models.DbModels.Order dbOrder = new()
+            {
+                OrderId = orderId,
+                OrderPeriod = order.OrderPeriod,
+                UserId = order.UserId,
+                StorageUnitId = order.StorageUnitId,
+                Status = order.Status,
+                CustomInstructions = order.CustomInstructions,
+                Insurance = order.Insurance
+
+            };
             await _orders.InsertOneAsync(dbOrder);
             return orderId;
         }
