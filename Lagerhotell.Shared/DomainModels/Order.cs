@@ -22,7 +22,7 @@ public class Order
     }
 
     public Order() { }
-    public string OrderId { get; set; }
+    public string? OrderId { get; set; }
     public OrderPeriod OrderPeriod { get; set; }
     public string UserId { get; set; }
     public string StorageUnitId { get; set; }
