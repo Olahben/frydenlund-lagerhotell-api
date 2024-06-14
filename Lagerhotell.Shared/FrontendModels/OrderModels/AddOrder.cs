@@ -6,9 +6,9 @@ public class AddOrderRequest
 }
 public class AddOrderResponse
 {
-    public AddOrderResponse(string id)
+    public AddOrderResponse(string orderId)
     {
-        OrderId = id;
+        OrderId = orderId;
     }
     public string OrderId { get; set; }
 
