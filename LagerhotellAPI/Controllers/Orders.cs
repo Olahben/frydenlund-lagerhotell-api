@@ -1,4 +1,4 @@
-﻿using LagerhotellAPI.Services;
+﻿using LagerhotellAPI.Models.DomainModels.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -9,10 +9,12 @@ namespace Controllers
     public class OrdersController : ControllerBase
     {
         private readonly OrderService _orderService;
+        private OrderValidator _orderValidator;
 
         public OrdersController(OrderService orderService)
         {
             _orderService = orderService;
+            _orderValidator = new OrderValidator();
         }
 
         /// <summary>
@@ -24,8 +26,17 @@ namespace Controllers
         [Route("add")]
         public async Task<IActionResult> AddOrder([FromBody] AddOrderRequest request)
         {
-            string orderId = await _orderService.AddOrder(request.Order);
-            return Ok(new AddOrderResponse(orderId));
+            var validationResult = _orderValidator.Validate(request.Order);
+            if (validationResult.IsValid)
+            {
+                string orderId = await _orderService.AddOrder(request.Order);
+                return Ok(new AddOrderResponse(orderId));
+            }
+            else
+            {
+                Console.WriteLine($"The request order did not meet the validators requirements, {validationResult.Errors}");
+                return BadRequest($"The request order did not meet the validators requirements, {validationResult.Errors}");
+            }
         }
 
         /// <summary>
