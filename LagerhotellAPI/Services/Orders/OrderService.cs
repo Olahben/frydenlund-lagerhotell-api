@@ -87,27 +87,35 @@ namespace LagerhotellAPI.Services
         }
 
         /// <summary>
-        /// Gets all orders in the database
+        /// Gets all orders from the database optionally filtered by userId and orderStatus.
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <returns>A list of all the orders</returns>
-        public async Task<List<LagerhotellAPI.Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take)
+        /// <param name="userId">The user ID to filter orders by (optional).</param>
+        /// <param name="skip">Number of records to skip (optional).</param>
+        /// <param name="take">Number of records to take (optional).</param>
+        /// <param name="orderStatus">The order status to filter by (optional).</param>
+        /// <returns>A list of orders filtered by the specified criteria.</returns>
+        public async Task<List<Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take, OrderStatus? orderStatus)
         {
-            var filter = Builders<LagerhotellAPI.Models.DbModels.Order>.Filter.Empty; // Default filter
+            var filterBuilder = Builders<Models.DbModels.Order>.Filter;
+            var filter = filterBuilder.Empty; // Default filter
 
             if (userId != null)
             {
-                filter = Builders<LagerhotellAPI.Models.DbModels.Order>.Filter.Eq(order => order.UserId, userId);
+                filter = filterBuilder.Eq(order => order.UserId, userId);
             }
 
-            List<LagerhotellAPI.Models.DbModels.Order> dbOrders = await _orders.Find(filter).Skip(skip).Limit(take).ToListAsync();
-
-            List<LagerhotellAPI.Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
+            if (orderStatus != null)
             {
-                return new LagerhotellAPI.Models.DomainModels.Order(dbOrder.Id, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions);
-            });
+                filter &= filterBuilder.Eq(order => order.Status, orderStatus);
+            }
+
+            List<Models.DbModels.Order> dbOrders = await _orders.Find(filter)
+                                                       .Skip(skip ?? 0)
+                                                       .Limit(take ?? int.MaxValue)
+                                                       .ToListAsync();
+
+            List<Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
+                new Models.DomainModels.Order(dbOrder.Id, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions));
 
             return domainOrders;
         }

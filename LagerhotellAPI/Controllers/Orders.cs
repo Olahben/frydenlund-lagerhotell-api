@@ -92,12 +92,12 @@ namespace Controllers
         /// <returns>A list of all orders</returns>
         // GetAllOrders
         [HttpGet]
-        public IActionResult GetAllOrders([FromQuery] string? userId, int? skip, int? take)
+        public IActionResult GetAllOrders([FromQuery] string? userId, int? skip, int? take, OrderStatus? orderStatus)
         {
             // rework logic
             try
             {
-                var orders = _orderService.GetAllOrders(userId, skip, take);
+                var orders = _orderService.GetAllOrders(userId, skip, take, orderStatus);
                 return Ok(orders);
             }
             catch
