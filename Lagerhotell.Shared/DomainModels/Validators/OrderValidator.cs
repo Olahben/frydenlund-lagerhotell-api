@@ -6,6 +6,7 @@ public class OrderValidator : AbstractValidator<Order>
     {
         RuleFor(x => x.UserId).NotEmpty().WithMessage("BrukerId er obligatorisk");
         RuleFor(x => x.OrderPeriod.OrderDate).NotEmpty().WithMessage("Startdato er obligatorisk");
+        RuleFor(x => x.OrderPeriod.OrderDate).LessThan(DateTime.Today.AddMonths(1)).WithMessage("Du kan kun bestille en måned frem i tid");
         RuleFor(x => x.OrderPeriod.OrderDate).GreaterThan(x => DateTime.Today.AddDays(-1)).WithMessage("Du kan kun bestille fra den dag i dag");
         RuleFor(x => x.Status).NotNull().WithMessage("Status er obligatorisk");
         RuleFor(x => x.CustomInstructions).MaximumLength(500).WithMessage("Tilleggsinformasjon kan ikke være lengre enn 500 bokstaver");
