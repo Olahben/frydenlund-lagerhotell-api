@@ -1,5 +1,4 @@
 using LagerhotellAPI.Models;
-using LagerhotellAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -20,6 +19,8 @@ builder.Services.AddScoped<StorageUnitService>();
 builder.Services.AddScoped<WarehouseHotelService>();
 builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<AssetService>();
+builder.Services.AddHostedService<PendingOrderHandler>();
+builder.Services.AddLogging(configure => configure.AddConsole());
 
 // Configure CORS policy
 builder.Services.AddCors(options =>
