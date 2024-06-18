@@ -1,37 +1,3 @@
 ﻿namespace LagerhotellAPI.Models.DomainModels;
 
-/*public class Order
-{
-    public Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null, OrderInsurance orderInsurance)
-    {
-        OrderId = orderId;
-        OrderPeriod = orderPeriod;
-        UserId = userId;
-        StorageUnitId = storageUnitId;
-        Status = status;
-        CustomInstructions = customInstructions;
-        Insurance = orderInsurance;
-    }
-
-    public Order(OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null)
-    {
-        OrderPeriod = orderPeriod;
-        UserId = userId;
-        StorageUnitId = storageUnitId;
-        Status = status;
-        CustomInstructions = customInstructions;
-    }
-
-    public Order() { }
-    public string? OrderId { get; set; }
-    public OrderPeriod OrderPeriod { get; set; }
-    public string UserId { get; set; }
-    public string StorageUnitId { get; set; }
-    public OrderStatus Status { get; set; }
-    public OrderInsurance Insurance { get; set; } = new OrderInsurance();
-
-    public string? CustomInstructions { get; set; }
-
-}*/
-
-public record Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, OrderInsurance insurance, string? customInstructions = null);
+public record Order(string orderId, string userId, string storageUnitId, OrderPeriod orderPeriod, OrderStatus status, OrderInsurance insurance, string? customInstructions = null);
