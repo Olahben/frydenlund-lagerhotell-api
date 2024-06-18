@@ -1,8 +1,8 @@
 ﻿namespace LagerhotellAPI.Models.DomainModels;
 
-public class Order
+/*public class Order
 {
-    public Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null)
+    public Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null, OrderInsurance orderInsurance)
     {
         OrderId = orderId;
         OrderPeriod = orderPeriod;
@@ -10,6 +10,7 @@ public class Order
         StorageUnitId = storageUnitId;
         Status = status;
         CustomInstructions = customInstructions;
+        Insurance = orderInsurance;
     }
 
     public Order(OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, string? customInstructions = null)
@@ -31,4 +32,6 @@ public class Order
 
     public string? CustomInstructions { get; set; }
 
-}
+}*/
+
+public record Order(string orderId, OrderPeriod orderPeriod, string userId, string storageUnitId, OrderStatus status, OrderInsurance insurance, string? customInstructions = null);
