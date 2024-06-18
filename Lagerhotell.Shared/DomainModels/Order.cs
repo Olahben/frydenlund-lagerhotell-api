@@ -1,3 +1,3 @@
 ﻿namespace LagerhotellAPI.Models.DomainModels;
 
-public record Order(string orderId, string userId, string storageUnitId, OrderPeriod orderPeriod, OrderStatus status, OrderInsurance insurance, string? customInstructions = null);
+public record Order(string OrderId, string UserId, string StorageUnitId, OrderPeriod OrderPeriod, OrderStatus Status, OrderInsurance Insurance, string? CustomInstructions = null);
