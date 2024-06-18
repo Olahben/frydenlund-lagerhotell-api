@@ -53,9 +53,10 @@ namespace Controllers
                 var order = _orderService.DeleteOrder(orderId);
                 return Ok(new DeleteOrderResponse { Success = true });
             }
-            catch
+            catch (Exception e)
             {
-                return Conflict();
+                Console.WriteLine($"Error in GetAllOrders: {e}");
+                return StatusCode(500);
             }
         }
 
@@ -77,9 +78,10 @@ namespace Controllers
                 }
                 return Ok(order);
             }
-            catch
+            catch (Exception e)
             {
-                return Conflict();
+                Console.WriteLine($"Error in GetOrderById: {e}");
+                return StatusCode(500);
             }
         }
 
@@ -100,9 +102,10 @@ namespace Controllers
                 var orders = _orderService.GetAllOrders(userId, skip, take, orderStatus);
                 return Ok(orders);
             }
-            catch
+            catch (Exception e)
             {
-                return Conflict();
+                Console.WriteLine($"Error in GetAllOrders: {e}");
+                return StatusCode(500);
             }
         }
 
