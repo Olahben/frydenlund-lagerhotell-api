@@ -5,40 +5,37 @@
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<PendingOrderHandler> _logger;
         private Timer _timer;
+        private OrderService _orderService;
 
-        public PendingOrderHandler(IServiceScopeFactory serviceScopeFactory, ILogger<PendingOrderHandler> logger)
+        public PendingOrderHandler(IServiceScopeFactory serviceScopeFactory, ILogger<PendingOrderHandler> logger, OrderService orderService)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
+            _orderService = orderService;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("PendingOrderHandler is starting.");
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
+            _timer = new Timer(RetrieveActivePendingOrders, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 
-        private async void DoWork(object state)
+        private async void RetrieveActivePendingOrders(object state)
         {
-            _logger.LogInformation("PendingOrderHandler is executing DoWork.");
+            _logger.LogInformation("PendingOrderHandler is executing retreiving all pending active orders.");
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            List<Order> pendingOrders = await _orderService.GetAllOrders(userId: null, skip: 0, take: 0, orderStatus: OrderStatus.Pending);
+
+            if (pendingOrders.Count == 0)
             {
-                var orderService = scope.ServiceProvider.GetRequiredService<OrderService>();
-
-                List<Order> pendingOrders = await orderService.GetAllOrders(userId: null, skip: 0, take: 0, orderStatus: OrderStatus.Pending);
-
-                if (pendingOrders.Count == 0)
+                _logger.LogInformation("No pending orders found.");
+            }
+            else
+            {
+                foreach (var order in pendingOrders)
                 {
-                    _logger.LogInformation("No pending orders found.");
-                }
-                else
-                {
-                    foreach (var order in pendingOrders)
-                    {
-                        _logger.LogInformation($"Processing order ID: {order.OrderId}, Status: {order.Status}");
-                    }
+                    _logger.LogInformation($"Processing order ID: {order.OrderId}, Status: {order.Status}");
                 }
             }
         }
