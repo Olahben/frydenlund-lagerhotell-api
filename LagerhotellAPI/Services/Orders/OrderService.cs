@@ -5,12 +5,12 @@ namespace LagerhotellAPI.Services
 {
     public class OrderService
     {
-        private readonly IMongoCollection<LagerhotellAPI.Models.DbModels.Order> _orders;
+        private readonly IMongoCollection<Models.DbModels.OrderDocument> _orders;
         public OrderService(MongoDbSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
-            _orders = database.GetCollection<LagerhotellAPI.Models.DbModels.Order>("Orders");
+            _orders = database.GetCollection<Models.DbModels.OrderDocument>("Orders");
         }
 
         /// <summary>
@@ -22,17 +22,7 @@ namespace LagerhotellAPI.Services
         {
             string orderId = Guid.NewGuid().ToString();
             // Id is set automatically by mongoDB
-            LagerhotellAPI.Models.DbModels.Order dbOrder = new()
-            {
-                OrderId = orderId,
-                OrderPeriod = order.OrderPeriod,
-                UserId = order.UserId,
-                StorageUnitId = order.StorageUnitId,
-                Status = order.Status,
-                CustomInstructions = order.CustomInstructions,
-                Insurance = order.Insurance
-
-            };
+            LagerhotellAPI.Models.DbModels.OrderDocument dbOrder = new(orderId, order.UserId, order.StorageUnitId, order.OrderPeriod, order.Status, order.Insurance, order.CustomInstructions);
             await _orders.InsertOneAsync(dbOrder);
             return orderId;
         }
@@ -55,7 +45,7 @@ namespace LagerhotellAPI.Services
         /// <returns></returns>
         public async Task ModifyOrder(string orderId, Order updatedOrder)
         {
-            LagerhotellAPI.Models.DbModels.Order updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.OrderPeriod, updatedOrder.StorageUnitId, updatedOrder.Status, updatedOrder.CustomInstructions);
+            LagerhotellAPI.Models.DbModels.OrderDocument updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.StorageUnitId, updatedOrder.OrderPeriod, updatedOrder.Status, updatedOrder.Insurance, updatedOrder.CustomInstructions);
             await _orders.ReplaceOneAsync(order => order.OrderId == orderId, updatedDbOrder);
         }
 
@@ -66,12 +56,12 @@ namespace LagerhotellAPI.Services
         /// <returns>order</returns>
         public async Task<Order?> GetOrder(string orderId)
         {
-            var dbOrder = await _orders.Find(order => order.Id == orderId).FirstOrDefaultAsync();
+            var dbOrder = await _orders.Find(order => order.OrderId == orderId).FirstOrDefaultAsync();
             if (dbOrder == null)
             {
                 return null;
             }
-            LagerhotellAPI.Models.DomainModels.Order domainOrder = new(dbOrder.OrderId, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions);
+            LagerhotellAPI.Models.DomainModels.Order domainOrder = new(dbOrder.OrderId, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.OrderPeriod, dbOrder.Status, dbOrder.Insurance, dbOrder.CustomInstructions);
             return domainOrder;
         }
 
@@ -80,7 +70,7 @@ namespace LagerhotellAPI.Services
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns>database model of order</returns>
-        public async Task<Models.DbModels.Order> GetOrderDbModel(string orderId)
+        public async Task<Models.DbModels.OrderDocument> GetOrderDbModel(string orderId)
         {
             var dbOrder = await _orders.Find(order => order.Id == orderId).FirstOrDefaultAsync();
             return dbOrder;
@@ -96,7 +86,7 @@ namespace LagerhotellAPI.Services
         /// <returns>A list of orders filtered by the specified criteria.</returns>
         public async Task<List<Models.DomainModels.Order>> GetAllOrders(string? userId, int? skip, int? take, OrderStatus? orderStatus)
         {
-            var filterBuilder = Builders<Models.DbModels.Order>.Filter;
+            var filterBuilder = Builders<Models.DbModels.OrderDocument>.Filter;
             var filter = filterBuilder.Empty; // Default filter
 
             if (userId != null)
@@ -109,13 +99,13 @@ namespace LagerhotellAPI.Services
                 filter &= filterBuilder.Eq(order => order.Status, orderStatus);
             }
 
-            List<Models.DbModels.Order> dbOrders = await _orders.Find(filter)
+            List<Models.DbModels.OrderDocument> dbOrders = await _orders.Find(filter)
                                                        .Skip(skip ?? 0)
                                                        .Limit(take ?? int.MaxValue)
                                                        .ToListAsync();
 
             List<Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
-                new Models.DomainModels.Order(dbOrder.Id, dbOrder.OrderPeriod, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.Status, dbOrder.CustomInstructions));
+                new Models.DomainModels.Order(dbOrder.Id, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.OrderPeriod, dbOrder.Status, dbOrder.Insurance, dbOrder.CustomInstructions));
 
             return domainOrders;
         }
