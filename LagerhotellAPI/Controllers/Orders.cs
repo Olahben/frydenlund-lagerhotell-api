@@ -67,11 +67,11 @@ namespace Controllers
         /// <returns>Order domain object</returns>
         // GetOrderById
         [HttpGet("{orderId}")]
-        public IActionResult GetOrderById([FromRoute] string orderId)
+        public async Task<IActionResult> GetOrderById([FromRoute] string orderId)
         {
             try
             {
-                var order = _orderService.GetOrder(orderId);
+                var order = await _orderService.GetOrder(orderId);
                 if (order == null)
                 {
                     return NotFound();
