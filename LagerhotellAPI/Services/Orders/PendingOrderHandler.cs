@@ -36,6 +36,7 @@
                 foreach (var order in pendingOrders)
                 {
                     _logger.LogInformation($"Processing order ID: {order.OrderId}, Status: {order.Status}");
+                    // Send "e-faktura" on email to the user
                 }
             }
         }
