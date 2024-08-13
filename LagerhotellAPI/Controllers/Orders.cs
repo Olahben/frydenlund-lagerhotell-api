@@ -95,12 +95,12 @@ namespace Controllers
         // GetAllOrders
         [HttpGet]
         [Authorize]
-        public IActionResult GetAllOrders([FromQuery] string? userId, int? skip, int? take, OrderStatus? orderStatus)
+        public async Task<IActionResult> GetAllOrders([FromQuery] string? userId, int? skip, int? take, OrderStatus? orderStatus)
         {
             // rework logic
             try
             {
-                var orders = _orderService.GetAllOrders(userId, skip, take, orderStatus);
+                var orders = await _orderService.GetAllOrders(userId, skip, take, orderStatus);
                 return Ok(orders);
             }
             catch (Exception e)
