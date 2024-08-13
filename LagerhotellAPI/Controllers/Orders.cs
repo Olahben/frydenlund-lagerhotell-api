@@ -94,6 +94,7 @@ namespace Controllers
         /// <returns>A list of all orders</returns>
         // GetAllOrders
         [HttpGet]
+        [Authorize]
         public IActionResult GetAllOrders([FromQuery] string? userId, int? skip, int? take, OrderStatus? orderStatus)
         {
             // rework logic
