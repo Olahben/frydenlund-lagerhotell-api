@@ -99,8 +99,9 @@ namespace LagerhotellAPI.Controllers
                     return NotFound("Storage unit not found.");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine($"An error occurred in GetStorageUnitById: {e}");
                 return StatusCode(500);
             }
         }
