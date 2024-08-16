@@ -6,6 +6,8 @@ public enum OrderStatus
     Confirmed,
     Cancelled,
     Completed,
+    Active,
+    PaymentDue,
     Deleted,
     NotCreated
 }
