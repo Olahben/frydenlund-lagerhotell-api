@@ -2,7 +2,4 @@
 
 public record CancelOrderRequest(string OrderId);
 
-public class CancelOrderResponse
-{
-    // empty
-}
+public record CancelOrderResponse(OrderPeriod OrderPeriod);
