@@ -6,6 +6,8 @@ public class OrderPeriod
     public DateTime? EndDate { get; set; }
     public DateTime TimeCreated { get; set; } = DateTime.Now;
 
+    public DateTime NextPaymentDate { get; private set; }
+
     public OrderPeriod(DateTime orderDate, DateTime? endDate = null)
     {
         if (endDate.HasValue && endDate < orderDate)
@@ -15,6 +17,7 @@ public class OrderPeriod
 
         OrderDate = orderDate;
         EndDate = endDate;
+        NextPaymentDate = orderDate;
     }
 
     public OrderPeriod() { }
