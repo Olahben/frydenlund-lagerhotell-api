@@ -110,6 +110,33 @@ namespace Controllers
             }
         }
 
+        [Authorize]
+        [HttpPut]
+        [Route("cancel")]
+        public async Task<IActionResult> CancelOrder([FromBody] CancelOrderRequest request)
+        {
+            try
+            {
+                var order = await _orderService.GetOrder(request.OrderId);
+                if (order == null)
+                {
+                    return NotFound();
+                }
+                if (order.Status == OrderStatus.Cancelled)
+                {
+                    return Conflict("Order is already cancelled");
+                }
+                await _orderService.CancelOrder(request.OrderId);
+                var newOrder = await _orderService.GetOrder(request.OrderId);
+                return Ok(new CancelOrderResponse(newOrder.OrderPeriod));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error in CancelOrder: {e}");
+                return StatusCode(500);
+            }
+        }
+
         // GetAllOrdersByUser
         /* [HttpGet("byuser")]
         public IActionResult GetAllOrdersByUser([FromQuery] User user)

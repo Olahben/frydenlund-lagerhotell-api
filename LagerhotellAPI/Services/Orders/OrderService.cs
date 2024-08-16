@@ -105,9 +105,16 @@ namespace LagerhotellAPI.Services
                                                        .ToListAsync();
 
             List<Models.DomainModels.Order> domainOrders = dbOrders.ConvertAll(dbOrder =>
-                new Models.DomainModels.Order(dbOrder.Id, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.OrderPeriod, dbOrder.Status, dbOrder.Insurance, dbOrder.CustomInstructions));
+                new Models.DomainModels.Order(dbOrder.OrderId, dbOrder.UserId, dbOrder.StorageUnitId, dbOrder.OrderPeriod, dbOrder.Status, dbOrder.Insurance, dbOrder.CustomInstructions));
 
             return domainOrders;
+        }
+
+        public async Task CancelOrder(string orderId)
+        {
+            var filter = Builders<Models.DbModels.OrderDocument>.Filter.Eq(order => order.OrderId, orderId);
+            var update = Builders<Models.DbModels.OrderDocument>.Update.Set(order => order.Status, OrderStatus.Cancelled);
+            await _orders.UpdateOneAsync(filter, update);
         }
     }
 }
