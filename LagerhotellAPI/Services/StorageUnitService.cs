@@ -132,6 +132,10 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException();
             }
+            if (storageUnit.Occupied)
+            {
+                throw new InvalidOperationException("Storage unit is already occupied.");
+            }
             var updatedStorageUnit = Builders<LagerhotellAPI.Models.DbModels.StorageUnit>.Update.Set(unit => unit.Occupied, true).Set(unit => unit.UserId, userId);
             _storageUnits.UpdateOne(unit => unit.StorageUnitId == id, updatedStorageUnit);
         }
