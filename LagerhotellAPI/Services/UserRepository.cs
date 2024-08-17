@@ -142,5 +142,15 @@ namespace LagerhotellAPI.Services
                 throw new KeyNotFoundException("Brukeren som skulle oppdateres ble ikke funnet");
             }
         }
+
+        public async Task<List<User>> GetAllUsers(int? skip, int? take)
+        {
+            var dbUsers = await _users.Find(_ => true).Limit(take).Skip(skip).ToListAsync();
+            List<User> domainUsers = dbUsers.ConvertAll(dbUser =>
+            {
+                return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
+            });
+            return domainUsers;
+        }
     }
 }

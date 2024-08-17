@@ -124,5 +124,14 @@ namespace Controllers
             }
 
         }
+
+        [Authorize(Roles = "Administrator")]
+        [Route("get-all/{skip}/{take}")]
+        [HttpGet]
+        public IActionResult GetAllUsers(int? skip, int? take)
+        {
+            var users = _userRepository.GetAllUsers(skip, take);
+            return Ok(users);
+        }
     }
 }
