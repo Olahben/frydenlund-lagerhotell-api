@@ -124,5 +124,16 @@ namespace LagerhotellAPI.Services
             });
             return domainStorageUnits;
         }
+
+        public async Task OccupyStorageUnit(string id, string userId)
+        {
+            var storageUnit = await GetStorageUnitById(id);
+            if (storageUnit == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            var updatedStorageUnit = Builders<LagerhotellAPI.Models.DbModels.StorageUnit>.Update.Set(unit => unit.Occupied, true).Set(unit => unit.UserId, userId);
+            _storageUnits.UpdateOne(unit => unit.StorageUnitId == id, updatedStorageUnit);
+        }
     }
 }

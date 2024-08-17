@@ -139,5 +139,29 @@ namespace LagerhotellAPI.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpPut]
+        [Authorize]
+        [Route("occupy")]
+        public async Task<IActionResult> OccupyStorageUnit([FromBody] OccupyStorageUnitRequest request)
+        {
+            try
+            {
+                await _storageUnitService.OccupyStorageUnit(request.StorageUnitId, request.UserId);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Storage unit not found.");
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict("Storage unit is already occupied.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }
