@@ -6,7 +6,8 @@ public class OrderPeriod
     public DateTime? EndDate { get; set; }
     public DateTime TimeCreated { get; set; } = DateTime.Now;
 
-    public DateTime NextPaymentDate { get; private set; }
+    // Is set when order is created
+    public DateTime NextPaymentDate { get; set; }
 
     public OrderPeriod(DateTime orderDate, DateTime? endDate = null)
     {
@@ -17,7 +18,6 @@ public class OrderPeriod
 
         OrderDate = orderDate;
         EndDate = endDate;
-        NextPaymentDate = orderDate;
     }
 
     public OrderPeriod() { }
