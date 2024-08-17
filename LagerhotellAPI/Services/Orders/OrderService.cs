@@ -22,6 +22,7 @@ namespace LagerhotellAPI.Services
         {
             string orderId = Guid.NewGuid().ToString();
             // Id is set automatically by mongoDB
+            order.OrderPeriod.NextPaymentDate = order.OrderPeriod.OrderDate ?? DateTime.MinValue;
             LagerhotellAPI.Models.DbModels.OrderDocument dbOrder = new(orderId, order.UserId, order.StorageUnitId, order.OrderPeriod, order.Status, order.Insurance, order.CustomInstructions);
             await _orders.InsertOneAsync(dbOrder);
             return orderId;
