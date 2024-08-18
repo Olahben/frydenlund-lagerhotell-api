@@ -152,5 +152,18 @@ namespace LagerhotellAPI.Services
             });
             return domainUsers;
         }
+
+        public async Task DeleteUser(string id)
+        {
+            var user = GetUserById(id);
+            if (user != null)
+            {
+                await _users.DeleteOneAsync(user => user.UserId == id);
+            }
+            else
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+        }
     }
 }

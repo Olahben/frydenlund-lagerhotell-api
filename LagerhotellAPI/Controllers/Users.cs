@@ -141,5 +141,26 @@ namespace Controllers
                 return StatusCode(500);
             }
         }
+
+        [Authorize]
+        [Route("delete-user/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUserById(string id)
+        {
+            try
+            {
+                await _userRepository.DeleteUser(id);
+                return Ok();
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500);
+            }
+        }
     }
 }
