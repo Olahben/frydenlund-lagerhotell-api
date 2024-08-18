@@ -130,6 +130,14 @@ namespace Controllers
                 var newOrder = await _orderService.GetOrder(request.OrderId);
                 return Ok(new CancelOrderResponse(newOrder.OrderPeriod));
             }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict();
+            }
             catch (Exception e)
             {
                 Console.WriteLine($"Error in CancelOrder: {e}");
