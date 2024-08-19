@@ -113,6 +113,7 @@ namespace LagerhotellAPI.Services
 
         public async Task CancelOrder(string orderId)
         {
+            // The storage unit's status is handled in "CanceledOrderHandler"
             var filter = Builders<Models.DbModels.OrderDocument>.Filter.Eq(order => order.OrderId, orderId);
             var update = Builders<Models.DbModels.OrderDocument>.Update.Set(order => order.Status, OrderStatus.Cancelled);
             await _orders.UpdateOneAsync(filter, update);
