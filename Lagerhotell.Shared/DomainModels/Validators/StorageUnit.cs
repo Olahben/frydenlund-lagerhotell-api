@@ -14,7 +14,6 @@ public class StorageUnitValidator : AbstractValidator<DomainModels.StorageUnit>
         RuleFor(x => x.Name).NotEmpty().WithMessage("Navn er obligatorisk");
         RuleFor(x => x.Name).MaximumLength(250).WithMessage("Navn kan ikke være lengre enn 250 bokstaver");
         RuleFor(x => x.Occupied).NotNull().WithMessage("Opptatt status er obligatorisk");
-        RuleFor(x => x.UserId).NotEmpty().WithMessage("BrukerId er obligatorisk");
         RuleFor(x => x.Coordinate).NotNull().WithMessage("Koordinater er obligatorisk");
         RuleFor(x => x.Coordinate.Longitude).Must(x => x >= -180 && x <= 180).WithMessage("Longitude må være mellom -180 og 180");
         RuleFor(x => x.Coordinate.Latitude).Must(x => x >= -90 && x <= 90).WithMessage("Latitude må være mellom -90 og 90");
