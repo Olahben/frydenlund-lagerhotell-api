@@ -1,10 +1,6 @@
 ﻿namespace LagerhotellAPI.Models.FrontendModels;
 
-public class ModifyStorageUnitRequest
-{
-    public required StorageUnit StorageUnit { get; set; }
-}
-
+public record ModifyStorageUnitRequest(StorageUnit StorageUnit);
 public class ModifyStorageUnitResponse
 {
 
