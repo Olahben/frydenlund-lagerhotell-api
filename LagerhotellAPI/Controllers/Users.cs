@@ -35,6 +35,21 @@ namespace Controllers
             }
         }
 
+        [Route("check-email/{email}")]
+        [HttpGet]
+        public IActionResult CheckEmailExistence(string email)
+        {
+            var user = _userRepository.GetByEmail(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
+        }
+
         [Route("add-user")]
         [HttpPost]
         public IActionResult AddUser([FromBody] AddUserRequest request)
@@ -79,6 +94,40 @@ namespace Controllers
             }
             return NotFound();
         }
+
+        [Route("log-in-by-email")]
+        [HttpPost]
+        public IActionResult LoginByEmail([FromBody] LoginByEmailRequest request)
+        {
+            User? user = _userRepository.GetByEmail(request.Email);
+            if (user != null)
+            {
+                if (_userRepository.DoPasswordsMatch(request.Password, user.Password))
+                {
+                    Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, user.IsAdministrator);
+                    return Ok(new LoginByEmailResponse(jwt.Token));
+                }
+
+                return Unauthorized();
+            }
+            return NotFound();
+        }
+
+
+        [Route("get-user-by-email/{email}")]
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetUserByEmail(string email)
+        {
+            var user = _userRepository.GetByEmail(email);
+            if (user != null)
+            {
+                return Ok(new GetByEmailResponse(user));
+            }
+            return NotFound();
+        }
+
+
 
         [Authorize]
         [Route("get-user/{userId}")]

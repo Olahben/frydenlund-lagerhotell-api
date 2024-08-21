@@ -57,6 +57,16 @@ namespace LagerhotellAPI.Services
             return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
         }
 
+        public User? GetByEmail(string email)
+        {
+            var dbUser = _users.Find(User => User.Email == email).FirstOrDefault();
+            if (dbUser == null)
+            {
+                return null;
+            }
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
+        }
+
         /// <summary>
         /// Gets a user from the database with the given phone number
         /// </summary>
