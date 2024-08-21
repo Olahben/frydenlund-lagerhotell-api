@@ -12,3 +12,6 @@ public class Login
         public string? Token { get; set; }
     }
 }
+
+public record LoginByEmailRequest(string Email, string Password);
+public record LoginByEmailResponse(string Token);
