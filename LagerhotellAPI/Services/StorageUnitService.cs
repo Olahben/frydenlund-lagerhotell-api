@@ -57,7 +57,7 @@ namespace LagerhotellAPI.Services
             Models.DbModels.StorageUnit oldStorageUnit = await GetStorageUnitByIdDbModel(storageUnitId);
             if (oldStorageUnit != null)
             {
-                Models.DbModels.StorageUnit updatedDbStorageUnit = new(oldStorageUnit.Id, updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.StorageUnitId, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
+                Models.DbModels.StorageUnit updatedDbStorageUnit = new(oldStorageUnit.Id, updatedStorageUnit.StorageUnitId, updatedStorageUnit.Dimensions, updatedStorageUnit.Temperated, updatedStorageUnit.LockCode, updatedStorageUnit.Name, updatedStorageUnit.Occupied, updatedStorageUnit.WarehouseHotelId, updatedStorageUnit.UserId, updatedStorageUnit.Coordinate, updatedStorageUnit.PricePerMonth);
                 await _storageUnits.ReplaceOneAsync(unit => unit.StorageUnitId == storageUnitId, updatedDbStorageUnit);
             }
             else
