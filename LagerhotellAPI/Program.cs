@@ -20,6 +20,7 @@ builder.Services.AddScoped<WarehouseHotelService>();
 builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<AssetService>();
 builder.Services.AddHostedService<PendingOrderHandler>();
+builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddLogging(configure => configure.AddConsole());
 
 // Configure CORS policy
