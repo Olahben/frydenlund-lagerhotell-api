@@ -20,7 +20,7 @@ public class CompanyUsers : ControllerBase
         try
         {
             CompanyUser companyUser = await _companyUserService.GetCompanyUserAsync(id);
-            return Ok(companyUser);
+            return Ok(new GetCompanyUserResponse(companyUser));
         }
         catch (KeyNotFoundException)
         {
@@ -40,7 +40,7 @@ public class CompanyUsers : ControllerBase
         try
         {
             List<CompanyUser> companyUsers = await _companyUserService.GetCompanyUsersAsync(take, skip);
-            return Ok(companyUsers);
+            return Ok(new GetCompanyUsersResponse(companyUsers));
         }
         catch (Exception ex)
         {
@@ -51,11 +51,11 @@ public class CompanyUsers : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateCompanyUserAsync([FromBody] CompanyUser companyUser)
+    public async Task<IActionResult> CreateCompanyUserAsync([FromBody] CreateCompanyUserRequest request)
     {
         try
         {
-            CompanyUser createdCompanyUser = await _companyUserService.CreateCompanyUserAsync(companyUser);
+            CompanyUser createdCompanyUser = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
             return Ok(createdCompanyUser);
         }
         catch (SqlAlreadyFilledException ex)
@@ -73,11 +73,11 @@ public class CompanyUsers : ControllerBase
     [HttpPut]
     [Route("modify")]
     [Authorize]
-    public async Task<IActionResult> UpdateCompanyUserAsync([FromBody] CompanyUser companyUser)
+    public async Task<IActionResult> UpdateCompanyUserAsync([FromBody] UpdateCompanyUserRequest request)
     {
         try
         {
-            await _companyUserService.UpdateCompanyUserAsync(companyUser.CompanyUserId, companyUser);
+            await _companyUserService.UpdateCompanyUserAsync(request.CompanyUser.CompanyUserId, request.CompanyUser);
             return Ok("Company user was modified");
         }
         catch (KeyNotFoundException)
