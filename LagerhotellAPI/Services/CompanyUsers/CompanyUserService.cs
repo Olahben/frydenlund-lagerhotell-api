@@ -59,7 +59,12 @@ namespace LagerhotellAPI.Services
 
         public async Task UpdateCompanyUserAsync(string id, CompanyUser companyUser)
         {
-            if (await GetCompanyUserAsync(id) == null)
+            CompanyUser existingCompanyUser;
+            try
+            {
+                existingCompanyUser = await GetCompanyUserAsync(id);
+            }
+            catch (KeyNotFoundException)
             {
                 throw new KeyNotFoundException("Company user not found");
             }
@@ -69,7 +74,11 @@ namespace LagerhotellAPI.Services
 
         public async Task DeleteCompanyUserAsync(string id)
         {
-            if (await GetCompanyUserAsync(id) == null)
+            try
+            {
+                var companyUser = await GetCompanyUserAsync(id);
+            }
+            catch (KeyNotFoundException)
             {
                 throw new KeyNotFoundException("Company user not found");
             }
