@@ -43,13 +43,18 @@ namespace LagerhotellAPI.Services
 
         public async Task<CompanyUser> CreateCompanyUserAsync(CompanyUser companyUser)
         {
-            if (await GetCompanyUserAsync(companyUser.CompanyUserId) != null)
+            try
             {
+                await GetCompanyUserAsync(companyUser.CompanyUserId);
                 throw new SqlAlreadyFilledException("Company user already exists");
             }
-            var companyUserDocument = new CompanyUserDocument(companyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address);
-            await _companyUsers.InsertOneAsync(companyUserDocument);
-            return companyUser;
+            catch (KeyNotFoundException)
+            {
+                string id = Guid.NewGuid().ToString();
+                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address);
+                await _companyUsers.InsertOneAsync(companyUserDocument);
+                return companyUser;
+            }
         }
 
         public async Task UpdateCompanyUserAsync(string id, CompanyUser companyUser)
