@@ -16,12 +16,17 @@ namespace LagerhotellAPI.Services
             _companyUsers = database.GetCollection<CompanyUserDocument>("CompanyUsers");
         }
 
-        public async Task<CompanyUserDocument> GetCompanyUserAsync(string id)
+        public async Task<CompanyUser> GetCompanyUserAsync(string id)
         {
-            return await _companyUsers.Find(cu => cu.CompanyUserId == id).FirstOrDefaultAsync();
+            CompanyUserDocument dbCompanyUserDocument = await _companyUsers.Find(cu => cu.CompanyUserId == id).FirstOrDefaultAsync();
+            if (dbCompanyUserDocument == null)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+            return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address);
         }
 
-        public async Task<List<CompanyUserDocument>> GetCompanyUsersAsync(int? take, int? skip)
+        public async Task<List<CompanyUser>> GetCompanyUsersAsync(int? take, int? skip)
         {
             var query = _companyUsers.Find(cu => true);
             if (take.HasValue)
@@ -32,7 +37,8 @@ namespace LagerhotellAPI.Services
             {
                 query = query.Skip(skip.Value);
             }
-            return await query.ToListAsync();
+            List<CompanyUserDocument> dbCompanyUsersDocuments = await query.ToListAsync();
+            return dbCompanyUsersDocuments.Select(cu => new CompanyUser(cu.CompanyUserId, cu.FirstName, cu.LastName, cu.Name, cu.CompanyNumber, cu.Email, cu.PhoneNumber, cu.Address)).ToList();
         }
 
         public async Task<CompanyUser> CreateCompanyUserAsync(CompanyUser companyUser)
