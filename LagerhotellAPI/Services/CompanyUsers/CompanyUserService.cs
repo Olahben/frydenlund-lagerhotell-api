@@ -25,7 +25,7 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address);
+            return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
         }
 
         public async Task<List<CompanyUser>> GetCompanyUsersAsync(int? take, int? skip)
@@ -40,7 +40,7 @@ namespace LagerhotellAPI.Services
                 query = query.Skip(skip.Value);
             }
             List<CompanyUserDocument> dbCompanyUsersDocuments = await query.ToListAsync();
-            return dbCompanyUsersDocuments.Select(cu => new CompanyUser(cu.CompanyUserId, cu.FirstName, cu.LastName, cu.Name, cu.CompanyNumber, cu.Email, cu.PhoneNumber, cu.Address)).ToList();
+            return dbCompanyUsersDocuments.Select(cu => new CompanyUser(cu.CompanyUserId, cu.FirstName, cu.LastName, cu.Name, cu.CompanyNumber, cu.Email, cu.PhoneNumber, cu.Address, cu.Password)).ToList();
         }
 
         public async Task<CompanyUser> GetCompanyUserByPhoneNumber(string phoneNumber)
@@ -50,7 +50,7 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address);
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
             return companyUser;
         }
 
@@ -61,7 +61,7 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address);
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
             return companyUser;
         }
         public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
@@ -75,7 +75,7 @@ namespace LagerhotellAPI.Services
             catch (KeyNotFoundException)
             {
                 string id = Guid.NewGuid().ToString();
-                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address);
+                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password);
                 await _companyUsers.InsertOneAsync(companyUserDocument);
                 // User is not administrator so third parameter is false
                 string userAccessToken = _tokenService.CreateJwt(id, companyUser.PhoneNumber, false).Token;
@@ -94,7 +94,7 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            var companyUserDocument = new CompanyUserDocument(companyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address);
+            var companyUserDocument = new CompanyUserDocument(companyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password);
             await _companyUsers.ReplaceOneAsync(cu => cu.CompanyUserId == id, companyUserDocument);
         }
 
