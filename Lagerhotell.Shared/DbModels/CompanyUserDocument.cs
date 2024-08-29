@@ -14,9 +14,10 @@ public class CompanyUserDocument
     public int CompanyNumber { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
+    public string Password { get; set; }
     public Address Address { get; set; }
 
-    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, int companyNumber, string email, string phoneNumber, Address address)
+    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, int companyNumber, string email, string phoneNumber, Address address, string password)
     {
         CompanyUserId = companyUserId;
         FirstName = firstName;
@@ -26,5 +27,6 @@ public class CompanyUserDocument
         Email = email;
         PhoneNumber = phoneNumber;
         Address = address;
+        Password = password;
     }
 }
