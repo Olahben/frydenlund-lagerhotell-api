@@ -8,6 +8,7 @@ namespace Controllers;
 public class CompanyUsers : ControllerBase
 {
     private readonly ICompanyUserService _companyUserService;
+    private readonly TokenService _tokenService;
 
     public CompanyUsers(ICompanyUserService companyUserService)
     {
@@ -55,8 +56,8 @@ public class CompanyUsers : ControllerBase
     {
         try
         {
-            CompanyUser createdCompanyUser = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
-            return Ok(createdCompanyUser);
+            (string userId, string userAcessToken) = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
+            return Ok(new CreateCompanyUserResponse(userId, userAcessToken));
         }
         catch (SqlAlreadyFilledException ex)
         {
