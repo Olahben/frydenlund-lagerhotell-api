@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlTypes;
 
 namespace Controllers;
@@ -9,6 +10,7 @@ public class CompanyUsers : ControllerBase
 {
     private readonly ICompanyUserService _companyUserService;
     private readonly TokenService _tokenService;
+    private readonly LagerhotellAPI.Models.DomainModels.Validators.CompanyUserValidator _companyUserValidator = new();
 
     public CompanyUsers(ICompanyUserService companyUserService)
     {
@@ -56,6 +58,14 @@ public class CompanyUsers : ControllerBase
     {
         try
         {
+            _companyUserValidator.ValidateAndThrow(request.CompanyUser);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        try
+        {
             (string userId, string userAcessToken) = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
             return Ok(new CreateCompanyUserResponse(userId, userAcessToken));
         }
@@ -76,6 +86,14 @@ public class CompanyUsers : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateCompanyUserAsync([FromBody] UpdateCompanyUserRequest request)
     {
+        try
+        {
+            _companyUserValidator.ValidateAndThrow(request.CompanyUser);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex);
+        }
         try
         {
             await _companyUserService.UpdateCompanyUserAsync(request.CompanyUser.CompanyUserId, request.CompanyUser);
