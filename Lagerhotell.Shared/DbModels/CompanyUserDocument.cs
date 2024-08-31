@@ -11,13 +11,13 @@ public class CompanyUserDocument
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Name { get; set; }
-    public int CompanyNumber { get; set; }
+    public string CompanyNumber { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string Password { get; set; }
     public Address Address { get; set; }
 
-    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, int companyNumber, string email, string phoneNumber, Address address, string password)
+    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password)
     {
         CompanyUserId = companyUserId;
         FirstName = firstName;

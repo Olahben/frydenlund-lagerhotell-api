@@ -8,8 +8,7 @@ public class CompanyUserValidator : AbstractValidator<CompanyUser>
         RuleFor(x => x.LastName).NotEmpty().WithMessage("Etternavn er obligatorisk");
         RuleFor(x => x.Name).NotEmpty().WithMessage("Navn er obligatorisk");
         RuleFor(x => x.CompanyNumber).NotEmpty().WithMessage("Organisasjonsnummer er obligatorisk");
-        RuleFor(x => x.CompanyNumber).LessThanOrEqualTo(999999999).WithMessage("Organisasjonsnummer kan ikke være lengre enn 9 siffer");
-        RuleFor(x => x.CompanyNumber).GreaterThanOrEqualTo(100000000).WithMessage("Organisasjonsnummer kan ikke være kortere enn 9 siffer");
+        RuleFor(x => x.CompanyNumber).Matches(@"^\d{9}$").WithMessage("Organisasjonsnummer er ikke gyldig");
         RuleFor(x => x.Email).NotEmpty().WithMessage("Epost er obligatorisk");
         RuleFor(x => x.Email).EmailAddress().WithMessage("Epost er ikke gyldig");
         RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage("Telefonnummer er obligatorisk");
