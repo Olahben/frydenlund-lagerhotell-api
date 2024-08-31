@@ -64,12 +64,24 @@ namespace LagerhotellAPI.Services
             CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
             return companyUser;
         }
+
+        public async Task<CompanyUser> GetCompanyUserByCompanyNumber(string companyNumber)
+        {
+            CompanyUserDocument dbCompanyUserDocument = await _companyUsers.Find(c => c.CompanyNumber == companyNumber).FirstOrDefaultAsync();
+            if (dbCompanyUserDocument == null)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
+            return companyUser;
+        }
         public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
         {
             try
             {
                 await GetCompanyUserByPhoneNumber(companyUser.PhoneNumber);
                 await GetCompanyUserByEmail(companyUser.Email);
+                await GetCompanyUserByCompanyNumber(companyUser.CompanyNumber);
                 throw new SqlAlreadyFilledException("Company user already exists");
             }
             catch (KeyNotFoundException)
