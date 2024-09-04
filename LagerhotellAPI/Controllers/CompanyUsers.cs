@@ -37,6 +37,26 @@ public class CompanyUsers : ControllerBase
     }
 
     [HttpGet]
+    [Route("get-by-phone-number/{phoneNumber}")]
+    public async Task<IActionResult> GetCompanyUserByPhoneNumber([FromRoute] string phoneNumber)
+    {
+        try
+        {
+            CompanyUser companyUser = await _companyUserService.GetCompanyUserByPhoneNumber(phoneNumber);
+            return Ok(new GetCompanyUserResponse(companyUser));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+    }
+
+    [HttpGet]
     [Route("all")]
     public async Task<IActionResult> GetCompanyUsersAsync([FromQuery] int? take, [FromQuery] int? skip)
     {
