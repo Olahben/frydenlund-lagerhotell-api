@@ -28,6 +28,16 @@ namespace LagerhotellAPI.Services
             return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
         }
 
+        public async Task<CompanyUserDocument> GetCompanyUserDocument(string id)
+        {
+            CompanyUserDocument dbCompanyUserDocument = await _companyUsers.Find(cu => cu.CompanyUserId == id).FirstOrDefaultAsync();
+            if (dbCompanyUserDocument == null)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+            return dbCompanyUserDocument;
+        }
+
         public async Task<List<CompanyUser>> GetCompanyUsersAsync(int? take, int? skip)
         {
             var query = _companyUsers.Find(cu => true);
@@ -97,16 +107,16 @@ namespace LagerhotellAPI.Services
 
         public async Task UpdateCompanyUserAsync(string id, CompanyUser companyUser)
         {
-            CompanyUser existingCompanyUser;
+            CompanyUserDocument existingCompanyUser;
             try
             {
-                existingCompanyUser = await GetCompanyUserAsync(id);
+                existingCompanyUser = await GetCompanyUserDocument(id);
             }
             catch (KeyNotFoundException)
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            var companyUserDocument = new CompanyUserDocument(companyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password);
+            var companyUserDocument = new CompanyUserDocument(existingCompanyUser.Id, existingCompanyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password);
             await _companyUsers.ReplaceOneAsync(cu => cu.CompanyUserId == id, companyUserDocument);
         }
 
