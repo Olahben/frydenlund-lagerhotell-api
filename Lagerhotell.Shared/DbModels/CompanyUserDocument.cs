@@ -29,4 +29,17 @@ public class CompanyUserDocument
         Address = address;
         Password = password;
     }
+    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password)
+    {
+        Id = id;
+        CompanyUserId = companyUserId;
+        FirstName = firstName;
+        LastName = lastName;
+        Name = name;
+        CompanyNumber = companyNumber;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        Address = address;
+        Password = password;
+    }
 }
