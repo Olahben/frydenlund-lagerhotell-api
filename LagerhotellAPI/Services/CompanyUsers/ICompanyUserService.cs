@@ -1,4 +1,5 @@
-﻿namespace LagerhotellAPI.Services;
+﻿using System.Data.SqlTypes;
+namespace LagerhotellAPI.Services;
 public interface ICompanyUserService
 {
 
@@ -8,7 +9,17 @@ public interface ICompanyUserService
     Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser);
     Task UpdateCompanyUserAsync(string id, CompanyUser companyUser);
     Task DeleteCompanyUserAsync(string id);
-
     Task<(string, string)> LoginCompanyUserByEmail(string email, string password);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="newPassword"></param>
+    /// <param name="oldPassword"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="SqlAlreadyFilledException"></exception>
+    /// <exception cref="SqlTypeException"></exception>
+    Task ResetPassword(string id, string newPassword, string oldPassword);
 
 }

@@ -173,4 +173,33 @@ public class CompanyUsers : ControllerBase
             return StatusCode(500);
         }
     }
+
+    [HttpPut]
+    [Route("reset-password")]
+    [Authorize]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        try
+        {
+            await _companyUserService.ResetPassword(request.UserId, request.NewPassword, request.OldPassword);
+            return Ok("Password was reset");
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (SqlAlreadyFilledException)
+        {
+            return UnprocessableEntity("New password is the same as the old one");
+        }
+        catch (SqlTypeException)
+        {
+            return Conflict("Incorrect password");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+    }
 }

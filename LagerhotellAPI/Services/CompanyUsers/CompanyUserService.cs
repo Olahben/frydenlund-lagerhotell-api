@@ -152,5 +152,45 @@ namespace LagerhotellAPI.Services
             string token = _tokenService.CreateJwt(relevantCompanyUser.CompanyUserId, relevantCompanyUser.PhoneNumber, false).Token;
             return (token, relevantCompanyUser.CompanyUserId);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newPassword"></param>
+        /// <param name="oldPassword"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="SqlAlreadyFilledException"></exception>
+        /// <exception cref="SqlTypeException"></exception>
+        public async Task ResetPassword(string id, string newPassword, string oldPassword)
+        {
+            CompanyUserDocument existingCompanyUser;
+            try
+            {
+                existingCompanyUser = await GetCompanyUserDocument(id);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+            if (existingCompanyUser.Password == newPassword)
+            {
+                throw new SqlAlreadyFilledException("New password is the same as the old one");
+            }
+            if (existingCompanyUser.Password != oldPassword)
+            {
+                throw new SqlTypeException("Incorrect password");
+            }
+            CompanyUser updatedCompanyUser = new(existingCompanyUser.CompanyUserId, existingCompanyUser.FirstName, existingCompanyUser.LastName, existingCompanyUser.Name, existingCompanyUser.CompanyNumber, existingCompanyUser.Email, existingCompanyUser.PhoneNumber, existingCompanyUser.Address, newPassword);
+            try
+            {
+                await UpdateCompanyUserAsync(id, updatedCompanyUser);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+        }
     }
 }
