@@ -149,4 +149,28 @@ public class CompanyUsers : ControllerBase
             return StatusCode(500);
         }
     }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> LoginAsync([FromBody] LoginCompanyUserByEmailRequest request)
+    {
+        try
+        {
+            (string token, string id) = await _companyUserService.LoginCompanyUserByEmail(request.Email, request.Password);
+            return Ok(new LoginCompanyUserByEmailResponse(token, id));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (SqlTypeException)
+        {
+            return Conflict("Incorrect password");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+    }
 }

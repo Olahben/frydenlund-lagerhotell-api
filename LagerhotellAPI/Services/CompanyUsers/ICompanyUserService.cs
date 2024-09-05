@@ -9,4 +9,6 @@ public interface ICompanyUserService
     Task UpdateCompanyUserAsync(string id, CompanyUser companyUser);
     Task DeleteCompanyUserAsync(string id);
 
+    Task<(string, string)> LoginCompanyUserByEmail(string email, string password);
+
 }

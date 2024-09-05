@@ -132,5 +132,25 @@ namespace LagerhotellAPI.Services
             }
             await _companyUsers.DeleteOneAsync(cu => cu.CompanyUserId == id);
         }
+
+        public async Task<(string, string)> LoginCompanyUserByEmail(string email, string password)
+        {
+            CompanyUser relevantCompanyUser;
+            try
+            {
+                relevantCompanyUser = await GetCompanyUserByEmail(email);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Company user not found");
+            }
+            if (relevantCompanyUser.Password != password)
+            {
+                throw new SqlTypeException("Incorrect password");
+            }
+
+            string token = _tokenService.CreateJwt(relevantCompanyUser.CompanyUserId, relevantCompanyUser.PhoneNumber, false).Token;
+            return (token, relevantCompanyUser.CompanyUserId);
+        }
     }
 }
