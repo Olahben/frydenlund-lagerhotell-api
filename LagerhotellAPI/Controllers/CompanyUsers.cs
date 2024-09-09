@@ -58,6 +58,7 @@ public class CompanyUsers : ControllerBase
 
     [HttpGet]
     [Route("all")]
+    [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> GetCompanyUsersAsync([FromQuery] int? take, [FromQuery] int? skip)
     {
         try
