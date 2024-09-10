@@ -1,4 +1,5 @@
 ﻿using LagerhotellAPI.Models;
+using LagerhotellAPI.Models.DbModels;
 using MongoDB.Driver;
 
 namespace LagerhotellAPI.Services
@@ -46,7 +47,8 @@ namespace LagerhotellAPI.Services
         /// <returns></returns>
         public async Task ModifyOrder(string orderId, Order updatedOrder)
         {
-            LagerhotellAPI.Models.DbModels.OrderDocument updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.StorageUnitId, updatedOrder.OrderPeriod, updatedOrder.Status, updatedOrder.Insurance, updatedOrder.CustomInstructions);
+            OrderDocument orderDocument = await GetOrderDbModel(orderId);
+            LagerhotellAPI.Models.DbModels.OrderDocument updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.StorageUnitId, updatedOrder.OrderPeriod, updatedOrder.Status, updatedOrder.Insurance, updatedOrder.CustomInstructions) { Id = orderDocument.Id};
             await _orders.ReplaceOneAsync(order => order.OrderId == orderId, updatedDbOrder);
         }
 
@@ -73,7 +75,7 @@ namespace LagerhotellAPI.Services
         /// <returns>database model of order</returns>
         public async Task<Models.DbModels.OrderDocument> GetOrderDbModel(string orderId)
         {
-            var dbOrder = await _orders.Find(order => order.Id == orderId).FirstOrDefaultAsync();
+            var dbOrder = await _orders.Find(order => order.OrderId == orderId).FirstOrDefaultAsync();
             return dbOrder;
         }
 
