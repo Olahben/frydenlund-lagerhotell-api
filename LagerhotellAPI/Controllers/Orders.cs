@@ -110,7 +110,7 @@ namespace Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         [Route("cancel")]
         public async Task<IActionResult> CancelOrder([FromBody] CancelOrderRequest request)
@@ -145,7 +145,7 @@ namespace Controllers
             }
         }
 
-        [Authorize (Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> ModifyOrder([FromBody] UpdateOrderRequest request)
