@@ -6,11 +6,13 @@ namespace LagerhotellAPI.Services
     public class OrderService
     {
         private readonly IMongoCollection<Models.DbModels.OrderDocument> _orders;
+        private readonly StorageUnitService _storageUnitService;
         public OrderService(MongoDbSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
             _orders = database.GetCollection<Models.DbModels.OrderDocument>("Orders");
+            _storageUnitService = new StorageUnitService(settings);
         }
 
         /// <summary>
@@ -131,6 +133,7 @@ namespace LagerhotellAPI.Services
             var filter = Builders<Models.DbModels.OrderDocument>.Filter.Eq(order => order.OrderId, orderId);
             var update = Builders<Models.DbModels.OrderDocument>.Update.Set(order => order.Status, orderStatus);
             await _orders.UpdateOneAsync(filter, update);
+            await _storageUnitService.VacateStorageUnit(order.StorageUnitId);
         }
     }
 }
