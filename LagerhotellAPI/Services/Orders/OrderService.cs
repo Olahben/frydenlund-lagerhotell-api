@@ -1,6 +1,5 @@
 ﻿using LagerhotellAPI.Models;
 using LagerhotellAPI.Models.DbModels;
-using MongoDB.Driver;
 
 namespace LagerhotellAPI.Services
 {
@@ -48,7 +47,7 @@ namespace LagerhotellAPI.Services
         public async Task ModifyOrder(string orderId, Order updatedOrder)
         {
             OrderDocument orderDocument = await GetOrderDbModel(orderId);
-            LagerhotellAPI.Models.DbModels.OrderDocument updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.StorageUnitId, updatedOrder.OrderPeriod, updatedOrder.Status, updatedOrder.Insurance, updatedOrder.CustomInstructions) { Id = orderDocument.Id};
+            LagerhotellAPI.Models.DbModels.OrderDocument updatedDbOrder = new(orderId, updatedOrder.UserId, updatedOrder.StorageUnitId, updatedOrder.OrderPeriod, updatedOrder.Status, updatedOrder.Insurance, updatedOrder.CustomInstructions) { Id = orderDocument.Id };
             await _orders.ReplaceOneAsync(order => order.OrderId == orderId, updatedDbOrder);
         }
 
@@ -115,9 +114,22 @@ namespace LagerhotellAPI.Services
 
         public async Task CancelOrder(string orderId)
         {
-            // The storage unit's status is handled in "CanceledOrderHandler"
+            OrderStatus orderStatus = OrderStatus.Cancelled;
+            var order = await GetOrder(orderId);
+            if (order == null)
+            {
+                throw new KeyNotFoundException("Order not found");
+            }
+            if (order.Status == OrderStatus.Cancelled)
+            {
+                throw new InvalidOperationException("Order is already cancelled");
+            }
+            if (order.Status == OrderStatus.Active)
+            {
+                orderStatus = OrderStatus.NotActiveAnymore;
+            }
             var filter = Builders<Models.DbModels.OrderDocument>.Filter.Eq(order => order.OrderId, orderId);
-            var update = Builders<Models.DbModels.OrderDocument>.Update.Set(order => order.Status, OrderStatus.Cancelled);
+            var update = Builders<Models.DbModels.OrderDocument>.Update.Set(order => order.Status, orderStatus);
             await _orders.UpdateOneAsync(filter, update);
         }
     }
