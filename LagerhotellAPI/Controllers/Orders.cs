@@ -145,6 +145,32 @@ namespace Controllers
             }
         }
 
+        [Authorize (Roles = "Administrator")]
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> ModifyOrder([FromBody] UpdateOrderRequest request)
+        {
+            try
+            {
+                var order = await _orderService.GetOrder(request.Order.OrderId);
+                if (order == null)
+                {
+                    return NotFound();
+                }
+                await _orderService.ModifyOrder(request.Order.OrderId, request.Order);
+                return Ok();
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error in ModifyOrder: {e}");
+                return StatusCode(500);
+            }
+        }
+
         // GetAllOrdersByUser
         /* [HttpGet("byuser")]
         public IActionResult GetAllOrdersByUser([FromQuery] User user)
