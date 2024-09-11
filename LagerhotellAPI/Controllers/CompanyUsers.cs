@@ -89,6 +89,9 @@ public class CompanyUsers : ControllerBase
         {
             (string userId, string userAcessToken) = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
             return Ok(new CreateCompanyUserResponse(userId, userAcessToken));
+        } catch (KeyNotFoundException e)
+        {
+            return NotFound();
         }
         catch (SqlAlreadyFilledException ex)
         {

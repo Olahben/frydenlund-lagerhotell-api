@@ -9,6 +9,7 @@ namespace LagerhotellAPI.Services
     {
         private readonly IMongoCollection<Models.DbModels.CompanyUserDocument> _companyUsers;
         private readonly TokenService _tokenService;
+        private readonly string _bronnoysundApiUrl = "https://data.brreg.no/enhetsregisteret/api";
 
         public CompanyUserService(MongoDbSettings settings, TokenService tokenService)
         {
@@ -85,8 +86,36 @@ namespace LagerhotellAPI.Services
             CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password);
             return companyUser;
         }
-        public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
+
+        public async Task<bool> DoesCompanyExistInNorway(string orgNr)
         {
+            var client = new HttpClient();
+            string url = $"{_bronnoysundApiUrl}/enheter/{orgNr}";
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return false;
+            }
+            return true;
+        }
+            public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
+        {
+            try
+            {
+                bool doesCompanyExist = await DoesCompanyExistInNorway(companyUser.CompanyNumber);
+                if (!doesCompanyExist)
+                {
+                    throw new KeyNotFoundException("Company not found in Norway");
+                }
+
+            } catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Company not found in Norway");
+            } catch (Exception e)
+            {
+                throw new Exception($"Error in CreateCompanyUserAsync: {e}");
+            }
             try
             {
                 await GetCompanyUserByPhoneNumber(companyUser.PhoneNumber);
