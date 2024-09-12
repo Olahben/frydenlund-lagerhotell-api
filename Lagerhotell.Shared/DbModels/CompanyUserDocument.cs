@@ -29,7 +29,7 @@ public class CompanyUserDocument
         Address = address;
         Password = password;
     }
-    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, bool isEmailVerified, string phoneNumber, Address address, string password)
+    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password)
     {
         Id = id;
         CompanyUserId = companyUserId;
