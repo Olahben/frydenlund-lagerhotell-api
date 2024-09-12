@@ -13,3 +13,10 @@ public class ActionInputIsNotValidException : BadRequestException
         : base("Action input is not valid")
     { }
 }
+
+public class InvalidVerificationCodeException : Exception
+{
+    public InvalidVerificationCodeException(string message = null)
+        : base(message == null ? "Bad Request" : message)
+    { }
+}
