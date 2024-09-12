@@ -20,6 +20,13 @@ public class AccountManagementService
         return code;
     }
 
+    /// <summary>
+    /// Returns the user's most recent email verification code
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<int> GetMostRecentCode(string email)
     {
         EmailVerificationCodeDocument? emailVerificationCodeDocument = await _verificationCodes.Find(document => document.Email == email).SortByDescending(document => document.TimeCreated).FirstOrDefaultAsync();
@@ -34,6 +41,15 @@ public class AccountManagementService
         return emailVerificationCodeDocument.Code;
     }
 
+    /// <summary>
+    /// Checks if the provided code matches the most recent code for the user
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidVerificationCodeException"></exception>
     public async Task<bool> VerifyEmailVerificationCode(string email, int code)
     {
         int mostRecentCode;
@@ -55,6 +71,11 @@ public class AccountManagementService
         throw new InvalidVerificationCodeException("Invalid verification code");
     }
 
+    /// <summary>
+    /// Starts the process ov verifying an users email by creating a code and saving it in the database
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
     public async Task StartEmailVerification(string email)
     {
         int code = CreateVerifyEmailCode();
