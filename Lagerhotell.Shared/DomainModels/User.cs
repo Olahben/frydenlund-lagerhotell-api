@@ -13,6 +13,17 @@ public class User
         Password = password;
         IsAdministrator = isAdministrator;
     }
+    public User (string firstName, string lastName, string phoneNumber, string email, string birthDate, Address address, string password, bool isAdministrator)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        PhoneNumber = phoneNumber;
+        Email = email;
+        BirthDate = birthDate;
+        Address = address;
+        Password = password;
+        IsAdministrator = isAdministrator;
+    }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public User()
