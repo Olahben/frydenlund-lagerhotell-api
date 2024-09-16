@@ -34,7 +34,7 @@ public class AccountManagementService
         {
             throw new KeyNotFoundException("No email verification code found");
         }
-        if (emailVerificationCodeDocument.TimeCreated.AddMinutes(15) < DateTime.Now)
+        if (emailVerificationCodeDocument.TimeCreated.AddMinutes(15) > DateTime.Now)
         {
             throw new InvalidOperationException("Email verification code has expired");
         }
@@ -60,7 +60,7 @@ public class AccountManagementService
         {
             throw new KeyNotFoundException("No email verification code found");
 
-        } catch (InvalidOperationException)
+        } catch (InvalidOperationException e)
         {
             throw new InvalidOperationException("Email verification code has expired");
         }
