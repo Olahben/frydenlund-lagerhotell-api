@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LagerhotellAPI.Models.CustomExceptionModels;
+﻿using LagerhotellAPI.Models.CustomExceptionModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers;
 
@@ -29,13 +29,16 @@ public class AuthenticationController : ControllerBase
         try
         {
             var result = await _accountManagementService.VerifyEmailVerificationCode(request.Email, request.Code);
-        } catch (KeyNotFoundException)
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
-        } catch (InvalidOperationException)
+        }
+        catch (InvalidOperationException)
         {
             return StatusCode(410);
-        } catch (InvalidVerificationCodeException)
+        }
+        catch (InvalidVerificationCodeException)
         {
             return BadRequest();
         }
