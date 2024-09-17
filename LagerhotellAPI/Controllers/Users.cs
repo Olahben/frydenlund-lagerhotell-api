@@ -52,16 +52,16 @@ namespace Controllers
 
         [Route("add-user")]
         [HttpPost]
-        public IActionResult AddUser([FromBody] AddUserRequest request)
+        public async Task<IActionResult> AddUser([FromBody] AddUserRequest request)
         {
-            var user = _userRepository.Get(request.PhoneNumber);
-            if (user != null)
+            bool doesSimilarUserExist = await _userRepository.DoesSimilarUserExist(request.PhoneNumber, request.Email);
+            if (doesSimilarUserExist)
             {
 
                 return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
             }
 
-            user = _userRepository.Add(
+            User user = _userRepository.Add(
              request.FirstName,
              request.LastName,
              request.PhoneNumber,
@@ -210,6 +210,18 @@ namespace Controllers
                 Console.WriteLine(ex);
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        [Route("does-similar-user-exist/{phoneNumber}/{email}")]
+        public async Task<IActionResult> DoesSimilarUserExist([FromRoute] string phoneNumber, [FromRoute] string email)
+        {
+            bool doesSimilarUserExist = await _userRepository.DoesSimilarUserExist(phoneNumber, email);
+            if (doesSimilarUserExist)
+            {
+                return Conflict();
+            }
+            return Ok();
         }
     }
 }
