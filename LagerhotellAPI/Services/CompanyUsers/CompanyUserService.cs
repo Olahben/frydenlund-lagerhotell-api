@@ -8,6 +8,7 @@ namespace LagerhotellAPI.Services
     public class CompanyUserService : ICompanyUserService
     {
         private readonly IMongoCollection<Models.DbModels.CompanyUserDocument> _companyUsers;
+        private readonly IMongoCollection<Models.DbModels.User> _users;
         private readonly TokenService _tokenService;
         private readonly string _bronnoysundApiUrl = "https://data.brreg.no/enhetsregisteret/api";
 
@@ -16,6 +17,7 @@ namespace LagerhotellAPI.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
             _companyUsers = database.GetCollection<CompanyUserDocument>("CompanyUsers");
+            _users = database.GetCollection<Models.DbModels.User>("Users");
             _tokenService = tokenService;
         }
 
@@ -99,31 +101,73 @@ namespace LagerhotellAPI.Services
             }
             return true;
         }
-            public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
-        {
-            try
-            {
-                bool doesCompanyExist = await DoesCompanyExistInNorway(companyUser.CompanyNumber);
-                if (!doesCompanyExist)
-                {
-                    throw new KeyNotFoundException("Company not found in Norway");
-                }
 
-            } catch (KeyNotFoundException)
+        /// <summary>
+        /// Checks if a user with similar credentials exist
+        /// </summary>
+        /// <param name="companyNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<bool> DoesSimilarUserExist(string companyNumber, string phoneNumber, string email)
+        {
+            bool companyInNorway = await DoesCompanyExistInNorway(companyNumber);
+            if (!companyInNorway)
             {
                 throw new KeyNotFoundException("Company not found in Norway");
-            } catch (Exception e)
-            {
-                throw new Exception($"Error in CreateCompanyUserAsync: {e}");
             }
             try
             {
-                await GetCompanyUserByPhoneNumber(companyUser.PhoneNumber);
-                await GetCompanyUserByEmail(companyUser.Email);
-                await GetCompanyUserByCompanyNumber(companyUser.CompanyNumber);
-                throw new SqlAlreadyFilledException("Company user already exists");
+                // Cross check if normal user has any of the same credentials
+                var userExistence1 = await _users.Find(u => u.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+                var userExistence2 = await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
+                if (userExistence1 != null || userExistence2 != null)
+                {
+                    throw new SqlAlreadyFilledException();
+                }
+                try
+                {
+                    await GetCompanyUserByPhoneNumber(phoneNumber);
+                    throw new SqlAlreadyFilledException();
+                }
+                catch (KeyNotFoundException)
+                {
+                    try
+                    {
+                        await GetCompanyUserByEmail(email);
+                        throw new SqlAlreadyFilledException();
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        try
+                        {
+                            await GetCompanyUserByCompanyNumber(companyNumber);
+                            throw new SqlAlreadyFilledException();
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (SqlAlreadyFilledException)
+            {
+                return true;
+            }
+        }
+        public async Task<(string, string)> CreateCompanyUserAsync(CompanyUser companyUser)
+        {
+            bool doesSimilarUserExist;
+            try
+            {
+                doesSimilarUserExist = await DoesSimilarUserExist(companyUser.CompanyNumber, companyUser.PhoneNumber, companyUser.Email);
             }
             catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Company not found in Norway");
+            }
+            if (!doesSimilarUserExist)
             {
                 string id = Guid.NewGuid().ToString();
                 var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password);
@@ -132,6 +176,7 @@ namespace LagerhotellAPI.Services
                 string userAccessToken = _tokenService.CreateJwt(id, companyUser.PhoneNumber, false).Token;
                 return (id, userAccessToken);
             }
+            throw new SqlAlreadyFilledException("User already exists");
         }
 
         public async Task UpdateCompanyUserAsync(string id, CompanyUser companyUser)

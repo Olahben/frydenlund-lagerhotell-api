@@ -21,5 +21,13 @@ public interface ICompanyUserService
     /// <exception cref="SqlAlreadyFilledException"></exception>
     /// <exception cref="SqlTypeException"></exception>
     Task ResetPassword(string id, string newPassword, string oldPassword);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="companyNumber"></param>
+    /// <param name="phoneNumber"></param>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    Task<bool> DoesSimilarUserExist(string companyNumber, string phoneNumber, string email);
 
 }
