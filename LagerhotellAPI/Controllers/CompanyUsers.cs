@@ -89,7 +89,8 @@ public class CompanyUsers : ControllerBase
         {
             (string userId, string userAcessToken) = await _companyUserService.CreateCompanyUserAsync(request.CompanyUser);
             return Ok(new CreateCompanyUserResponse(userId, userAcessToken));
-        } catch (KeyNotFoundException e)
+        }
+        catch (KeyNotFoundException e)
         {
             return NotFound();
         }
@@ -199,6 +200,33 @@ public class CompanyUsers : ControllerBase
         catch (SqlTypeException)
         {
             return Conflict("Incorrect password");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+    }
+
+    [HttpGet]
+    [Route("does-similar-user-exist/{companyNumber}/{phoneNumber}/{email}")]
+    public async Task<IActionResult> DoesSimilarUserExist(
+    [FromRoute] string companyNumber,
+    [FromRoute] string phoneNumber,
+    [FromRoute] string email)
+    {
+        try
+        {
+            bool result = await _companyUserService.DoesSimilarUserExist(companyNumber, phoneNumber, email);
+            if (result)
+            {
+                return Conflict("A user with similar credentials already exist");
+            }
+            return Ok();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("Company is not registered in Norway");
         }
         catch (Exception ex)
         {

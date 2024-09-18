@@ -1,13 +1,13 @@
 ﻿using LagerhotellAPI.Models;
-using MongoDB.Driver;
 
 namespace LagerhotellAPI.Services
 {
     public class UserRepository
     {
         private readonly IMongoCollection<Models.DbModels.User> _users;
+        private readonly CompanyUserService _companyUserService;
 
-        public UserRepository(MongoDbSettings settings)
+        public UserRepository(MongoDbSettings settings, TokenService tokenService)
         {
             if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
                 throw new ArgumentNullException(nameof(settings), "MongoDbSettings is not configured properly.");
@@ -16,6 +16,7 @@ namespace LagerhotellAPI.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
             _users = database.GetCollection<Models.DbModels.User>("Users");
+            _companyUserService = new CompanyUserService(settings, tokenService);
         }
 
         /// <summary>
@@ -65,6 +66,37 @@ namespace LagerhotellAPI.Services
                 return null;
             }
             return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email);
+        }
+
+        public async Task<bool> DoesSimilarUserExist(string phoneNumber, string email)
+        {
+            User user = GetByEmail(email);
+            if (user != null)
+            {
+                return true;
+            }
+            User user1 = Get(phoneNumber);
+            if (user1 != null)
+            {
+                return true;
+            }
+            try
+            {
+                await _companyUserService.GetCompanyUserByEmail(email);
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                try
+                {
+                    await _companyUserService.GetCompanyUserByPhoneNumber(phoneNumber);
+                    return true;
+                }
+                catch (KeyNotFoundException)
+                {
+                    return false;
+                }
+            }
         }
 
         /// <summary>
