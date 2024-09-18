@@ -12,7 +12,7 @@ namespace Controllers
     {
         private readonly UserRepository _userRepository;
         private readonly GetUser.GetUserResponse _getuserResponse = new GetUser.GetUserResponse();
-        private readonly TokenService _tokenService;
+        private readonly TokenService _tokenService;   
 
         public UsersController(TokenService tokenService, UserRepository userRepository)
         {
