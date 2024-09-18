@@ -2,12 +2,25 @@ using LagerhotellAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Antiforgery;
+using Auth0.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var mongoDbSettings = new MongoDbSettings();
 builder.Configuration.GetSection("LagerhotellDatabase").Bind(mongoDbSettings);
 builder.Services.AddSingleton(mongoDbSettings);
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+  {
+      options.MinimumSameSitePolicy = SameSiteMode.None;
+  });
+
+builder.Services.AddAuth0WebAppAuthentication(options =>
+{
+    options.Domain = builder.Configuration["Auth0:Domain"];
+    options.ClientId = builder.Configuration["Auth0:ClientId"];
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
