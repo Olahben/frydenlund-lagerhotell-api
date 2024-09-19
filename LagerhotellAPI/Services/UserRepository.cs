@@ -1,4 +1,5 @@
-﻿using LagerhotellAPI.Models;
+﻿global using LagerhotellAPI.Models.DbModels.Auth0;
+using LagerhotellAPI.Models;
 
 namespace LagerhotellAPI.Services
 {
@@ -6,8 +7,9 @@ namespace LagerhotellAPI.Services
     {
         private readonly IMongoCollection<Models.DbModels.User> _users;
         private readonly CompanyUserService _companyUserService;
+        private readonly Auth0UserService _auth0UserService;
 
-        public UserRepository(MongoDbSettings settings, TokenService tokenService)
+        public UserRepository(MongoDbSettings settings, TokenService tokenService, IConfiguration configuration)
         {
             if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
                 throw new ArgumentNullException(nameof(settings), "MongoDbSettings is not configured properly.");
@@ -17,6 +19,7 @@ namespace LagerhotellAPI.Services
             var database = client.GetDatabase("Lagerhotell");
             _users = database.GetCollection<Models.DbModels.User>("Users");
             _companyUserService = new CompanyUserService(settings, tokenService);
+            _auth0UserService = new Auth0UserService(configuration);
         }
 
         /// <summary>
@@ -32,15 +35,25 @@ namespace LagerhotellAPI.Services
         /// <param name="password"></param>
         /// <param name="isAdministrator"></param>
         /// <returns>user object</returns>
-        public User Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email)
+        public async Task<User> Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email)
         {
             string userId = Guid.NewGuid().ToString();
             Address userAddress = new(streetAddress, postalCode, city);
             Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email);
             _users.InsertOne(user);
             User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email);
+            await AddUserToAuth0(new User(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email));
             return domainUser;
 
+        }
+
+        public async Task AddUserToAuth0(User user)
+        {
+            UserAuth0 userAuth0 = new(user.Id, user.Email, false, user.Password, true)
+            {
+                NormalUserMetadata = user
+            };
+            await _auth0UserService.AddUser(userAuth0);
         }
 
         /// <summary>
