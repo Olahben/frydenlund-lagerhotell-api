@@ -2,6 +2,8 @@
 global using System.Net.Http.Headers;
 global using System.Text.Json;
 global using System.Text;
+global using System.Net;
+global using LagerhotellAPI.Models.CustomExceptionModels;
 namespace LagerhotellAPI.Services;
 
 public class Auth0UserService
@@ -69,6 +71,12 @@ public class Auth0UserService
         var data = new StringContent(json, null, "application/json");
         var response = await client.PostAsync(endpoint, data);
         var responseContent = await response.Content.ReadAsStringAsync();
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new BadRequestException(responseContent);
+            }
+        }
     }
 }

@@ -74,7 +74,11 @@ namespace Controllers
                  request.Password,
                  request.IsAdministrator,
                  request.Email);
-            } catch (Exception ex)
+            }  catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message + "Could originate from auth0 call");
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database"});
