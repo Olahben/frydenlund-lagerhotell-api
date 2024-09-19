@@ -10,6 +10,7 @@ public class Auth0UserService
     private readonly string _bearerToken;
     private readonly string _domain;
     private readonly string _clientId;
+    private readonly string _dbName = "Lagerhotell";
     private HttpClient client = new();
 
     public Auth0UserService(IConfiguration configuration)
@@ -59,9 +60,9 @@ public class Auth0UserService
         var jsonData = new
         {
             client_id = _clientId,
-            email = "testuser7@example.com",
-            password = "passwordPassword123456!",
-            connection = "Username-Password-Authentication",
+            email = user.Email,
+            password = user.Password,
+            connection = _dbName,
             user_metadata = userMetaData
         };
         var json = JsonSerializer.Serialize(jsonData);
