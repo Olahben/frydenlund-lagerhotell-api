@@ -35,6 +35,7 @@ builder.Services.AddScoped<AssetService>();
 builder.Services.AddHostedService<PendingOrderHandler>();
 builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddScoped<AccountManagementService>();
+builder.Services.AddScoped<Auth0UserService>();
 builder.Services.AddLogging(configure => configure.AddConsole());
 
 // Configure CORS policy
