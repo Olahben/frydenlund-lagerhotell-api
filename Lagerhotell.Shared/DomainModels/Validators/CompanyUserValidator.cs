@@ -18,8 +18,11 @@ public class CompanyUserValidator : AbstractValidator<CompanyUser>
         RuleFor(x => x.Address.PostalCode).NotEmpty().WithMessage("Postnummer er obligatorisk");
         RuleFor(x => x.Address.PostalCode).Matches(@"^\d{4}$").WithMessage("Postnummer er ikke gyldig");
         RuleFor(x => x.Address.City).NotEmpty().WithMessage("By er obligatorisk");
-        RuleFor(x => x.Password).MinimumLength(8).WithMessage("Passord må være minst 8 tegn");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("Obligatorisk felt");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Obligatorisk felt")
+            .MinimumLength(8).WithMessage("Passord må være minst 8 tegn")
+            .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$").WithMessage("Passord må inneholde minst én stor bokstav, én liten bokstav og ett tall");
     }
 
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>

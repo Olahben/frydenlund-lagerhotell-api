@@ -23,8 +23,10 @@ public class UserValidator : AbstractValidator<DomainModels.User>
         RuleFor(x => x.Address.City).NotNull().NotEmpty().WithMessage("Poststed kan ikke være tom");
         RuleFor(x => x.Address.City).MaximumLength(250).WithMessage("Poststed kan ikke være lengre enn 250 bokstaver");
         RuleFor(x => x.Password).NotNull().NotEmpty().WithMessage("Passord kan ikke være tom");
-        RuleFor(x => x.Password).MinimumLength(6).WithMessage("Passord må være minst 6 tegn langt");
-        RuleFor(x => x.Password).MaximumLength(250).WithMessage("Passord kan ikke være lengre enn 250 tegn");
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Obligatorisk felt")
+            .MinimumLength(8).WithMessage("Passord må være minst 8 tegn")
+            .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$").WithMessage("Passord må inneholde minst én stor bokstav, én liten bokstav og ett tall");
         RuleFor(x => x.IsAdministrator).NotNull().NotEmpty().WithMessage("Administratorstatus kan ikke være tom");
     }
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
