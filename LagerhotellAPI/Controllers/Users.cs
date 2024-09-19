@@ -61,7 +61,7 @@ namespace Controllers
                 return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
             }
 
-            User user = _userRepository.Add(
+            User user = await _userRepository.Add(
              request.FirstName,
              request.LastName,
              request.PhoneNumber,
