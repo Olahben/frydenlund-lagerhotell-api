@@ -68,5 +68,6 @@ public class Auth0UserService
         var data = new StringContent(json, null, "application/json");
         var response = await client.PostAsync(endpoint, data);
         var responseContent = await response.Content.ReadAsStringAsync();
+        response.EnsureSuccessStatusCode();
     }
 }

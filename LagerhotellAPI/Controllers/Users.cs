@@ -60,18 +60,25 @@ namespace Controllers
 
                 return Conflict(new CheckPhoneNumber.CheckPhoneNumberResponse { PhoneNumberExistence = true });
             }
-
-            User user = await _userRepository.Add(
-             request.FirstName,
-             request.LastName,
-             request.PhoneNumber,
-             request.BirthDate,
-             request.Address,
-             request.PostalCode,
-             request.City,
-             request.Password,
-             request.IsAdministrator,
-             request.Email);
+            User user;
+            try
+            {
+                user = await _userRepository.Add(
+                 request.FirstName,
+                 request.LastName,
+                 request.PhoneNumber,
+                 request.BirthDate,
+                 request.Address,
+                 request.PostalCode,
+                 request.City,
+                 request.Password,
+                 request.IsAdministrator,
+                 request.Email);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database"});
+            }
 
             Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, request.IsAdministrator);
 
