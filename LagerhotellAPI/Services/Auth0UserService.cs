@@ -13,6 +13,7 @@ public class Auth0UserService
     private readonly string _bearerToken;
     private readonly string _domain;
     private readonly string _clientId;
+    private readonly string _managementApiId;
     private readonly string _dbName = "Lagerhotell";
     private HttpClient client = new();
     private readonly CompanyUserService _companyUserService;
@@ -24,6 +25,7 @@ public class Auth0UserService
         _usersApiId = $"https://{_domain}";
         _clientId = configuration["Auth0:ClientId"];
         _companyUserService = new CompanyUserService(settings, tokenService);
+        _managementApiId = $"https://{_domain}/api/v2";
     }
 
     public async Task? AddUser(UserAuth0 user)
@@ -53,6 +55,8 @@ public class Auth0UserService
         var json = JsonSerializer.Serialize(jsonData);
         var data = new StringContent(json, null, "application/json");
         var response = await client.PostAsync(endpoint, data);
+        
+        
         var responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
