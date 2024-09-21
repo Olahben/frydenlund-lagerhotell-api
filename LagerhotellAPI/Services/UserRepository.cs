@@ -49,7 +49,10 @@ namespace LagerhotellAPI.Services
 
         public async Task AddUserToAuth0(User user)
         {
-            UserAuth0 userAuth0 = new(user.Id, user.Email, user.Password);
+            UserAuth0 userAuth0 = new(user.Id, user.Email)
+            {
+                Password = user.Password
+            };
             await _auth0UserService.AddUser(userAuth0);
         }
 
