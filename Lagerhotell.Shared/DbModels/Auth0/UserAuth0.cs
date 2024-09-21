@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LagerhotellAPI.Models.DbModels.Auth0;
 
-public record UserAuth0(string UserId, string Email, string Password)
+public record UserAuth0(string UserId, string Email)
 {
     public string? UserAuth0Id { get; set; }
+    public string? Password { get; set; }
     // Empty constructor
-    public UserAuth0() : this(string.Empty, string.Empty, string.Empty) { }
+    public UserAuth0() : this(string.Empty, string.Empty) { }
 };
