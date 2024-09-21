@@ -35,7 +35,8 @@ public class Auth0UserService
         {
             await _companyUserService.GetCompanyUserAsync(user.UserId);
             isCompanyUser = true;
-        } catch (KeyNotFoundException e)
+        }
+        catch (KeyNotFoundException e)
         {
             isCompanyUser = false;
         }
@@ -55,8 +56,8 @@ public class Auth0UserService
         var json = JsonSerializer.Serialize(jsonData);
         var data = new StringContent(json, null, "application/json");
         var response = await client.PostAsync(endpoint, data);
-        
-        
+
+
         var responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -88,6 +89,54 @@ public class Auth0UserService
         catch (HttpRequestException e)
         {
             throw new BadRequestException($"Invalid access token, {e}");
+        }
+    }
+
+    public async Task<UserAuth0> GetCompleteUser(string auth0Id)
+    {
+        string endpoint = _managementApiId + $"/users/{auth0Id}";
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+        var response = await client.GetAsync(endpoint);
+        try
+        {
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var user = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
+            string userId = user["user_metadata"].GetProperty("user_id").ToString();
+            string email = user["email"].ToString();
+
+            return new UserAuth0(userId, email)
+            {
+                UserAuth0Id = auth0Id
+            };
+        }
+        catch (HttpRequestException e)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new BadRequestException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new Exception($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                throw new TooManyRequestsException($"{e.Message}");
+            }
+            throw new Exception(e.ToString());
         }
     }
 }
