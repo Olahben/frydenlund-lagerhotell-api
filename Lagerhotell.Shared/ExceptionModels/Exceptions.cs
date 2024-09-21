@@ -20,3 +20,10 @@ public class InvalidVerificationCodeException : Exception
         : base(message == null ? "Bad Request" : message)
     { }
 }
+public class TooManyRequestsException : Exception
+{
+    public TooManyRequestsException(string message = null)
+        : base(message == null ? "Bad Request" : message)
+    { }
+}
+
