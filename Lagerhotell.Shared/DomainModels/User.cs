@@ -1,7 +1,7 @@
 ﻿namespace LagerhotellAPI.Models.DomainModels;
 public class User
 {
-    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified)
     {
         Id = userId;
         FirstName = firstName;
@@ -12,8 +12,9 @@ public class User
         Address = address;
         Password = password;
         IsAdministrator = isAdministrator;
+        IsEmailVerified = isEmailVerified;
     }
-    public User (string firstName, string lastName, string phoneNumber, string email, string birthDate, Address address, string password, bool isAdministrator)
+    public User (string firstName, string lastName, string phoneNumber, string email, string birthDate, Address address, string password, bool isAdministrator, bool isEmailVerified)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -23,6 +24,7 @@ public class User
         Address = address;
         Password = password;
         IsAdministrator = isAdministrator;
+        IsEmailVerified = isEmailVerified;
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -36,6 +38,7 @@ public class User
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
+    public bool IsEmailVerified { get; set; } = false;
     public string BirthDate { get; set; }
 
     public Address Address { get; set; }
