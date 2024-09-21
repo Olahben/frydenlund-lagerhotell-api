@@ -13,11 +13,12 @@ public class CompanyUserDocument
     public string Name { get; set; }
     public string CompanyNumber { get; set; }
     public string Email { get; set; }
+    public bool IsEmailVerified { get; set; }
     public string PhoneNumber { get; set; }
     public string Password { get; set; }
     public Address Address { get; set; }
 
-    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password)
+    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified)
     {
         CompanyUserId = companyUserId;
         FirstName = firstName;
@@ -28,8 +29,9 @@ public class CompanyUserDocument
         PhoneNumber = phoneNumber;
         Address = address;
         Password = password;
+        IsEmailVerified = isEmailVerified;
     }
-    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password)
+    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified)
     {
         Id = id;
         CompanyUserId = companyUserId;
@@ -41,5 +43,6 @@ public class CompanyUserDocument
         PhoneNumber = phoneNumber;
         Address = address;
         Password = password;
+        IsEmailVerified = isEmailVerified;
     }
 }
