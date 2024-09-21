@@ -62,4 +62,28 @@ public class Auth0UserService
             }
         }
     }
+
+    /// <summary>
+    /// Gets a users information from Auth0 (will be finished as soon as auth0 tokens are implemented for this application)
+    /// </summary>
+    /// <param name="accesstoken"></param>
+    /// <returns></returns>
+    /// <exception cref="BadRequestException"></exception>
+    public async Task<object> GetUser(string accesstoken)
+    {
+        string endpoint = _usersApiId + "/userinfo";
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
+        var response = await client.GetAsync(endpoint);
+        try
+        {
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            object user = JsonSerializer.Deserialize<object>(responseContent);
+            return user;
+        }
+        catch (HttpRequestException e)
+        {
+            throw new BadRequestException($"Invalid access token, {e}");
+        }
+    }
 }
