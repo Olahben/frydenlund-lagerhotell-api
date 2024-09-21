@@ -9,4 +9,6 @@ namespace LagerhotellAPI.Models.DbModels.Auth0;
 public record UserAuth0(string UserId, string Email, string Password)
 {
     public string? UserAuth0Id { get; set; }
+    // Empty constructor
+    public UserAuth0() : this(string.Empty, string.Empty, string.Empty) { }
 };
