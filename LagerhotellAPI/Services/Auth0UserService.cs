@@ -4,6 +4,7 @@ global using System.Text.Json;
 global using System.Text;
 global using System.Net;
 global using LagerhotellAPI.Models.CustomExceptionModels;
+using LagerhotellAPI.Models;
 namespace LagerhotellAPI.Services;
 
 public class Auth0UserService
@@ -14,58 +15,40 @@ public class Auth0UserService
     private readonly string _clientId;
     private readonly string _dbName = "Lagerhotell";
     private HttpClient client = new();
+    private readonly CompanyUserService _companyUserService;
 
-    public Auth0UserService(IConfiguration configuration)
+    public Auth0UserService(IConfiguration configuration, MongoDbSettings settings, TokenService tokenService)
     {
         _bearerToken = configuration["Auth0:ApiBearerToken"];
         _domain = configuration["Auth0:Domain"];
         _managementApiId = $"https://{_domain}";
         _clientId = configuration["Auth0:ClientId"];
+        _companyUserService = new CompanyUserService(settings, tokenService);
     }
 
     public async Task? AddUser(UserAuth0 user)
     {
+        bool isCompanyUser;
+        try
+        {
+            await _companyUserService.GetCompanyUserAsync(user.UserId);
+            isCompanyUser = true;
+        } catch (KeyNotFoundException e)
+        {
+            isCompanyUser = false;
+        }
         string endpoint = _managementApiId + "/dbconnections/signup";
-        object userMetaData;
-        if (user.NormalUserMetadata != null)
-        {
-            userMetaData = new
-            {
-                user_id = user.UserId,
-                first_name = user.NormalUserMetadata.FirstName,
-                last_name = user.NormalUserMetadata.LastName,
-                phone_number = user.NormalUserMetadata.PhoneNumber,
-                email = user.NormalUserMetadata.Email,
-                birth_date = user.NormalUserMetadata.BirthDate,
-                street_address = user.NormalUserMetadata.Address.StreetAddress,
-                postal_code = user.NormalUserMetadata.Address.PostalCode,
-                city = user.NormalUserMetadata.Address.City,
-                is_administrator = user.NormalUserMetadata.IsAdministrator.ToString()
-            };
-        }
-        else
-        {
-            userMetaData = new
-            {
-                company_user_id = user.CompanyUserMetaData.CompanyUserId,
-                first_name = user.CompanyUserMetaData.FirstName,
-                last_name = user.CompanyUserMetaData.LastName,
-                name = user.CompanyUserMetaData.Name,
-                phone_number = user.CompanyUserMetaData.PhoneNumber,
-                email = user.CompanyUserMetaData.Email,
-                company_number = user.CompanyUserMetaData.CompanyNumber,
-                street_address = user.CompanyUserMetaData.Address.StreetAddress,
-                postal_code = user.CompanyUserMetaData.Address.PostalCode,
-                city = user.CompanyUserMetaData.Address.City
-            };
-        }
         var jsonData = new
         {
             client_id = _clientId,
             email = user.Email,
             password = user.Password,
             connection = _dbName,
-            user_metadata = userMetaData
+            user_metadata = new
+            {
+                company_user = isCompanyUser.ToString(),
+                user_id = user.UserId
+            }
         };
         var json = JsonSerializer.Serialize(jsonData);
         var data = new StringContent(json, null, "application/json");
