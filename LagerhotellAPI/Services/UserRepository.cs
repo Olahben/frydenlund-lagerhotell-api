@@ -19,7 +19,7 @@ namespace LagerhotellAPI.Services
             var database = client.GetDatabase("Lagerhotell");
             _users = database.GetCollection<Models.DbModels.User>("Users");
             _companyUserService = new CompanyUserService(settings, tokenService);
-            _auth0UserService = new Auth0UserService(configuration);
+            _auth0UserService = new Auth0UserService(configuration, settings, tokenService);
         }
 
         /// <summary>
@@ -49,10 +49,7 @@ namespace LagerhotellAPI.Services
 
         public async Task AddUserToAuth0(User user)
         {
-            UserAuth0 userAuth0 = new(user.Id, user.Email, false, user.Password, true)
-            {
-                NormalUserMetadata = user
-            };
+            UserAuth0 userAuth0 = new(user.Id, user.Email, user.Password);
             await _auth0UserService.AddUser(userAuth0);
         }
 
