@@ -9,7 +9,7 @@ namespace LagerhotellAPI.Services;
 
 public class Auth0UserService
 {
-    private readonly string _managementApiId;
+    private readonly string _usersApiId;
     private readonly string _bearerToken;
     private readonly string _domain;
     private readonly string _clientId;
@@ -21,7 +21,7 @@ public class Auth0UserService
     {
         _bearerToken = configuration["Auth0:ApiBearerToken"];
         _domain = configuration["Auth0:Domain"];
-        _managementApiId = $"https://{_domain}";
+        _usersApiId = $"https://{_domain}";
         _clientId = configuration["Auth0:ClientId"];
         _companyUserService = new CompanyUserService(settings, tokenService);
     }
@@ -37,7 +37,7 @@ public class Auth0UserService
         {
             isCompanyUser = false;
         }
-        string endpoint = _managementApiId + "/dbconnections/signup";
+        string endpoint = _usersApiId + "/dbconnections/signup";
         var jsonData = new
         {
             client_id = _clientId,
