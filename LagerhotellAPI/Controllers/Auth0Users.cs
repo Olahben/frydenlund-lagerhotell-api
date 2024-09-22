@@ -14,6 +14,8 @@ public class Auth0UsersController : ControllerBase
     }
 
     // Endpoints are going to be protected with authorization after auth0 tokens are integrated
+    // For now, they are open for testing purposes
+    // Endpoints do not currently have request models or response models, this will be implemented and validated later
     [HttpGet]
     [Route("get-user")]
     public async Task<IActionResult> GetUser([FromQuery] string auth0UserId)
@@ -22,6 +24,37 @@ public class Auth0UsersController : ControllerBase
         {
             var user = await _auth0UserService.GetCompleteUser(auth0UserId);
             return Ok(user);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (TooManyRequestsException e)
+        {
+            return StatusCode(StatusCodes.Status429TooManyRequests, e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("signup-user")]
+    public async Task<IActionResult> SignupUser([FromBody] UserAuth0 user)
+    {
+        try
+        {
+            await _auth0UserService.AddUser(user);
+            return Ok();
         }
         catch (KeyNotFoundException e)
         {
