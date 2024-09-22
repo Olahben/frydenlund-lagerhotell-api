@@ -28,6 +28,12 @@ public class Auth0UserService
         _managementApiId = $"https://{_domain}/api/v2";
     }
 
+    /// <summary>
+    /// Signs up and adds a user to auth0
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    /// <exception cref="BadRequestException"></exception>
     public async Task? AddUser(UserAuth0 user)
     {
         bool isCompanyUser;
@@ -92,6 +98,16 @@ public class Auth0UserService
         }
     }
 
+    /// <summary>
+    /// Gets a full user from the user management api in Auth0
+    /// </summary>
+    /// <param name="auth0Id"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="BadRequestException"></exception>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="TooManyRequestsException"></exception>
     public async Task<UserAuth0> GetCompleteUser(string auth0Id)
     {
         string endpoint = _managementApiId + $"/users/{auth0Id}";
@@ -140,6 +156,16 @@ public class Auth0UserService
         }
     }
 
+    /// <summary>
+    /// Deletes a user from auth0
+    /// </summary>
+    /// <param name="auth0Id"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="BadRequestException"></exception>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="TooManyRequestsException"></exception>
     public async Task DeleteUser(string auth0Id)
     {
         string endpoint = _managementApiId + $"/users/{auth0Id}";
