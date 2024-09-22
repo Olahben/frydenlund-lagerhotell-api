@@ -139,4 +139,39 @@ public class Auth0UserService
             throw new Exception(e.ToString());
         }
     }
+
+    public async Task DeleteUser(string auth0Id)
+    {
+        string endpoint = _managementApiId + $"/users/{auth0Id}";
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+        var response = await client.DeleteAsync(endpoint);
+        try
+        {
+            response.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException e)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new BadRequestException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new Exception($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                throw new TooManyRequestsException($"{e.Message}");
+            }
+            throw new Exception(e.ToString());
+        }
+    }
 }
