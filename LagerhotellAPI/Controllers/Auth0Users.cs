@@ -139,4 +139,42 @@ public class Auth0UsersController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
+
+    /// <summary>
+    /// Endpoint for updating a users password when the user has not forgotten the password
+    /// </summary>
+    /// <param name="auth0UserId"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
+    // TODO: take old password, check if it is correct, before changing the original password
+    [HttpPatch]
+    [Route("change-user-password")]
+    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromQuery] string password)
+    {
+        try
+        {
+            await _auth0UserService.ChangeUserpassword(auth0UserId, password);
+            return Ok();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (TooManyRequestsException e)
+        {
+            return StatusCode(StatusCodes.Status429TooManyRequests, e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
 }
