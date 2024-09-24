@@ -15,6 +15,7 @@ public class Auth0UserService
     private readonly string _clientId;
     private readonly string _managementApiId;
     private readonly string _dbName = "Lagerhotell";
+    private readonly string _clientSecret;
     private HttpClient client = new();
     private readonly CompanyUserService _companyUserService;
 
@@ -26,6 +27,7 @@ public class Auth0UserService
         _clientId = configuration["Auth0:ClientId"];
         _companyUserService = new CompanyUserService(settings, tokenService);
         _managementApiId = $"https://{_domain}/api/v2";
+        _clientSecret = configuration["Auth0:ClientSecret"];
     }
 
     /// <summary>
@@ -255,6 +257,53 @@ public class Auth0UserService
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
         var response = await client.PatchAsync(endpoint, data);
+        try
+        {
+            response.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException e)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new BadRequestException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new Exception($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                throw new TooManyRequestsException($"{e.Message}");
+            }
+            throw new Exception(e.ToString());
+        }
+    }
+
+    public async Task IsLoginCredentialsCorrect(string email, string password)
+    {
+        string endpoint = _usersApiId + "/oauth/token";
+        var jsonData = new
+        {
+            client_id = _clientId,
+            username = email,
+            password,
+            grant_type = "password",
+            scope = "openid",
+            client_secret = _clientSecret,
+            connection = _dbName
+        };
+        var json = JsonSerializer.Serialize(jsonData);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(endpoint, data);
+        string responseContent = await response.Content.ReadAsStringAsync();
         try
         {
             response.EnsureSuccessStatusCode();
