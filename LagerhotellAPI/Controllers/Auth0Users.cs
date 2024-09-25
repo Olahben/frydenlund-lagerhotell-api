@@ -146,11 +146,20 @@ public class Auth0UsersController : ControllerBase
     /// <param name="auth0UserId"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    // TODO: take old password, check if it is correct, before changing the original password
     [HttpPatch]
     [Route("change-user-password")]
-    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromQuery] string password)
+    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromQuery] string email, [FromQuery] string password, [FromQuery] string oldPassword)
     {
+        try
+        {
+            await _auth0UserService.IsLoginCredentialsCorrect(email, oldPassword);
+        } catch (UnauthorizedAccessException)
+        {
+            return Unauthorized("Old password is incorrect");
+        } catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
         try
         {
             await _auth0UserService.ChangeUserpassword(auth0UserId, password);
