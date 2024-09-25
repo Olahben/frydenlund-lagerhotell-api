@@ -16,6 +16,7 @@ public class Auth0UserService
     private readonly string _managementApiId;
     private readonly string _dbName = "Lagerhotell";
     private readonly string _clientSecret;
+    private readonly string _dbId;
     private HttpClient client = new();
     private readonly CompanyUserService _companyUserService;
 
@@ -28,6 +29,7 @@ public class Auth0UserService
         _companyUserService = new CompanyUserService(settings, tokenService);
         _managementApiId = $"https://{_domain}/api/v2";
         _clientSecret = configuration["Auth0:ClientSecret"];
+        _dbId = configuration["Auth0:DbId"];
     }
 
     /// <summary>
