@@ -194,7 +194,7 @@ public class Auth0UsersController : ControllerBase
         try
         {
             await _auth0UserService.SendForgotPasswordEmail(email);
-            return Ok();
+            return Created();
         }
         catch (KeyNotFoundException e)
         {
