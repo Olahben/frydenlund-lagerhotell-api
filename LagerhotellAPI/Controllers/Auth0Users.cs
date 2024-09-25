@@ -186,4 +186,35 @@ public class Auth0UsersController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
+
+    [HttpPost]
+    [Route("send-forgot-password-email")]
+    public async Task<IActionResult> SendForgotPasswordEmail([FromQuery] string email)
+    {
+        try
+        {
+            await _auth0UserService.SendForgotPasswordEmail(email);
+            return Ok();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (TooManyRequestsException e)
+        {
+            return StatusCode(StatusCodes.Status429TooManyRequests, e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
 }
