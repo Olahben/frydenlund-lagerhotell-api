@@ -23,7 +23,7 @@ public class Auth0UsersController : ControllerBase
         try
         {
             var user = await _auth0UserService.GetCompleteUser(auth0UserId);
-            return Ok(user);
+            return Ok(new GetAuth0UserResponse(user));
         }
         catch (KeyNotFoundException e)
         {
@@ -49,11 +49,11 @@ public class Auth0UsersController : ControllerBase
 
     [HttpPost]
     [Route("signup-user")]
-    public async Task<IActionResult> SignupUser([FromBody] UserAuth0 user)
+    public async Task<IActionResult> SignupUser([FromBody] SignupUserAuth0Request user)
     {
         try
         {
-            await _auth0UserService.AddUser(user);
+            await _auth0UserService.AddUser(user.user);
             return Ok();
         }
         catch (KeyNotFoundException e)
@@ -111,11 +111,11 @@ public class Auth0UsersController : ControllerBase
 
     [HttpPatch]
     [Route("update-and-verify-user-email")]
-    public async Task<IActionResult> UpdateAndVerifyUserEmail([FromQuery] string auth0UserId, [FromQuery] string email)
+    public async Task<IActionResult> UpdateAndVerifyUserEmail([FromQuery] string auth0UserId, [FromBody] UpdateAndVerifyUserEmailRequest request)
     {
         try
         {
-            await _auth0UserService.UpdateAndVerifyEmail(auth0UserId, email);
+            await _auth0UserService.UpdateAndVerifyEmail(auth0UserId, request.email);
             return Ok();
         }
         catch (KeyNotFoundException e)
@@ -148,11 +148,11 @@ public class Auth0UsersController : ControllerBase
     /// <returns></returns>
     [HttpPatch]
     [Route("change-user-password")]
-    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromQuery] string email, [FromQuery] string password, [FromQuery] string oldPassword)
+    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromBody] ChangeUserPasswordRequest request)
     {
         try
         {
-            await _auth0UserService.IsLoginCredentialsCorrect(email, oldPassword);
+            await _auth0UserService.IsLoginCredentialsCorrect(request.email, request.oldPassword);
         } catch (UnauthorizedAccessException)
         {
             return Unauthorized("Old password is incorrect");
@@ -162,7 +162,7 @@ public class Auth0UsersController : ControllerBase
         }
         try
         {
-            await _auth0UserService.ChangeUserpassword(auth0UserId, password);
+            await _auth0UserService.ChangeUserpassword(auth0UserId, request.newPassword);
             return Ok();
         }
         catch (KeyNotFoundException e)
@@ -189,11 +189,11 @@ public class Auth0UsersController : ControllerBase
 
     [HttpPost]
     [Route("send-forgot-password-email")]
-    public async Task<IActionResult> SendForgotPasswordEmail([FromQuery] string email)
+    public async Task<IActionResult> SendForgotPasswordEmail([FromBody] SendForgotPasswordEmailRequest request)
     {
         try
         {
-            await _auth0UserService.SendForgotPasswordEmail(email);
+            await _auth0UserService.SendForgotPasswordEmail(request.email);
             return Created();
         }
         catch (KeyNotFoundException e)
