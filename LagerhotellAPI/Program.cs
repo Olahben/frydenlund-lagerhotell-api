@@ -16,11 +16,11 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
       options.MinimumSameSitePolicy = SameSiteMode.None;
   });
 
-builder.Services.AddAuth0WebAppAuthentication(options =>
+/*builder.Services.AddAuth0WebAppAuthentication(options =>
 {
     options.Domain = builder.Configuration["Auth0:Domain"];
     options.ClientId = builder.Configuration["Auth0:ClientId"];
-});
+});*/
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    /*options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
@@ -67,7 +67,9 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
+    };*/
+    options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+    options.Audience = builder.Configuration["App:HostUrl"];
 });
 
 // Configure Swagger
@@ -92,4 +94,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
