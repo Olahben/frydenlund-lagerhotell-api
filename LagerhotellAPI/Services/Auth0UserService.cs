@@ -5,6 +5,9 @@ global using System.Text;
 global using System.Net;
 global using LagerhotellAPI.Models.CustomExceptionModels;
 using LagerhotellAPI.Models;
+using static System.Net.WebRequestMethods;
+using Microsoft.OpenApi.Models;
+using ZstdSharp.Unsafe;
 namespace LagerhotellAPI.Services;
 
 public class Auth0UserService
@@ -17,6 +20,11 @@ public class Auth0UserService
     private readonly string _dbName = "Lagerhotell";
     private readonly string _clientSecret;
     private readonly string _dbId;
+    private readonly string _loginCallbackUrl;
+    private readonly string _SPAClientId;
+    private readonly string _SPAClientSecret;
+    private readonly string _apiClientId;
+    private readonly string _apiClientSecret;
     private HttpClient client = new();
     private readonly CompanyUserService _companyUserService;
 
@@ -30,6 +38,11 @@ public class Auth0UserService
         _managementApiId = $"https://{_domain}/api/v2";
         _clientSecret = configuration["Auth0:ClientSecret"];
         _dbId = configuration["Auth0:DbId"];
+        _loginCallbackUrl = configuration["Auth0:LoginCallback"];
+        _SPAClientId = configuration["Auth0:SPAClientId"];
+        _SPAClientSecret = configuration["Auth0:SPAClientSecret"];
+        _apiClientId = configuration["Auth0:ApiClientId"];
+        _apiClientSecret = configuration["Auth0:ApiClientSecret"];
     }
 
     /// <summary>
@@ -354,6 +367,58 @@ public class Auth0UserService
             response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException e)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new BadRequestException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new Exception($"{e.Message}");
+            }
+            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                throw new TooManyRequestsException($"{e.Message}");
+            }
+            throw new Exception(e.ToString());
+        }
+    }
+
+    public async Task<string> ExchangeCodeForTokens(string code)
+    {
+        string endpoint = "https://dev-5d78w0vkmfapcdn6.us.auth0.com/oauth/token";
+        var jsonData = new
+        {
+            client_id = _apiClientId,
+            client_secret = _apiClientSecret,
+            code,
+            grant_type = "authorization_code",
+            redirect_uri = "https://localhost:5001/authentication/login-callback",
+            scope = "openid profile email offline_access"
+        };
+        var json = JsonSerializer.Serialize(jsonData);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(endpoint, data);
+        try
+        {
+            response.EnsureSuccessStatusCode();
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
+            // save refresh token along with access token in database
+            return token["access_token"].ToString();
+        } catch (HttpRequestException e)
         {
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
