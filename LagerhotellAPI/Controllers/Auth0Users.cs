@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers;
 
-[Route("auth0-users")]
 [ApiController]
+[Route("auth0-users")]
 public class Auth0UsersController : ControllerBase
 {
     private readonly Auth0UserService _auth0UserService;
@@ -195,6 +195,40 @@ public class Auth0UsersController : ControllerBase
         {
             await _auth0UserService.SendForgotPasswordEmail(request.email);
             return Created();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (TooManyRequestsException e)
+        {
+            return StatusCode(StatusCodes.Status429TooManyRequests, e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("exchange-code-for-tokens")]
+    public async Task<IActionResult> ExchangeCodeForTokens([FromBody] ExchangeCodeForTokensRequest request)
+    {
+        // Gets tokens based on code
+        // Saves refresh token in database
+        // Returns access token to frontend
+        try
+        {
+            string token = await _auth0UserService.ExchangeCodeForTokens(request.Code);
+            return Ok(new ExchangeCodeForTokensResponse(token));
         }
         catch (KeyNotFoundException e)
         {
