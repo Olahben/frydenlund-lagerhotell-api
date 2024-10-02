@@ -97,7 +97,7 @@ public class Auth0UserService
     /// <param name="accesstoken"></param>
     /// <returns></returns>
     /// <exception cref="BadRequestException"></exception>
-    public async Task<object> GetUser(string accesstoken)
+    public async Task<string> GetUserIdViaToken(string accesstoken)
     {
         string endpoint = _usersApiId + "/userinfo";
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
@@ -106,8 +106,10 @@ public class Auth0UserService
         {
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            object user = JsonSerializer.Deserialize<object>(responseContent);
-            return user;
+            JsonElement jsonObject = JsonSerializer.Deserialize<JsonElement>(responseContent);
+            string id = jsonObject.GetProperty("sub").GetString();
+            return id;
+
         }
         catch (HttpRequestException e)
         {
@@ -392,7 +394,7 @@ public class Auth0UserService
         }
     }
 
-    public async Task<string> ExchangeCodeForTokens(string code)
+    public async Task<(string, string)> ExchangeCodeForTokens(string code)
     {
         string endpoint = "https://dev-5d78w0vkmfapcdn6.us.auth0.com/oauth/token";
         var jsonData = new
@@ -417,7 +419,7 @@ public class Auth0UserService
             };
             var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
             // save refresh token along with access token in database
-            return token["access_token"].ToString();
+            return (token["access_token"].ToString(), token["refresh_token"].ToString());
         } catch (HttpRequestException e)
         {
             if (response.StatusCode == HttpStatusCode.NotFound)
