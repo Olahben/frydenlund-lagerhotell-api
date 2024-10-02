@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Antiforgery;
 using Auth0.AspNetCore.Authentication;
+using LagerhotellAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,7 @@ builder.Services.AddHostedService<PendingOrderHandler>();
 builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddScoped<AccountManagementService>();
 builder.Services.AddScoped<Auth0UserService>();
+builder.Services.AddScoped<RefreshTokens>();
 builder.Services.AddLogging(configure => configure.AddConsole());
 
 // Configure CORS policy
