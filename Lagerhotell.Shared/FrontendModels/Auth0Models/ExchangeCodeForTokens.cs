@@ -7,4 +7,4 @@ using System.Threading.Tasks;
 namespace LagerhotellAPI.Models.FrontendModels;
 
 public record ExchangeCodeForTokensRequest(string Code);
-public record ExchangeCodeForTokensResponse(string AccessToken);
+public record ExchangeCodeForTokensResponse(string AccessToken, string UserId);
