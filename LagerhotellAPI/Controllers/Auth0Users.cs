@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿global using LagerhotellAPI.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LagerhotellAPI.Controllers;
@@ -8,9 +9,11 @@ namespace LagerhotellAPI.Controllers;
 public class Auth0UsersController : ControllerBase
 {
     private readonly Auth0UserService _auth0UserService;
-    public Auth0UsersController(Auth0UserService auth0UserService)
+    private readonly RefreshTokens _refreshTokensRepository;
+    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository)
     {
         _auth0UserService = auth0UserService;
+        _refreshTokensRepository = refreshTokensRepository;
     }
 
     // Endpoints are going to be protected with authorization after auth0 tokens are integrated
@@ -227,8 +230,11 @@ public class Auth0UsersController : ControllerBase
         // Returns access token to frontend
         try
         {
-            string token = await _auth0UserService.ExchangeCodeForTokens(request.Code);
-            return Ok(new ExchangeCodeForTokensResponse(token));
+            (string accessToken, string refreshToken) = await _auth0UserService.ExchangeCodeForTokens(request.Code);
+            string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
+            UserAuth0 user = await _auth0UserService.GetCompleteUser(auth0Id);
+            await _refreshTokensRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, user.UserId));
+            return Ok(new ExchangeCodeForTokensResponse(accessToken, user.UserId));
         }
         catch (KeyNotFoundException e)
         {
