@@ -13,11 +13,15 @@ namespace Controllers
         private readonly UserRepository _userRepository;
         private readonly GetUser.GetUserResponse _getuserResponse = new GetUser.GetUserResponse();
         private readonly TokenService _tokenService;   
+        private readonly Auth0UserService _auth0UserService;
+        private readonly RefreshTokens _refreshTokenRepository;
 
-        public UsersController(TokenService tokenService, UserRepository userRepository)
+        public UsersController(TokenService tokenService, UserRepository userRepository, Auth0UserService auth0UserService, RefreshTokens refreshTokenRpository)
         {
             _tokenService = tokenService;
             _userRepository = userRepository;
+            _auth0UserService = auth0UserService;
+            _refreshTokenRepository = refreshTokenRpository;
         }
 
         [Route("check-phone/{phoneNumber}")]
@@ -54,6 +58,8 @@ namespace Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] AddUserRequest request)
         {
+            string accessToken;
+            string refreshToken;
             bool doesSimilarUserExist = await _userRepository.DoesSimilarUserExist(request.PhoneNumber, request.Email);
             if (doesSimilarUserExist)
             {
@@ -74,6 +80,9 @@ namespace Controllers
                  request.Password,
                  request.IsAdministrator,
                  request.Email);
+               (accessToken, refreshToken) = await _auth0UserService.GetUserTokens(request.Password, request.Email);
+                string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
+                await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
             }  catch (BadRequestException ex)
             {
                 return BadRequest(ex.Message + "Could originate from auth0 call");
@@ -84,9 +93,7 @@ namespace Controllers
                 return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database"});
             }
 
-            Jwt jwt = _tokenService.CreateJwt(user.Id, user.PhoneNumber, request.IsAdministrator);
-
-            return Ok(new AddUserResponse { UserId = user.Id, Token = jwt.Token });
+            return Ok(new AddUserResponse { UserId = user.Id, Token = accessToken });
         }
         [Route("log-in")]
         [HttpPost]
