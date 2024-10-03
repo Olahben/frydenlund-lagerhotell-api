@@ -396,7 +396,7 @@ public class Auth0UserService
 
     public async Task<(string, string)> ExchangeCodeForTokens(string code)
     {
-        string endpoint = "https://dev-5d78w0vkmfapcdn6.us.auth0.com/oauth/token";
+        string endpoint = _usersApiId + "/oauth/token";
         var jsonData = new
         {
             client_id = _apiClientId,
@@ -444,5 +444,29 @@ public class Auth0UserService
             }
             throw new Exception(e.ToString());
         }
+    }
+
+    public async Task<(string, string)> GetUserTokens(string password, string email)
+    {
+        string endpoint = _usersApiId + "/oauth/token";
+        var jsonData = new
+        {
+            client_id = _apiClientId,
+            client_secret = _apiClientSecret,
+            username = email,
+            password = password,
+            grant_type = "password",
+            scope = "openid profile email offline_access"
+        };
+        var json = JsonSerializer.Serialize(jsonData);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(endpoint, data);
+        string responseContent = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
+        return (token["access_token"].ToString(), token["refresh_token"].ToString());
     }
 }
