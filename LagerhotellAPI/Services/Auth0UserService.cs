@@ -25,6 +25,7 @@ public class Auth0UserService
     private readonly string _SPAClientSecret;
     private readonly string _apiClientId;
     private readonly string _apiClientSecret;
+    private readonly string _apiAudience;
     private HttpClient client = new();
     private readonly CompanyUserService _companyUserService;
 
@@ -43,6 +44,7 @@ public class Auth0UserService
         _SPAClientSecret = configuration["Auth0:SPAClientSecret"];
         _apiClientId = configuration["Auth0:ApiClientId"];
         _apiClientSecret = configuration["Auth0:ApiClientSecret"];
+        _apiAudience = configuration["App:HostUrl"];
     }
 
     /// <summary>
@@ -456,7 +458,8 @@ public class Auth0UserService
             username = email,
             password = password,
             grant_type = "password",
-            scope = "openid profile email offline_access"
+            scope = "openid profile email offline_access",
+            audience = _apiAudience
         };
         var json = JsonSerializer.Serialize(jsonData);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
