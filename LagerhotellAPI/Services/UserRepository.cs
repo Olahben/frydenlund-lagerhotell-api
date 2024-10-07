@@ -223,7 +223,7 @@ namespace LagerhotellAPI.Services
 
         public async Task<User> GetByAuth0Id(string id)
         {
-            var dbUser = _users.Find(user => user.Auth0Id == id).FirstOrDefault();
+            var dbUser = await _users.Find(user => user.Auth0Id == id).FirstOrDefaultAsync();
             if (dbUser == null)
             {
                 throw new KeyNotFoundException("User not found.");
