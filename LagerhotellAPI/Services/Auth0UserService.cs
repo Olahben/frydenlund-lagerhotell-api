@@ -62,7 +62,7 @@ public class Auth0UserService
             connection = _dbName,
             user_metadata = new
             {
-                company_user = isCompanyUser,
+                company_user = isCompanyUser.ToString(),
                 user_id = user.UserId
             }
         };
