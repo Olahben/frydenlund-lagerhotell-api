@@ -3,6 +3,7 @@
 public class CompanyUser
 {
     public string? CompanyUserId { get; set; }
+    public string Auth0Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Name { get; set; }
@@ -13,7 +14,7 @@ public class CompanyUser
     public string Password { get; set; }
     public Address Address { get; set; }
 
-    public CompanyUser(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified)
+    public CompanyUser(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified, string auth0Id)
     {
         CompanyUserId = companyUserId;
         FirstName = firstName;
@@ -25,6 +26,7 @@ public class CompanyUser
         Address = address;
         Password = password;
         IsEmailVerified = isEmailVerified;
+        Auth0Id = auth0Id;
     }
 
     public CompanyUser()

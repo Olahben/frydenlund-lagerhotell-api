@@ -8,6 +8,7 @@ public class CompanyUserDocument
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
     public string CompanyUserId { get; set; }
+    public string Auth0Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Name { get; set; }
@@ -18,7 +19,7 @@ public class CompanyUserDocument
     public string Password { get; set; }
     public Address Address { get; set; }
 
-    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified)
+    public CompanyUserDocument(string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified, string auth0Id)
     {
         CompanyUserId = companyUserId;
         FirstName = firstName;
@@ -30,8 +31,9 @@ public class CompanyUserDocument
         Address = address;
         Password = password;
         IsEmailVerified = isEmailVerified;
+        Auth0Id = auth0Id;
     }
-    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified)
+    public CompanyUserDocument(string id, string companyUserId, string firstName, string lastName, string name, string companyNumber, string email, string phoneNumber, Address address, string password, bool isEmailVerified, string auth0Id)
     {
         Id = id;
         CompanyUserId = companyUserId;
@@ -44,5 +46,6 @@ public class CompanyUserDocument
         Address = address;
         Password = password;
         IsEmailVerified = isEmailVerified;
+        Auth0Id = auth0Id;
     }
 }
