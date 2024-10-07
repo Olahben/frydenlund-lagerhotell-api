@@ -27,15 +27,13 @@ public class Auth0UserService
     private readonly string _apiClientSecret;
     private readonly string _apiAudience;
     private HttpClient client = new();
-    private readonly CompanyUserService _companyUserService;
 
-    public Auth0UserService(IConfiguration configuration, MongoDbSettings settings, TokenService tokenService)
+    public Auth0UserService(IConfiguration configuration)
     {
         _bearerToken = configuration["Auth0:ApiBearerToken"];
         _domain = configuration["Auth0:Domain"];
         _usersApiId = $"https://{_domain}";
         _clientId = configuration["Auth0:ClientId"];
-        _companyUserService = new CompanyUserService(settings, tokenService);
         _managementApiId = $"https://{_domain}/api/v2";
         _clientSecret = configuration["Auth0:ClientSecret"];
         _dbId = configuration["Auth0:DbId"];
@@ -53,18 +51,8 @@ public class Auth0UserService
     /// <param name="user"></param>
     /// <returns></returns>
     /// <exception cref="BadRequestException"></exception>
-    public async Task? AddUser(UserAuth0 user)
+    public async Task AddUser(UserAuth0 user, bool isCompanyUser)
     {
-        bool isCompanyUser;
-        try
-        {
-            await _companyUserService.GetCompanyUserAsync(user.UserId);
-            isCompanyUser = true;
-        }
-        catch (KeyNotFoundException e)
-        {
-            isCompanyUser = false;
-        }
         string endpoint = _usersApiId + "/dbconnections/signup";
         var jsonData = new
         {
@@ -74,7 +62,7 @@ public class Auth0UserService
             connection = _dbName,
             user_metadata = new
             {
-                company_user = isCompanyUser.ToString(),
+                company_user = isCompanyUser,
                 user_id = user.UserId
             }
         };
