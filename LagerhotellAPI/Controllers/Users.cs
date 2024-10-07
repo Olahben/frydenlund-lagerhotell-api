@@ -92,7 +92,7 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _logger.LogError(ex, "Error in AddUser");
                 return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database"});
             }
 
@@ -210,7 +210,7 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _logger.LogError(ex, "Error in UpdateUserValues");
                 return NotFound(ex.Message);
             }
 
@@ -228,8 +228,8 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                return StatusCode(500);
+                _logger.LogError(e, "Error in GetAllUsers");
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -249,8 +249,8 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return StatusCode(500);
+                _logger.LogError(ex, "Error in DeleteUserById");
+                return StatusCode(500, ex.Message);
             }
         }
 
