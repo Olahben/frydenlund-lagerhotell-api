@@ -27,6 +27,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<Auth0UserService>();
+builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddSingleton<OrderService>();
 builder.Services.AddScoped<StorageUnitService>();
@@ -34,9 +36,7 @@ builder.Services.AddScoped<WarehouseHotelService>();
 builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<AssetService>();
 builder.Services.AddHostedService<PendingOrderHandler>();
-builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddScoped<AccountManagementService>();
-builder.Services.AddScoped<Auth0UserService>();
 builder.Services.AddScoped<RefreshTokens>();
 builder.Services.AddLogging(configure => configure.AddConsole());
 
