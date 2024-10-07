@@ -29,5 +29,6 @@ public interface ICompanyUserService
     /// <param name="email"></param>
     /// <returns></returns>
     Task<bool> DoesSimilarUserExist(string companyNumber, string phoneNumber, string email);
+    Task<CompanyUser> GetUserByAuth0Id(string id);
 
 }

@@ -234,4 +234,24 @@ public class CompanyUsers : ControllerBase
             return StatusCode(500);
         }
     }
+
+    [HttpGet]
+    [Route("get-user-by-auth0-id/{auth0Id}")]
+    public async Task<IActionResult> GetUserByAuth0Id([FromRoute] string auth0Id)
+    {
+        try
+        {
+            CompanyUser companyUser = await _companyUserService.GetUserByAuth0Id(auth0Id);
+            return Ok(new GetCompanyUserResponse(companyUser));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex}");
+            return StatusCode(500);
+        }
+    }
 }

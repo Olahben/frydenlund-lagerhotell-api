@@ -273,5 +273,15 @@ namespace LagerhotellAPI.Services
                 throw new KeyNotFoundException("Company user not found");
             }
         }
+
+        public async Task<CompanyUser> GetUserByAuth0Id(string id)
+        {
+            var user = await _companyUsers.Find(u => u.Auth0Id == id).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found");
+            }
+            return new CompanyUser(user.CompanyUserId, user.FirstName, user.LastName, user.Name, user.CompanyNumber, user.Email, user.PhoneNumber, user.Address, user.Password, user.IsEmailVerified, user.Auth0Id);
+        }
     }
 }
