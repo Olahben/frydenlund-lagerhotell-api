@@ -220,5 +220,15 @@ namespace LagerhotellAPI.Services
                 throw new KeyNotFoundException("User not found.");
             }
         }
+
+        public async Task<User> GetByAuth0Id(string id)
+        {
+            var dbUser = _users.Find(user => user.Auth0Id == id).FirstOrDefault();
+            if (dbUser == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+        }
     }
 }
