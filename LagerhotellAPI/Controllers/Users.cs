@@ -15,13 +15,15 @@ namespace Controllers
         private readonly TokenService _tokenService;   
         private readonly Auth0UserService _auth0UserService;
         private readonly RefreshTokens _refreshTokenRepository;
+        private ILogger<UsersController> _logger;
 
-        public UsersController(TokenService tokenService, UserRepository userRepository, Auth0UserService auth0UserService, RefreshTokens refreshTokenRpository)
+        public UsersController(TokenService tokenService, UserRepository userRepository, Auth0UserService auth0UserService, RefreshTokens refreshTokenRpository, ILogger<UsersController> logger)
         {
             _tokenService = tokenService;
             _userRepository = userRepository;
             _auth0UserService = auth0UserService;
             _refreshTokenRepository = refreshTokenRpository;
+            _logger = logger;
         }
 
         [Route("check-phone/{phoneNumber}")]
@@ -173,6 +175,27 @@ namespace Controllers
             }
             return NotFound();
 
+        }
+
+        [Authorize]
+        [Route("get-user-by-auth0-id/{auth0Id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetUserByAuth0Id(string auth0Id)
+        {
+            try
+            {
+                var user = await _userRepository.GetByAuth0Id(auth0Id);
+                return Ok(new GetUser.GetUserResponse { User = user });
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetUserByAuth0Id");
+                return StatusCode(500, e.Message);
+            }
         }
 
         [Authorize]
