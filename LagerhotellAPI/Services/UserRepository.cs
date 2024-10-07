@@ -9,7 +9,7 @@ namespace LagerhotellAPI.Services
         private readonly CompanyUserService _companyUserService;
         private readonly Auth0UserService _auth0UserService;
 
-        public UserRepository(MongoDbSettings settings, IConfiguration configuration, ICompanyUserService companyUserService, TokenService tokenService)
+        public UserRepository(MongoDbSettings settings, IConfiguration configuration, RefreshTokens repos, TokenService tokenService, Auth0UserService auth0UserService)
         {
             if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
                 throw new ArgumentNullException(nameof(settings), "MongoDbSettings is not configured properly.");
@@ -19,7 +19,7 @@ namespace LagerhotellAPI.Services
             var database = client.GetDatabase("Lagerhotell");
             _users = database.GetCollection<Models.DbModels.User>("Users");
             _auth0UserService = new Auth0UserService(configuration);
-            _companyUserService = new CompanyUserService(settings, tokenService, _auth0UserService, configuration);
+            _companyUserService = new CompanyUserService(settings, tokenService, auth0UserService, configuration, repos);
         }
 
         /// <summary>
