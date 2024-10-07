@@ -173,10 +173,12 @@ namespace LagerhotellAPI.Services
             if (!doesSimilarUserExist)
             {
                 string id = Guid.NewGuid().ToString();
-                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, companyUser.Auth0Id);
-                await _companyUsers.InsertOneAsync(companyUserDocument);
-                await _auth0UserService.AddUser(new UserAuth0(id, companyUser.Email) { Password = companyUser.Password}, true);
+                await _auth0UserService.AddUser(new UserAuth0(id, companyUser.Email) { Password = companyUser.Password }, true);
                 (string userAccessToken, string refreshToken) = await _auth0UserService.GetUserTokens(companyUser.Password, companyUser.Email);
+                string auth0Id = await _auth0UserService.GetUserIdViaToken(userAccessToken);
+
+                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, auth0Id);
+                await _companyUsers.InsertOneAsync(companyUserDocument);
                 _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, companyUser.Auth0Id));
                 return (id, userAccessToken);
             }
