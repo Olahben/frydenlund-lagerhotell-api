@@ -35,14 +35,14 @@ namespace LagerhotellAPI.Services
         /// <param name="password"></param>
         /// <param name="isAdministrator"></param>
         /// <returns>user object</returns>
-        public async Task<User> Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email)
+        public async Task<User> Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email, string auth0Id)
         {
             string userId = Guid.NewGuid().ToString();
             Address userAddress = new(streetAddress, postalCode, city);
-            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false);
+            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, auth0Id);
             await _users.InsertOneAsync(user);
-            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email, false);
-            await AddUserToAuth0(new User(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false));
+            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email, false, auth0Id);
+            await AddUserToAuth0(new User(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, auth0Id));
             return domainUser;
 
         }
@@ -68,7 +68,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified);
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         public User? GetByEmail(string email)
@@ -78,7 +78,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified);
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         public async Task<bool> DoesSimilarUserExist(string phoneNumber, string email)
@@ -154,7 +154,7 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified);
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace LagerhotellAPI.Services
             if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email, oldDbUser.IsEmailVerified);
+                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email, oldDbUser.IsEmailVerified, oldDbUser.Auth0Id);
                 var filter = Builders<Models.DbModels.User>.Filter.Eq(user => user.UserId, oldDbUser.UserId);
                 var options = new ReplaceOptions { IsUpsert = false };
                 _users.ReplaceOne(filter, updatedUserDb, options);
@@ -203,7 +203,7 @@ namespace LagerhotellAPI.Services
             var dbUsers = await _users.Find(_ => true).Limit(take).Skip(skip).ToListAsync();
             List<User> domainUsers = dbUsers.ConvertAll(dbUser =>
             {
-                return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified);
+                return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
             });
             return domainUsers;
         }

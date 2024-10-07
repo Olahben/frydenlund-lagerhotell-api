@@ -69,6 +69,8 @@ namespace Controllers
             User user;
             try
             {
+                (accessToken, refreshToken) = await _auth0UserService.GetUserTokens(request.Password, request.Email);
+                string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
                 user = await _userRepository.Add(
                  request.FirstName,
                  request.LastName,
@@ -79,9 +81,8 @@ namespace Controllers
                  request.City,
                  request.Password,
                  request.IsAdministrator,
-                 request.Email);
-               (accessToken, refreshToken) = await _auth0UserService.GetUserTokens(request.Password, request.Email);
-                string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
+                 request.Email,
+                 auth0Id);
                 await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
             }  catch (BadRequestException ex)
             {

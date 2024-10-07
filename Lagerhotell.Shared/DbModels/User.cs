@@ -6,7 +6,7 @@ namespace LagerhotellAPI.Models.DbModels;
 public class User
 {
 
-    public User(string id, string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified)
+    public User(string id, string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
     {
         Id = id;
         UserId = userId;
@@ -19,8 +19,9 @@ public class User
         Password = password;
         IsAdministrator = isAdministrator;
         IsEmailVerified = isEmailVerified;
+        Auth0Id = auth0Id;
     }
-    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
     {
         UserId = userId;
         FirstName = firstName;
@@ -32,6 +33,7 @@ public class User
         Password = password;
         IsAdministrator = isAdministrator;
         IsEmailVerified = isEmailVerified;
+        Auth0Id = auth0Id;
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -45,6 +47,7 @@ public class User
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
     public string UserId { get; set; }
+    public string Auth0Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
