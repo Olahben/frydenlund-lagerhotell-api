@@ -50,13 +50,14 @@ public class Auth0UsersController : ControllerBase
         }
     }
 
+    // Endpoint only used for testing purposes
     [HttpPost]
     [Route("signup-user")]
     public async Task<IActionResult> SignupUser([FromBody] SignupUserAuth0Request user)
     {
         try
         {
-            await _auth0UserService.AddUser(user.user);
+            await _auth0UserService.AddUser(user.user, false);
             return Ok();
         }
         catch (KeyNotFoundException e)
