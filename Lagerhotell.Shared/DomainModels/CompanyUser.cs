@@ -3,7 +3,7 @@
 public class CompanyUser
 {
     public string? CompanyUserId { get; set; }
-    public string Auth0Id { get; set; }
+    public string? Auth0Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Name { get; set; }
