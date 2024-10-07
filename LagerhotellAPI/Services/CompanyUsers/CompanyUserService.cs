@@ -14,7 +14,7 @@ namespace LagerhotellAPI.Services
         private readonly RefreshTokens _refreshTokenRepository;
         private readonly string _bronnoysundApiUrl = "https://data.brreg.no/enhetsregisteret/api";
 
-        public CompanyUserService(MongoDbSettings settings, TokenService tokenService, Auth0UserService auth0UserService, IConfiguration configuration)
+        public CompanyUserService(MongoDbSettings settings, TokenService tokenService, Auth0UserService auth0UserService, IConfiguration configuration, RefreshTokens refreshTokenRepository)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
@@ -22,6 +22,7 @@ namespace LagerhotellAPI.Services
             _users = database.GetCollection<Models.DbModels.User>("Users");
             _tokenService = new TokenService(configuration);
             _auth0UserService = new Auth0UserService(configuration);
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<CompanyUser> GetCompanyUserAsync(string id)
@@ -179,7 +180,7 @@ namespace LagerhotellAPI.Services
 
                 var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, auth0Id);
                 await _companyUsers.InsertOneAsync(companyUserDocument);
-                _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, companyUser.Auth0Id));
+                await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
                 return (id, userAccessToken);
             }
             throw new SqlAlreadyFilledException("User already exists");
