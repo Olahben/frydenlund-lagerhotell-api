@@ -10,15 +10,18 @@ namespace LagerhotellAPI.Services
         private readonly IMongoCollection<Models.DbModels.CompanyUserDocument> _companyUsers;
         private readonly IMongoCollection<Models.DbModels.User> _users;
         private readonly TokenService _tokenService;
+        private readonly Auth0UserService _auth0UserService;
+        private readonly RefreshTokens _refreshTokenRepository;
         private readonly string _bronnoysundApiUrl = "https://data.brreg.no/enhetsregisteret/api";
 
-        public CompanyUserService(MongoDbSettings settings, TokenService tokenService)
+        public CompanyUserService(MongoDbSettings settings, TokenService tokenService, Auth0UserService auth0UserService, IConfiguration configuration)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase("Lagerhotell");
             _companyUsers = database.GetCollection<CompanyUserDocument>("CompanyUsers");
             _users = database.GetCollection<Models.DbModels.User>("Users");
-            _tokenService = tokenService;
+            _tokenService = new TokenService(configuration);
+            _auth0UserService = new Auth0UserService(configuration);
         }
 
         public async Task<CompanyUser> GetCompanyUserAsync(string id)
@@ -172,8 +175,9 @@ namespace LagerhotellAPI.Services
                 string id = Guid.NewGuid().ToString();
                 var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, companyUser.Auth0Id);
                 await _companyUsers.InsertOneAsync(companyUserDocument);
-                // User is not administrator so third parameter is false
-                string userAccessToken = _tokenService.CreateJwt(id, companyUser.PhoneNumber, false).Token;
+                await _auth0UserService.AddUser(new UserAuth0(id, companyUser.Email) { Password = companyUser.Password}, true);
+                (string userAccessToken, string refreshToken) = await _auth0UserService.GetUserTokens(companyUser.Password, companyUser.Email);
+                _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, companyUser.Auth0Id));
                 return (id, userAccessToken);
             }
             throw new SqlAlreadyFilledException("User already exists");
