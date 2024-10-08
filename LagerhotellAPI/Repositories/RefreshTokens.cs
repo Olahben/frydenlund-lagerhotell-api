@@ -15,9 +15,9 @@ public class RefreshTokens
         _refreshTokens = database.GetCollection<Models.DbModels.Auth0.RefreshTokenDocument>("RefreshTokens");
     }
 
-    public async Task<Models.DbModels.Auth0.RefreshTokenDocument?> GetRefreshToken(string refreshToken)
+    public async Task<Models.DbModels.Auth0.RefreshTokenDocument?> GetRefreshToken(string auth0Id)
     {
-        Models.DbModels.Auth0.RefreshTokenDocument? refreshTokenDocument = await _refreshTokens.Find(refreshTokenDocument => refreshTokenDocument.RefreshToken == refreshToken).FirstOrDefaultAsync();
+        Models.DbModels.Auth0.RefreshTokenDocument? refreshTokenDocument = await _refreshTokens.Find(refreshTokenDocument => refreshTokenDocument.UserAuth0Id == auth0Id).FirstOrDefaultAsync();
         return refreshTokenDocument;
     }
 
