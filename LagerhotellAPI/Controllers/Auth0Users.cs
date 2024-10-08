@@ -235,7 +235,7 @@ public class Auth0UsersController : ControllerBase
             (string accessToken, string refreshToken) = await _auth0UserService.ExchangeCodeForTokens(request.Code);
             string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
             UserAuth0 user = await _auth0UserService.GetCompleteUser(auth0Id);
-            await _refreshTokensRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, user.UserId));
+            await _refreshTokensRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
             return Ok(new ExchangeCodeForTokensResponse(accessToken, user.UserId));
         }
         catch (KeyNotFoundException e)
