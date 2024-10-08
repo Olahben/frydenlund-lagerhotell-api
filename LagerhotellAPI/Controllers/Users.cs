@@ -81,7 +81,7 @@ namespace Controllers
                 request.PostalCode,
                 request.City,
                 request.Password,
-                true,
+                request.IsAdministrator,
                 request.Email);
                 string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
                 await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
