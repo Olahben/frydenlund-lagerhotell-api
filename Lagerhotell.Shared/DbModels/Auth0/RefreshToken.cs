@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace LagerhotellAPI.Models.DbModels.Auth0;
 
-public record RefreshTokenDocument(string RefreshToken, string UserAuth0Id);
+public record RefreshTokenDocument(string RefreshToken, string UserAuth0Id)
+{
+    [BsonId]
+    [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+    public string Id { get; init; }
+}
