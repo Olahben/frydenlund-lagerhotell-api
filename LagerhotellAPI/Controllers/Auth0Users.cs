@@ -1,6 +1,7 @@
 ﻿global using LagerhotellAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace LagerhotellAPI.Controllers;
 
@@ -258,4 +259,33 @@ public class Auth0UsersController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
+
+    [HttpPost]
+    [Route("refresh-token/{auth0Id}")]
+    public async Task<IActionResult> RefreshAccessToken([FromRoute] string auth0Id)
+    {
+        try
+        {
+            RefreshTokenDocument? refreshTokenDocument = await _refreshTokensRepository.GetRefreshToken(auth0Id);
+            if (refreshTokenDocument == null)
+            {
+                return NotFound("Refresh token not found");
+            }
+            string newAccessToken = await _auth0UserService.RefreshAccessToken(refreshTokenDocument.RefreshToken);
+            return Ok(new RefreshAccessTokenResponse(newAccessToken));
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.Message.Contains("400"))
+            {
+                return BadRequest("Refresh token is invalid");
+            }
+            else if (e.Message.Contains("401"))
+            {
+                return Unauthorized("Refresh token is invalid");
+            }
+            return StatusCode(500, e.Message);
+        }
+    }
+
 }

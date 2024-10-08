@@ -410,7 +410,8 @@ public class Auth0UserService
             var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
             // save refresh token along with access token in database
             return (token["access_token"].ToString(), token["refresh_token"].ToString());
-        } catch (HttpRequestException e)
+        }
+        catch (HttpRequestException e)
         {
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -459,5 +460,28 @@ public class Auth0UserService
         };
         var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
         return (token["access_token"].ToString(), token["refresh_token"].ToString());
+    }
+
+    public async Task<string> RefreshAccessToken(string refreshToken)
+    {
+        string endpoint = _usersApiId + "/oauth/token";
+        var jsonData = new
+        {
+            client_id = _apiClientId,
+            client_secret = _apiClientSecret,
+            grant_type = "refresh_token",
+            refresh_token = refreshToken
+        };
+        var json = JsonSerializer.Serialize(jsonData);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(endpoint, data);
+        response.EnsureSuccessStatusCode();
+        string responseContent = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
+        return token["access_token"].ToString();
     }
 }
