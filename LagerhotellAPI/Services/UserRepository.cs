@@ -1,5 +1,7 @@
 ﻿global using LagerhotellAPI.Models.DbModels.Auth0;
+using Amazon.Runtime.Internal;
 using LagerhotellAPI.Models;
+using LagerhotellAPI.Repositories;
 
 namespace LagerhotellAPI.Services
 {
@@ -35,15 +37,18 @@ namespace LagerhotellAPI.Services
         /// <param name="password"></param>
         /// <param name="isAdministrator"></param>
         /// <returns>user object</returns>
-        public async Task<User> Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email, string auth0Id)
+        public async Task<(User, string, string)> Add(string firstName, string lastName, string phoneNumber, string birthDate, string streetAddress, string postalCode, string city, string password, bool isAdministrator, string email)
         {
-            string userId = Guid.NewGuid().ToString();
             Address userAddress = new(streetAddress, postalCode, city);
+            string userId = Guid.NewGuid().ToString();
+            await AddUserToAuth0(new User(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, ""));
+            (string accessToken, string refreshToken) = await _auth0UserService.GetUserTokens(password, email);
+            string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
+
             Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, auth0Id);
             await _users.InsertOneAsync(user);
             User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email, false, auth0Id);
-            await AddUserToAuth0(new User(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, auth0Id));
-            return domainUser;
+            return (domainUser, accessToken, refreshToken);
 
         }
 
@@ -53,7 +58,7 @@ namespace LagerhotellAPI.Services
             {
                 Password = user.Password
             };
-            await _auth0UserService.AddUser(userAuth0, false);
+            await _auth0UserService.AddUser(userAuth0, false, user.IsAdministrator);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Controllers
     {
         private readonly UserRepository _userRepository;
         private readonly GetUser.GetUserResponse _getuserResponse = new GetUser.GetUserResponse();
-        private readonly TokenService _tokenService;   
+        private readonly TokenService _tokenService;
         private readonly Auth0UserService _auth0UserService;
         private readonly RefreshTokens _refreshTokenRepository;
         private ILogger<UsersController> _logger;
@@ -71,29 +71,29 @@ namespace Controllers
             User user;
             try
             {
-                (accessToken, refreshToken) = await _auth0UserService.GetUserTokens(request.Password, request.Email);
+                // change admin argument
+                (user, accessToken, refreshToken) = await _userRepository.Add(
+                request.FirstName,
+                request.LastName,
+                request.PhoneNumber,
+                request.BirthDate,
+                request.Address,
+                request.PostalCode,
+                request.City,
+                request.Password,
+                true,
+                request.Email);
                 string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
-                user = await _userRepository.Add(
-                 request.FirstName,
-                 request.LastName,
-                 request.PhoneNumber,
-                 request.BirthDate,
-                 request.Address,
-                 request.PostalCode,
-                 request.City,
-                 request.Password,
-                 request.IsAdministrator,
-                 request.Email,
-                 auth0Id);
                 await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
-            }  catch (BadRequestException ex)
+            }
+            catch (BadRequestException ex)
             {
                 return BadRequest(ex.Message + "Could originate from auth0 call");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in AddUser");
-                return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database"});
+                return StatusCode(500, new { Message = "Something went wrong with adding a user to auth0 or the database" });
             }
 
             return Ok(new AddUserResponse { UserId = user.Id, Token = accessToken });
