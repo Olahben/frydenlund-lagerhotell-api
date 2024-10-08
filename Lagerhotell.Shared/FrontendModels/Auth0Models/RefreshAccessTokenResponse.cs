@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace LagerhotellAPI.Models.FrontendModels;
 
-public record RefreshAccessTokenResponse(string accessToken);
+public record RefreshAccessTokenResponse(string AccessToken);
