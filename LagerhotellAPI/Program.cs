@@ -59,19 +59,12 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    /*options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };*/
     options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
     options.Audience = builder.Configuration["App:HostUrl"];
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        RoleClaimType = "https://lagerhotell.com/roles" 
+    };
 });
 
 // Configure Swagger
