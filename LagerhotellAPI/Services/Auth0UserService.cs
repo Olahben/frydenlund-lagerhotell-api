@@ -51,7 +51,7 @@ public class Auth0UserService
     /// <param name="user"></param>
     /// <returns></returns>
     /// <exception cref="BadRequestException"></exception>
-    public async Task AddUser(UserAuth0 user, bool isCompanyUser)
+    public async Task AddUser(UserAuth0 user, bool isCompanyUser, bool isAdmin)
     {
         string endpoint = _usersApiId + "/dbconnections/signup";
         var jsonData = new
@@ -62,6 +62,7 @@ public class Auth0UserService
             connection = _dbName,
             user_metadata = new
             {
+                is_admin = isAdmin.ToString(),
                 company_user = isCompanyUser.ToString(),
                 user_id = user.UserId
             }
