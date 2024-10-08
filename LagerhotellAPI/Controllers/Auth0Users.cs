@@ -261,12 +261,12 @@ public class Auth0UsersController : ControllerBase
     }
 
     [HttpPost]
-    [Route("refresh-token/{auth0Id}")]
-    public async Task<IActionResult> RefreshAccessToken([FromRoute] string auth0Id)
+    [Route("refresh-token")]
+    public async Task<IActionResult> RefreshAccessToken([FromBody] RefreshAccessTokenRequest request)
     {
         try
         {
-            RefreshTokenDocument? refreshTokenDocument = await _refreshTokensRepository.GetRefreshToken(auth0Id);
+            RefreshTokenDocument? refreshTokenDocument = await _refreshTokensRepository.GetRefreshToken(request.Auth0Id);
             if (refreshTokenDocument == null)
             {
                 return NotFound("Refresh token not found");
