@@ -174,7 +174,7 @@ namespace LagerhotellAPI.Services
             if (!doesSimilarUserExist)
             {
                 string id = Guid.NewGuid().ToString();
-                await _auth0UserService.AddUser(new UserAuth0(id, companyUser.Email) { Password = companyUser.Password }, true);
+                await _auth0UserService.AddUser(new UserAuth0(id, companyUser.Email) { Password = companyUser.Password }, true, false);
                 (string userAccessToken, string refreshToken) = await _auth0UserService.GetUserTokens(companyUser.Password, companyUser.Email);
                 string auth0Id = await _auth0UserService.GetUserIdViaToken(userAccessToken);
 

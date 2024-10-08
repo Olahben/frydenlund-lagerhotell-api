@@ -58,7 +58,7 @@ public class Auth0UsersController : ControllerBase
     {
         try
         {
-            await _auth0UserService.AddUser(user.user, false);
+            await _auth0UserService.AddUser(user.user, false, false);
             return Ok();
         }
         catch (KeyNotFoundException e)
