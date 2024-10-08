@@ -63,7 +63,6 @@ public class Auth0UserService
             user_metadata = new
             {
                 is_admin = isAdmin.ToString(),
-                company_user = isCompanyUser.ToString(),
                 user_id = user.UserId
             }
         };
