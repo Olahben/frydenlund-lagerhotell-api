@@ -7,4 +7,4 @@ using System.Threading.Tasks;
 
 namespace LagerhotellAPI.Models.FrontendModels;
 
-public record GetAuth0UserResponse(UserAuth0 user);
+public record GetAuth0UserResponse(UserAuth0 User);
