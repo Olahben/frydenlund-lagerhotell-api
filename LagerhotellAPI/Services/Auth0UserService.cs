@@ -387,17 +387,19 @@ public class Auth0UserService
     public async Task<(string, string)> ExchangeCodeForTokens(string code)
     {
         string endpoint = _usersApiId + "/oauth/token";
-        var jsonData = new
-        {
-            client_id = _apiClientId,
-            client_secret = _apiClientSecret,
-            code,
-            grant_type = "authorization_code",
-            redirect_uri = "https://localhost:5001/authentication/login-callback",
-            scope = "openid profile email offline_access"
-        };
-        var json = JsonSerializer.Serialize(jsonData);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var formData = new Dictionary<string, string>
+    {
+        { "client_id", _apiClientId },
+        { "client_secret", _apiClientSecret },
+        { "code", code },
+        { "grant_type", "authorization_code" },
+        { "redirect_uri", "https://localhost:5001/authentication/login-callback" },
+        { "scope", "openid profile email offline_access" },
+        { "audience", _apiAudience }
+    };
+
+        var data = new FormUrlEncodedContent(formData);
+
         var response = await client.PostAsync(endpoint, data);
         try
         {
