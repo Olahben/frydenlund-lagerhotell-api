@@ -288,4 +288,32 @@ public class Auth0UsersController : ControllerBase
         }
     }
 
+    [HttpPost]
+    [Route("send-verification-email")]
+    public async Task<IActionResult> SendVerificationEmail([FromBody] SendVerificationEmailRequest request)
+    {
+        try
+        {
+            await _auth0UserService.SendVerificationEmail(request.Auth0Id);
+            return Created();
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.Message.Contains("400"))
+            {
+                return BadRequest(e.Message);
+            } else if (e.Message.Contains("401"))
+            {
+                return Unauthorized(e.Message);
+            } else if (e.Message.Contains("429"))
+            {
+                return StatusCode(429, e.Message);
+            } else if (e.Message.Contains("403"))
+            {
+                return StatusCode(403, e.Message);
+            }
+            return StatusCode(500, e.Message);
+        }
+    }
+
 }
