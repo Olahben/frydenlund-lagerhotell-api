@@ -486,4 +486,19 @@ public class Auth0UserService
         var token = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
         return token["access_token"].ToString();
     }
+
+    public async Task SendVerificationEmail(string auth0Id)
+    {
+        string endpoint = _managementApiId + $"/jobs/verification-email";
+        var jsonData = new
+        {
+            user_id = auth0Id,
+            client_id = _apiClientId
+        };
+        var json = JsonSerializer.Serialize(jsonData);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerToken);
+        var response = await client.PostAsync(endpoint, data);
+        response.EnsureSuccessStatusCode();
+    }
 }
