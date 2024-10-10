@@ -201,11 +201,11 @@ namespace Controllers
         [Authorize]
         [Route("update-user-values")]
         [HttpPut]
-        public IActionResult UpdateUserValues([FromBody] UpdateUserValuesRequest request)
+        public IActionResult UpdateUserValues([FromBody] UpdateUserValuesRequest2 request)
         {
             try
             {
-                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator, request.Email, request.IsEmailVerified);
+                _userRepository.UpdateUserValues(request.UserId, request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator, request.Email, request.IsEmailVerified);
                 return Ok();
             }
             catch (Exception ex)
