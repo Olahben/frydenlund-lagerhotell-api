@@ -205,7 +205,7 @@ namespace Controllers
         {
             try
             {
-                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator, request.Email);
+                _userRepository.UpdateUserValues(request.FirstName, request.LastName, request.PhoneNumber, request.BirthDate, request.Password, request.Address.StreetAddress, request.Address.PostalCode, request.Address.City, request.IsAdministrator, request.Email, request.IsEmailVerified);
                 return Ok();
             }
             catch (Exception ex)

@@ -186,13 +186,13 @@ namespace LagerhotellAPI.Services
         /// <param name="city"></param>
         /// <param name="isAdministrator"></param>
         /// <exception cref="KeyNotFoundException"></exception>
-        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator, string email)
+        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator, string email, bool isEmailVerified)
         {
             Models.DbModels.User oldDbUser = GetByPhoneDbModel(phoneNumber);
             if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email, oldDbUser.IsEmailVerified, oldDbUser.Auth0Id);
+                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email, isEmailVerified, oldDbUser.Auth0Id);
                 var filter = Builders<Models.DbModels.User>.Filter.Eq(user => user.UserId, oldDbUser.UserId);
                 var options = new ReplaceOptions { IsUpsert = false };
                 _users.ReplaceOne(filter, updatedUserDb, options);
