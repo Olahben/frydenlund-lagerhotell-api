@@ -162,6 +162,16 @@ namespace LagerhotellAPI.Services
             return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
+        public LagerhotellAPI.Models.DbModels.User? GetUserByIdDbModel(string id)
+        {
+            var dbUser = _users.Find(user => user.UserId == id).FirstOrDefault();
+            if (dbUser == null)
+            {
+                return null;
+            }
+            return dbUser;
+        }
+
         /// <summary>
         /// Checks if the given password matches the password in the database
         /// </summary>
@@ -186,9 +196,9 @@ namespace LagerhotellAPI.Services
         /// <param name="city"></param>
         /// <param name="isAdministrator"></param>
         /// <exception cref="KeyNotFoundException"></exception>
-        public void UpdateUserValues(string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator, string email, bool isEmailVerified)
+        public void UpdateUserValues(string userId, string firstName, string lastName, string phoneNumber, string birthDate, string password, string streetAddress, string postalCode, string city, bool isAdministrator, string email, bool isEmailVerified)
         {
-            Models.DbModels.User oldDbUser = GetByPhoneDbModel(phoneNumber);
+            Models.DbModels.User oldDbUser = GetUserByIdDbModel(userId);
             if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
