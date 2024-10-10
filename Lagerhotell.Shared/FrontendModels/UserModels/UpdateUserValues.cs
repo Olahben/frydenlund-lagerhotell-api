@@ -13,6 +13,7 @@ public class UpdateUserValuesRequest
     public required Address Address { get; set; }
     public required bool IsAdministrator { get; set; }
     public required string Email { get; set; }
+    public required bool IsEmailVerified { get; set; }
 }
 
 public class UpdateUserValuesResponse
