@@ -11,10 +11,12 @@ public class CompanyUsers : ControllerBase
     private readonly ICompanyUserService _companyUserService;
     private readonly TokenService _tokenService;
     private readonly LagerhotellAPI.Models.DomainModels.Validators.CompanyUserValidator _companyUserValidator = new();
+    private readonly Auth0UserService _auth0UserService;
 
-    public CompanyUsers(ICompanyUserService companyUserService)
+    public CompanyUsers(ICompanyUserService companyUserService, Auth0UserService auth0UserService)
     {
         _companyUserService = companyUserService;
+        _auth0UserService = auth0UserService;
     }
 
     [HttpGet("{id}")]
@@ -139,6 +141,19 @@ public class CompanyUsers : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteCompanyUserAsync([FromRoute] string id)
     {
+        try
+        {
+            await _auth0UserService.DeleteUser(id);
+        } catch (BadRequestException e)
+        {
+            return BadRequest(e.Message);
+        } catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        } catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
         try
         {
             await _companyUserService.DeleteCompanyUserAsync(id);

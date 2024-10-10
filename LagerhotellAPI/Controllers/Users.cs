@@ -240,6 +240,22 @@ namespace Controllers
         {
             try
             {
+                await _auth0UserService.DeleteUser(id);
+            }
+            catch (BadRequestException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return Unauthorized(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+            try
+            {
                 await _userRepository.DeleteUser(id);
                 return Ok();
             }
