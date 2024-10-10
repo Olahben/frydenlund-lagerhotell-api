@@ -288,6 +288,7 @@ public class Auth0UsersController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     [Route("send-verification-email")]
     public async Task<IActionResult> SendVerificationEmail([FromBody] SendVerificationEmailRequest request)
