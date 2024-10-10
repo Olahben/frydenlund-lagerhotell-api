@@ -236,7 +236,7 @@ namespace Controllers
         [Authorize]
         [Route("delete-user/{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteUserById(string id)
+        public async Task<IActionResult> DeleteUserById([FromRoute] string id)
         {
             try
             {
