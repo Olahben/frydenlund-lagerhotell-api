@@ -143,7 +143,12 @@ public class CompanyUsers : ControllerBase
     {
         try
         {
-            await _auth0UserService.DeleteUser(id);
+            var user = await _companyUserService.GetCompanyUserAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            await _auth0UserService.DeleteUser(user.Auth0Id);
         } catch (BadRequestException e)
         {
             return BadRequest(e.Message);

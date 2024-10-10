@@ -240,7 +240,12 @@ namespace Controllers
         {
             try
             {
-                await _auth0UserService.DeleteUser(id);
+                var user = _userRepository.GetUserById(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                await _auth0UserService.DeleteUser(user.Auth0Id);
             }
             catch (BadRequestException e)
             {
