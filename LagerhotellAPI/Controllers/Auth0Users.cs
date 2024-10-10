@@ -21,8 +21,8 @@ public class Auth0UsersController : ControllerBase
     // For now, they are open for testing purposes
     // Endpoints do not currently have request models or response models, this will be implemented and validated later
     [HttpGet]
-    [Route("get-user")]
-    public async Task<IActionResult> GetUser([FromQuery] string auth0UserId)
+    [Route("get-user/{auth0UserId}")]
+    public async Task<IActionResult> GetUser([FromRoute] string auth0UserId)
     {
         try
         {
