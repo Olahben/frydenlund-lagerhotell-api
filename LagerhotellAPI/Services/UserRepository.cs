@@ -54,7 +54,7 @@ namespace LagerhotellAPI.Services
 
         public async Task AddUserToAuth0(User user)
         {
-            UserAuth0 userAuth0 = new(user.Id, user.Email)
+            UserAuth0 userAuth0 = new(user.Id, user.Email, user.IsEmailVerified)
             {
                 Password = user.Password
             };

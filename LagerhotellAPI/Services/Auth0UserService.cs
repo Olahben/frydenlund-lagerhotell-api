@@ -133,8 +133,9 @@ public class Auth0UserService
             var user = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(responseContent, options);
             string userId = user["user_metadata"].GetProperty("user_id").ToString();
             string email = user["email"].ToString();
+            bool emailVerified = user["email_verified"].GetBoolean();
 
-            return new UserAuth0(userId, email)
+            return new UserAuth0(userId, email, emailVerified)
             {
                 UserAuth0Id = auth0Id
             };
