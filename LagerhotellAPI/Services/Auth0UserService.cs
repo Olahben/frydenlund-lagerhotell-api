@@ -347,7 +347,7 @@ public class Auth0UserService
         string endpoint = _usersApiId + "/dbconnections/change_password";
         var jsonData = new
         {
-            client_id = _clientId,
+            client_id = _apiClientId,
             email,
             connection = _dbName
         };
