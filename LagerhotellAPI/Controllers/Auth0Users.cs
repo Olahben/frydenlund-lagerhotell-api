@@ -87,6 +87,7 @@ public class Auth0UsersController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete]
     [Route("delete-user")]
     public async Task<IActionResult> DeleteUser([FromQuery] string auth0UserId)
