@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace LagerhotellAPI.Models.FrontendModels;
 
-public record ChangeUserPasswordRequest(string Email, string OldPassword, string NewPassword, string Auth0Id);
+public record ChangeUserPasswordRequest(string Auth0Id, string Email, string OldPassword, string NewPassword);
