@@ -11,10 +11,14 @@ public class Auth0UsersController : ControllerBase
 {
     private readonly Auth0UserService _auth0UserService;
     private readonly RefreshTokens _refreshTokensRepository;
-    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository)
+    private readonly CompanyUserService _companyUserService;
+    private readonly UserRepository _userRepository;
+    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository, CompanyUserService companyUserService, UserRepository userRepository)
     {
         _auth0UserService = auth0UserService;
         _refreshTokensRepository = refreshTokensRepository;
+        _companyUserService = companyUserService;
+        _userRepository = userRepository;
     }
 
     // Endpoints are going to be protected with authorization after auth0 tokens are integrated
@@ -89,6 +93,34 @@ public class Auth0UsersController : ControllerBase
     {
         try
         {
+            var user = await _userRepository.GetByAuth0Id(auth0UserId);
+            try
+            {
+                await _userRepository.DeleteUser(user.Id);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("User not found");
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            var user = await _companyUserService.GetUserByAuth0Id(auth0UserId);
+            try
+            {
+                await _companyUserService.DeleteCompanyUserAsync(user.CompanyUserId);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+        try
+        {
             await _auth0UserService.DeleteUser(auth0UserId);
             return Ok();
         }
@@ -158,10 +190,12 @@ public class Auth0UsersController : ControllerBase
         try
         {
             await _auth0UserService.IsLoginCredentialsCorrect(request.Email, request.OldPassword);
-        } catch (UnauthorizedAccessException)
+        }
+        catch (UnauthorizedAccessException)
         {
             return Unauthorized("Old password is incorrect");
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
@@ -303,13 +337,16 @@ public class Auth0UsersController : ControllerBase
             if (e.Message.Contains("400"))
             {
                 return BadRequest(e.Message);
-            } else if (e.Message.Contains("401"))
+            }
+            else if (e.Message.Contains("401"))
             {
                 return Unauthorized(e.Message);
-            } else if (e.Message.Contains("429"))
+            }
+            else if (e.Message.Contains("429"))
             {
                 return StatusCode(429, e.Message);
-            } else if (e.Message.Contains("403"))
+            }
+            else if (e.Message.Contains("403"))
             {
                 return StatusCode(403, e.Message);
             }
