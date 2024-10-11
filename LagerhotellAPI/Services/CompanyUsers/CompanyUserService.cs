@@ -32,7 +32,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password, dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
+            // empty password to avoid sending it to the client
+            return new CompanyUser(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, "", dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
         }
 
         public async Task<CompanyUserDocument> GetCompanyUserDocument(string id)
@@ -57,7 +58,7 @@ namespace LagerhotellAPI.Services
                 query = query.Skip(skip.Value);
             }
             List<CompanyUserDocument> dbCompanyUsersDocuments = await query.ToListAsync();
-            return dbCompanyUsersDocuments.Select(cu => new CompanyUser(cu.CompanyUserId, cu.FirstName, cu.LastName, cu.Name, cu.CompanyNumber, cu.Email, cu.PhoneNumber, cu.Address, cu.Password, cu.IsEmailVerified, cu.Auth0Id)).ToList();
+            return dbCompanyUsersDocuments.Select(cu => new CompanyUser(cu.CompanyUserId, cu.FirstName, cu.LastName, cu.Name, cu.CompanyNumber, cu.Email, cu.PhoneNumber, cu.Address, "", cu.IsEmailVerified, cu.Auth0Id)).ToList();
         }
 
         public async Task<CompanyUser> GetCompanyUserByPhoneNumber(string phoneNumber)
@@ -67,7 +68,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password, dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
+            // empty password to avoid sending it to the client
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, "", dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
             return companyUser;
         }
 
@@ -78,7 +80,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password, dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
+            // empty password to avoid sending it to the client
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, "", dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
             return companyUser;
         }
 
@@ -89,7 +92,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, dbCompanyUserDocument.Password, dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
+            // empty password to avoid sending it to the client
+            CompanyUser companyUser = new(dbCompanyUserDocument.CompanyUserId, dbCompanyUserDocument.FirstName, dbCompanyUserDocument.LastName, dbCompanyUserDocument.Name, dbCompanyUserDocument.CompanyNumber, dbCompanyUserDocument.Email, dbCompanyUserDocument.PhoneNumber, dbCompanyUserDocument.Address, "", dbCompanyUserDocument.IsEmailVerified, dbCompanyUserDocument.Auth0Id);
             return companyUser;
         }
 
@@ -178,7 +182,7 @@ namespace LagerhotellAPI.Services
                 (string userAccessToken, string refreshToken) = await _auth0UserService.GetUserTokens(companyUser.Password, companyUser.Email);
                 string auth0Id = await _auth0UserService.GetUserIdViaToken(userAccessToken);
 
-                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, auth0Id);
+                var companyUserDocument = new CompanyUserDocument(id, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.IsEmailVerified, auth0Id);
                 await _companyUsers.InsertOneAsync(companyUserDocument);
                 await _refreshTokenRepository.CreateRefreshToken(new RefreshTokenDocument(refreshToken, auth0Id));
                 return (id, userAccessToken);
@@ -197,7 +201,7 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("Company user not found");
             }
-            var companyUserDocument = new CompanyUserDocument(existingCompanyUser.Id, existingCompanyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.Password, companyUser.IsEmailVerified, existingCompanyUser.Auth0Id);
+            var companyUserDocument = new CompanyUserDocument(existingCompanyUser.Id, existingCompanyUser.CompanyUserId, companyUser.FirstName, companyUser.LastName, companyUser.Name, companyUser.CompanyNumber, companyUser.Email, companyUser.PhoneNumber, companyUser.Address, companyUser.IsEmailVerified, existingCompanyUser.Auth0Id);
             await _companyUsers.ReplaceOneAsync(cu => cu.CompanyUserId == id, companyUserDocument);
         }
 
@@ -246,7 +250,7 @@ namespace LagerhotellAPI.Services
         /// <exception cref="SqlTypeException"></exception>
         public async Task ResetPassword(string id, string newPassword, string oldPassword)
         {
-            CompanyUserDocument existingCompanyUser;
+            /*CompanyUserDocument existingCompanyUser;
             try
             {
                 existingCompanyUser = await GetCompanyUserDocument(id);
@@ -271,7 +275,7 @@ namespace LagerhotellAPI.Services
             catch (KeyNotFoundException)
             {
                 throw new KeyNotFoundException("Company user not found");
-            }
+            }*/
         }
 
         public async Task<CompanyUser> GetUserByAuth0Id(string id)
@@ -281,7 +285,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("User not found");
             }
-            return new CompanyUser(user.CompanyUserId, user.FirstName, user.LastName, user.Name, user.CompanyNumber, user.Email, user.PhoneNumber, user.Address, user.Password, user.IsEmailVerified, user.Auth0Id);
+            // empty password to avoid sending it to the client
+            return new CompanyUser(user.CompanyUserId, user.FirstName, user.LastName, user.Name, user.CompanyNumber, user.Email, user.PhoneNumber, user.Address, "", user.IsEmailVerified, user.Auth0Id);
         }
     }
 }
