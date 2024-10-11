@@ -6,7 +6,7 @@ namespace LagerhotellAPI.Models.DbModels;
 public class User
 {
 
-    public User(string id, string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
+    public User(string id, string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
     {
         Id = id;
         UserId = userId;
@@ -16,12 +16,11 @@ public class User
         Email = email;
         BirthDate = birthDate;
         Address = address;
-        Password = password;
         IsAdministrator = isAdministrator;
         IsEmailVerified = isEmailVerified;
         Auth0Id = auth0Id;
     }
-    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, string password, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
+    public User(string userId, string firstName, string lastName, string phoneNumber, string birthDate, Address address, bool isAdministrator, string email, bool isEmailVerified, string auth0Id)
     {
         UserId = userId;
         FirstName = firstName;
@@ -30,7 +29,6 @@ public class User
         Email = email;
         BirthDate = birthDate;
         Address = address;
-        Password = password;
         IsAdministrator = isAdministrator;
         IsEmailVerified = isEmailVerified;
         Auth0Id = auth0Id;
@@ -56,6 +54,5 @@ public class User
     public string BirthDate { get; set; }
 
     public Address Address { get; set; }
-    public string Password { get; set; }
     public bool IsAdministrator { get; set; }
 }

@@ -45,9 +45,10 @@ namespace LagerhotellAPI.Services
             (string accessToken, string refreshToken) = await _auth0UserService.GetUserTokens(password, email);
             string auth0Id = await _auth0UserService.GetUserIdViaToken(accessToken);
 
-            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, password, isAdministrator, email, false, auth0Id);
+            Models.DbModels.User user = new(userId, firstName, lastName, phoneNumber, birthDate, userAddress, isAdministrator, email, false, auth0Id);
             await _users.InsertOneAsync(user);
-            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, user.Password, user.IsAdministrator, email, false, auth0Id);
+            // empty password to avoid sending it back to the client
+            User domainUser = new(user.UserId, user.FirstName, user.LastName, phoneNumber, user.BirthDate, userAddress, "", user.IsAdministrator, email, false, auth0Id);
             return (domainUser, accessToken, refreshToken);
 
         }
@@ -73,7 +74,8 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+            // empty password to avoid sending it back to the client
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, "", dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         public User? GetByEmail(string email)
@@ -83,7 +85,8 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+            // empty password to avoid sending it back to the client
+            return new LagerhotellAPI.Models.DomainModels.User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, "", dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         public async Task<bool> DoesSimilarUserExist(string phoneNumber, string email)
@@ -159,7 +162,8 @@ namespace LagerhotellAPI.Services
             {
                 return null;
             }
-            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+            // empty password to avoid sending it back to the client
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, "", dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
 
         public LagerhotellAPI.Models.DbModels.User? GetUserByIdDbModel(string id)
@@ -202,7 +206,7 @@ namespace LagerhotellAPI.Services
             if (oldDbUser != null)
             {
                 Address userAddress = new(streetAddress, postalCode, city);
-                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, password, isAdministrator, email, isEmailVerified, oldDbUser.Auth0Id);
+                Models.DbModels.User updatedUserDb = new(oldDbUser.Id, oldDbUser.UserId, firstName, lastName, oldDbUser.PhoneNumber, birthDate, userAddress, isAdministrator, email, isEmailVerified, oldDbUser.Auth0Id);
                 var filter = Builders<Models.DbModels.User>.Filter.Eq(user => user.UserId, oldDbUser.UserId);
                 var options = new ReplaceOptions { IsUpsert = false };
                 _users.ReplaceOne(filter, updatedUserDb, options);
@@ -216,9 +220,10 @@ namespace LagerhotellAPI.Services
         public async Task<List<User>> GetAllUsers(int? skip, int? take)
         {
             var dbUsers = await _users.Find(_ => true).Limit(take).Skip(skip).ToListAsync();
+            // empty password to avoid sending it back to the client
             List<User> domainUsers = dbUsers.ConvertAll(dbUser =>
             {
-                return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+                return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, "", dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
             });
             return domainUsers;
         }
@@ -243,7 +248,8 @@ namespace LagerhotellAPI.Services
             {
                 throw new KeyNotFoundException("User not found.");
             }
-            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, dbUser.Password, dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
+            // empty password to avoid sending it back to the client
+            return new User(dbUser.UserId, dbUser.FirstName, dbUser.LastName, dbUser.PhoneNumber, dbUser.BirthDate, dbUser.Address, "", dbUser.IsAdministrator, dbUser.Email, dbUser.IsEmailVerified, dbUser.Auth0Id);
         }
     }
 }
