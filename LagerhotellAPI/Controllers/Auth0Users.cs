@@ -153,11 +153,11 @@ public class Auth0UsersController : ControllerBase
     /// <returns></returns>
     [HttpPatch]
     [Route("change-user-password")]
-    public async Task<IActionResult> ChangeUserPassword([FromQuery] string auth0UserId, [FromBody] ChangeUserPasswordRequest request)
+    public async Task<IActionResult> ChangeUserPassword([FromBody] ChangeUserPasswordRequest request)
     {
         try
         {
-            await _auth0UserService.IsLoginCredentialsCorrect(request.email, request.oldPassword);
+            await _auth0UserService.IsLoginCredentialsCorrect(request.Email, request.OldPassword);
         } catch (UnauthorizedAccessException)
         {
             return Unauthorized("Old password is incorrect");
@@ -167,7 +167,7 @@ public class Auth0UsersController : ControllerBase
         }
         try
         {
-            await _auth0UserService.ChangeUserpassword(auth0UserId, request.newPassword);
+            await _auth0UserService.ChangeUserpassword(request.Auth0Id, request.NewPassword);
             return Ok();
         }
         catch (KeyNotFoundException e)
