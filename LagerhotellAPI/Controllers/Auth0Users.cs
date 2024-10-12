@@ -11,9 +11,9 @@ public class Auth0UsersController : ControllerBase
 {
     private readonly Auth0UserService _auth0UserService;
     private readonly RefreshTokens _refreshTokensRepository;
-    private readonly CompanyUserService _companyUserService;
+    private readonly ICompanyUserService _companyUserService;
     private readonly UserRepository _userRepository;
-    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository, CompanyUserService companyUserService, UserRepository userRepository)
+    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository, ICompanyUserService companyUserService, UserRepository userRepository)
     {
         _auth0UserService = auth0UserService;
         _refreshTokensRepository = refreshTokensRepository;
@@ -90,11 +90,11 @@ public class Auth0UsersController : ControllerBase
     [Authorize]
     [HttpDelete]
     [Route("delete-user")]
-    public async Task<IActionResult> DeleteUser([FromQuery] string auth0UserId)
+    public async Task<IActionResult> DeleteUser([FromBody] Auth0IdRequest request)
     {
         try
         {
-            var user = await _userRepository.GetByAuth0Id(auth0UserId);
+            var user = await _userRepository.GetByAuth0Id(request.Auth0Id);
             try
             {
                 await _userRepository.DeleteUser(user.Id);
@@ -106,7 +106,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (KeyNotFoundException)
         {
-            var user = await _companyUserService.GetUserByAuth0Id(auth0UserId);
+            var user = await _companyUserService.GetUserByAuth0Id(request.Auth0Id);
             try
             {
                 await _companyUserService.DeleteCompanyUserAsync(user.CompanyUserId);
@@ -122,7 +122,7 @@ public class Auth0UsersController : ControllerBase
         }
         try
         {
-            await _auth0UserService.DeleteUser(auth0UserId);
+            await _auth0UserService.DeleteUser(request.Auth0Id);
             return Ok();
         }
         catch (KeyNotFoundException e)
