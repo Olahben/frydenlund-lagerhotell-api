@@ -12,11 +12,13 @@ public class CompanyUsers : ControllerBase
     private readonly TokenService _tokenService;
     private readonly LagerhotellAPI.Models.DomainModels.Validators.CompanyUserValidator _companyUserValidator = new();
     private readonly Auth0UserService _auth0UserService;
+    private readonly ILogger<CompanyUsers> _logger;
 
-    public CompanyUsers(ICompanyUserService companyUserService, Auth0UserService auth0UserService)
+    public CompanyUsers(ICompanyUserService companyUserService, Auth0UserService auth0UserService, ILogger<CompanyUsers> logger)
     {
         _companyUserService = companyUserService;
         _auth0UserService = auth0UserService;
+        _logger = logger;
     }
 
     [HttpGet("{id}")]
@@ -33,7 +35,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in GetCompanyUserAsync");
             return StatusCode(500);
         }
     }
@@ -53,7 +55,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in GetCompanyUserByPhoneNumber");
             return StatusCode(500);
         }
     }
@@ -70,7 +72,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in GetCompanyUsersAsync");
             return StatusCode(500);
         }
     }
@@ -103,7 +105,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in CreateCompanyUserAsync");
             return StatusCode(500);
         }
     }
@@ -132,7 +134,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in UpdateCompanyUserAsync");
             return StatusCode(500);
         }
     }
@@ -170,7 +172,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in DeleteCompanyUserAsync");
             return StatusCode(500);
         }
     }
@@ -194,7 +196,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in LoginAsync");
             return StatusCode(500);
         }
     }
@@ -223,7 +225,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in ResetPassword");
             return StatusCode(500);
         }
     }
@@ -250,7 +252,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in DoesSimilarUserExist");
             return StatusCode(500);
         }
     }
@@ -270,7 +272,7 @@ public class CompanyUsers : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{ex}");
+            _logger.LogError(ex, "Error in GetUserByAuth0Id");
             return StatusCode(500);
         }
     }

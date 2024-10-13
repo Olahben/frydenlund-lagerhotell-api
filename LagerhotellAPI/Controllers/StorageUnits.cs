@@ -8,11 +8,13 @@ namespace LagerhotellAPI.Controllers
     {
         private readonly StorageUnitService _storageUnitService;
         private readonly WarehouseHotelService _warehouseHotelService;
+        private readonly ILogger<StorageUnitsController> _logger;
 
-        public StorageUnitsController(StorageUnitService storageUnitService, WarehouseHotelService warehouseHotelService)
+        public StorageUnitsController(StorageUnitService storageUnitService, WarehouseHotelService warehouseHotelService, ILogger<StorageUnitsController> logger)
         {
             _storageUnitService = storageUnitService;
             _warehouseHotelService = warehouseHotelService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -38,9 +40,10 @@ namespace LagerhotellAPI.Controllers
             {
                 return Conflict("Storage unit already exists.");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                _logger.LogError(e, "Error in AddStorageUnit");
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -59,6 +62,7 @@ namespace LagerhotellAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in DeleteStorageUnit");
                 return StatusCode(500, ex);
             }
         }
@@ -79,6 +83,7 @@ namespace LagerhotellAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in ModifyStorageUnit");
                 return StatusCode(500, ex);
             }
         }
@@ -101,7 +106,7 @@ namespace LagerhotellAPI.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"An error occurred in GetStorageUnitById: {e}");
+                _logger.LogError(e, "Error in GetStorageUnitById");
                 return StatusCode(500);
             }
         }
@@ -121,7 +126,7 @@ namespace LagerhotellAPI.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"{e}");
+                _logger.LogError(e, "Error in GetStorageUnitsByWarehouseHotelId");
                 return StatusCode(500);
             }
         }
@@ -134,8 +139,9 @@ namespace LagerhotellAPI.Controllers
                 var storageUnits = await _storageUnitService.GetAllStorageUnits(skip, take);
                 return Ok(storageUnits);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e, "Error in GetAllStorageUnits");
                 return StatusCode(500);
             }
         }
@@ -160,6 +166,7 @@ namespace LagerhotellAPI.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Error in OccupyStorageUnit");
                 return StatusCode(500);
             }
         }

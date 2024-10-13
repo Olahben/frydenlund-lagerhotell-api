@@ -9,10 +9,12 @@ namespace Controllers;
 public class LocationsController : ControllerBase
 {
     private readonly LocationService _locationService;
+    private readonly ILogger<LocationsController> _logger;
 
-    public LocationsController(LocationService locationService)
+    public LocationsController(LocationService locationService, ILogger<LocationsController> logger)
     {
         _locationService = locationService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -32,7 +34,7 @@ public class LocationsController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error in locations controller", ex);
+            _logger.LogError(ex, "Error in AddLocation");
             return StatusCode(500);
         }
     }
@@ -48,8 +50,11 @@ public class LocationsController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            Console.WriteLine($"Error in locations controller DeleteLocation method, location does probably not exist. Error: {ex}");
             return Conflict();
+        } catch (Exception e)
+        {
+            _logger.LogError(e, "Error in DeleteLocation");
+            return StatusCode(500, e.Message);
         }
     }
 
@@ -67,6 +72,10 @@ public class LocationsController : ControllerBase
         {
             Console.WriteLine($"Error in locations controller ModifyLocation, location does probably not exist. Error: {ex}");
             return Conflict();
+        } catch (Exception e)
+        {
+            _logger.LogError(e, "Error in ModifyLocation");
+            return StatusCode(500, e.Message);
         }
     }
 
@@ -80,8 +89,8 @@ public class LocationsController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in locations controller GetAllLocations, Error: {ex}");
-            return StatusCode(500);
+            _logger.LogError(ex, "Error in GetAllLocations");
+            return StatusCode(500, ex.Message);
         }
     }
 }

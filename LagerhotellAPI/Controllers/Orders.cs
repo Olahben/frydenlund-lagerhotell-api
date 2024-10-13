@@ -10,11 +10,13 @@ namespace Controllers
     {
         private readonly OrderService _orderService;
         private OrderValidator _orderValidator;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(OrderService orderService)
+        public OrdersController(OrderService orderService, ILogger<OrdersController> logger)
         {
             _orderService = orderService;
             _orderValidator = new OrderValidator();
+            _logger = logger;
         }
 
         /// <summary>
@@ -26,16 +28,22 @@ namespace Controllers
         [Route("add")]
         public async Task<IActionResult> AddOrder([FromBody] AddOrderRequest request)
         {
-            var validationResult = _orderValidator.Validate(request.Order);
-            if (validationResult.IsValid)
+            try
             {
-                string orderId = await _orderService.AddOrder(request.Order);
-                return Ok(new AddOrderResponse(orderId));
-            }
-            else
+                var validationResult = _orderValidator.Validate(request.Order);
+                if (validationResult.IsValid)
+                {
+                    string orderId = await _orderService.AddOrder(request.Order);
+                    return Ok(new AddOrderResponse(orderId));
+                }
+                else
+                {
+                    Console.WriteLine($"The request order did not meet the validators requirements, {validationResult.Errors}");
+                    return BadRequest($"The request order did not meet the validators requirements, {validationResult.Errors}");
+                }
+            } catch (Exception e)
             {
-                Console.WriteLine($"The request order did not meet the validators requirements, {validationResult.Errors}");
-                return BadRequest($"The request order did not meet the validators requirements, {validationResult.Errors}");
+                _logger.LogError(e, "Error in AddOrder");
             }
         }
 
@@ -55,7 +63,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error in GetAllOrders: {e}");
+                _logger.LogError(e, "Error in DeleteOrder");
                 return StatusCode(500);
             }
         }
@@ -80,7 +88,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error in GetOrderById: {e}");
+                _logger.LogError(e, "Error in GetOrderById");
                 return StatusCode(500);
             }
         }
@@ -105,7 +113,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error in GetAllOrders: {e}");
+                _logger.LogError(e, "Error in GetAllOrders");
                 return StatusCode(500);
             }
         }
@@ -140,7 +148,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error in CancelOrder: {e}");
+                _logger.LogError(e, "Error in CancelOrder");
                 return StatusCode(500);
             }
         }
@@ -166,7 +174,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error in ModifyOrder: {e}");
+                _logger.LogError(e, "Error in ModifyOrder");
                 return StatusCode(500);
             }
         }

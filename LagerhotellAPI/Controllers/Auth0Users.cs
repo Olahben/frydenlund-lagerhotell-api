@@ -13,12 +13,14 @@ public class Auth0UsersController : ControllerBase
     private readonly RefreshTokens _refreshTokensRepository;
     private readonly ICompanyUserService _companyUserService;
     private readonly UserRepository _userRepository;
-    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository, ICompanyUserService companyUserService, UserRepository userRepository)
+    private readonly ILogger<Auth0UsersController> _logger;
+    public Auth0UsersController(Auth0UserService auth0UserService, RefreshTokens refreshTokensRepository, ICompanyUserService companyUserService, UserRepository userRepository, ILogger<Auth0UsersController> logger)
     {
         _auth0UserService = auth0UserService;
         _refreshTokensRepository = refreshTokensRepository;
         _companyUserService = companyUserService;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     // Endpoints are going to be protected with authorization after auth0 tokens are integrated
@@ -51,6 +53,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.GetUser");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -83,6 +86,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.SignupUser");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -118,6 +122,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.DeleteUser")
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
         try
@@ -143,6 +148,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.DeleteUser");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -174,6 +180,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.UpdateAndVerifyUserEmail");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -198,6 +205,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.ChangeUserPassword");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
         try
@@ -223,6 +231,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.ChangeUserPassword");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -254,6 +263,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.SendForgotPasswordEmail");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -291,6 +301,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Error in Auth0UsersController.ExchangeCodeForTokens");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
     }
@@ -319,6 +330,7 @@ public class Auth0UsersController : ControllerBase
             {
                 return Unauthorized("Refresh token is invalid");
             }
+            _logger.LogError(e, "Error in Auth0UsersController.RefreshAccessToken");
             return StatusCode(500, e.Message);
         }
     }
@@ -351,6 +363,7 @@ public class Auth0UsersController : ControllerBase
             {
                 return StatusCode(403, e.Message);
             }
+            _logger.LogError(e, "Error in Auth0UsersController.SendVerificationEmail");
             return StatusCode(500, e.Message);
         }
     }
