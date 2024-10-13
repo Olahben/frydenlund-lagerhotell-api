@@ -44,6 +44,7 @@ namespace Controllers
             } catch (Exception e)
             {
                 _logger.LogError(e, "Error in AddOrder");
+                return StatusCode(500, e.Message);
             }
         }
 

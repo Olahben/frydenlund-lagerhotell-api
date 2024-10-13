@@ -122,7 +122,7 @@ public class Auth0UsersController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error in Auth0UsersController.DeleteUser")
+            _logger.LogError(e, "Error in Auth0UsersController.DeleteUser");
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
         try
