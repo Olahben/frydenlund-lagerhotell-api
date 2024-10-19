@@ -473,7 +473,8 @@ public class Auth0UserService
             client_id = _apiClientId,
             client_secret = _apiClientSecret,
             grant_type = "refresh_token",
-            refresh_token = refreshToken
+            refresh_token = refreshToken,
+            audience = _apiAudience
         };
         var json = JsonSerializer.Serialize(jsonData);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
