@@ -41,6 +41,7 @@ public class CompanyUserDocument
         CompanyNumber = companyNumber;
         Email = email;
         PhoneNumber = phoneNumber;
+        Address = address;
         IsEmailVerified = isEmailVerified;
         Auth0Id = auth0Id;
     }
