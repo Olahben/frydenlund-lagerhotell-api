@@ -117,7 +117,13 @@ public class CompanyUsers : ControllerBase
     {
         try
         {
+            // Set example password to pass validator
+            // wont affect the users actual password
+            string oldPassword = request.CompanyUser.Password;
+            request.CompanyUser.Password = "Passord123";
             _companyUserValidator.ValidateAndThrow(request.CompanyUser);
+            request.CompanyUser.Password = oldPassword;
+
         }
         catch (ValidationException ex)
         {
